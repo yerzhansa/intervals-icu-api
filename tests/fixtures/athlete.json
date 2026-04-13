@@ -1,0 +1,17 @@
+{
+  "id": "i12345",
+  "name": "Test Rider",
+  "email": "test@example.com",
+  "city": "Almaty",
+  "country": "KZ",
+  "sex": "M",
+  "weight": 72.5,
+  "icu_ftp": 280,
+  "icu_resting_hr": 48,
+  "icu_max_hr": 190,
+  "icu_lthr": 165,
+  "icu_date_of_birth": "1990-05-15",
+  "locale": "en",
+  "timezone": "Asia/Almaty",
+  "future_field_2027": "forward compat test"
+}

@@ -1,0 +1,16 @@
+{
+  "id": 98765,
+  "start_date_local": "2026-04-14T00:00:00",
+  "icu_training_load": 85,
+  "moving_time": 5400,
+  "category": "WORKOUT",
+  "name": "Sweet Spot 2x20",
+  "type": "Ride",
+  "description": "Warmup 15min, 2x20min @ 88-94% FTP with 5min recovery, cooldown 10min",
+  "not_on_fitness_chart": false,
+  "indoor": true,
+  "color": null,
+  "uid": null,
+  "workout_doc": null,
+  "hide_from_athlete": false
+}

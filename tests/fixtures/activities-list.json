@@ -1,0 +1,29 @@
+[
+  {
+    "id": "i12345:1234567890",
+    "start_date_local": "2026-04-13T07:30:00",
+    "type": "Ride",
+    "name": "Morning Endurance Ride",
+    "moving_time": 5400,
+    "icu_training_load": 65,
+    "trainer": false
+  },
+  {
+    "id": "i12345:1234567891",
+    "start_date_local": "2026-04-12T17:00:00",
+    "type": "VirtualRide",
+    "name": "Sweet Spot Intervals",
+    "moving_time": 3600,
+    "icu_training_load": 85,
+    "trainer": true
+  },
+  {
+    "id": "i12345:1234567892",
+    "start_date_local": "2026-04-11T06:00:00",
+    "type": "Ride",
+    "name": "Recovery Spin",
+    "moving_time": 2400,
+    "icu_training_load": 25,
+    "trainer": false
+  }
+]

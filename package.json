@@ -1,0 +1,61 @@
+{
+  "name": "intervals-icu-api",
+  "version": "0.1.0",
+  "description": "TypeScript client for the intervals.icu API, generated from official OpenAPI spec",
+  "keywords": [
+    "api",
+    "cycling",
+    "intervals.icu",
+    "openapi",
+    "training",
+    "typescript"
+  ],
+  "license": "MIT",
+  "author": "Yerzhan Sagyt",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yerzhansa/intervals-icu-api.git"
+  },
+  "files": [
+    "dist",
+    "openapi.json"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "generate": "openapi-typescript openapi.json -o src/generated/schema.ts",
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt --write .",
+    "fmt:check": "oxfmt --check .",
+    "check": "oxlint && oxfmt --check .",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.17.0",
+    "valibot": "^1.3.1"
+  },
+  "devDependencies": {
+    "msw": "^2.13.2",
+    "openapi-typescript": "^7.13.0",
+    "oxfmt": "^0.45.0",
+    "oxlint": "^1.60.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

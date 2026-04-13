@@ -1,0 +1,5 @@
+[
+  { "id": 98765, "start_date_local": "2026-04-14T00:00:00", "category": "WORKOUT", "name": "Sweet Spot 2x20", "type": "Ride", "icu_training_load": 85 },
+  { "id": 98766, "start_date_local": "2026-04-15T00:00:00", "category": "WORKOUT", "name": "Recovery Spin", "type": "Ride", "icu_training_load": 25 },
+  { "id": 98767, "start_date_local": "2026-04-16T00:00:00", "category": "NOTE", "name": "Rest day", "type": null, "icu_training_load": null }
+]
