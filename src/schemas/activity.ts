@@ -25,7 +25,9 @@ export const ActivitySchema = v.looseObject({
   source: v.nullish(v.string()),
   trainer: v.nullish(v.boolean()),
   group: v.nullish(v.string()),
-  icu_zone_times: v.nullish(v.array(v.number())),
+  icu_zone_times: v.nullish(
+    v.array(v.union([v.number(), v.looseObject({ id: v.nullish(v.string()), secs: v.nullish(v.number()) })]))
+  ),
 });
 
 export type Activity = v.InferOutput<typeof ActivitySchema>;
