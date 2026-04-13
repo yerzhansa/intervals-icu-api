@@ -12,12 +12,13 @@ describe("RateLimiter", () => {
     expect(elapsed).toBeLessThan(50);
   });
 
-  it("delays requests when tokens exhausted", async () => {
-    const limiter = new RateLimiter({ requestsPerSecond: 10, burst: 1 });
-    await limiter.acquire(); // uses the 1 token
+  it("delays requests when tokens exhausted", { timeout: 10000 }, async () => {
+    const limiter = new RateLimiter({ requestsPerSecond: 100, burst: 1 });
+    await limiter.acquire();
     const start = Date.now();
-    await limiter.acquire(); // must wait ~100ms for refill
+    await limiter.acquire();
     const elapsed = Date.now() - start;
-    expect(elapsed).toBeGreaterThanOrEqual(50);
+    expect(elapsed).toBeGreaterThanOrEqual(5);
+    expect(elapsed).toBeLessThan(200);
   });
 });
