@@ -1,6 +1,6 @@
 {
   "name": "intervals-icu-api",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "TypeScript client for the intervals.icu API, generated from official OpenAPI spec",
   "keywords": [
     "api",
