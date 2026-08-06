@@ -1,5 +1,9 @@
 node_modules/
 dist/
 docs/
+!docs/
+docs/*
+!docs/RFC-0001-v0.2-correctness-contract.md
+!docs/v0.2-investigation-matrix.md
 .env
 *.tgz
