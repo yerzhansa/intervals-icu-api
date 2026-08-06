@@ -1,6 +1,6 @@
 {
   "name": "intervals-icu-api",
-  "version": "0.1.2",
+  "version": "0.2.0-beta.1",
   "description": "TypeScript client for the intervals.icu API, generated from official OpenAPI spec",
   "keywords": [
     "api",
@@ -18,7 +18,11 @@
   },
   "files": [
     "dist",
-    "openapi.json"
+    "openapi.json",
+    "CHANGELOG.md",
+    "MIGRATION.md",
+    "docs/RFC-0001-v0.2-correctness-contract.md",
+    "docs/v0.2-investigation-matrix.md"
   ],
   "type": "module",
   "main": "./dist/index.js",
@@ -31,8 +35,16 @@
     }
   },
   "scripts": {
-    "generate": "openapi-typescript openapi.json -o src/generated/schema.ts",
+    "generate": "npm run schema:generate",
+    "schema:fetch": "node scripts/schema-fetch.mjs",
+    "schema:generate": "node scripts/schema-generate.mjs",
+    "schema:check": "node scripts/schema-check.mjs",
+    "schema:upstream-diff": "node scripts/schema-upstream-diff.mjs",
+    "scan:sensitive": "node scripts/sensitive-data-check.mjs",
+    "test:schema-diff": "node --test scripts/test-schema-upstream-diff.mjs",
     "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test:compat": "npm run build && tsc -p tests/compat/tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "oxlint",
@@ -40,6 +52,8 @@
     "fmt": "oxfmt --write .",
     "fmt:check": "oxfmt --check .",
     "check": "oxlint && oxfmt --check .",
+    "verify": "npm run scan:sensitive && npm run schema:check && npm run test:schema-diff && npm run typecheck && npm test && npm run test:compat && npm run check",
+    "prepack": "npm run build",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
