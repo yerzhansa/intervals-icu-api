@@ -1,0 +1,48 @@
+[
+  {
+    "type": "time",
+    "name": null,
+    "data": [0, 1, 2, 3],
+    "valueType": "java.lang.Integer",
+    "valueTypeIsArray": false,
+    "anomalies": null,
+    "custom": false,
+    "allNull": false
+  },
+  {
+    "type": "latlng",
+    "data": [43.2, 43.21, null],
+    "data2": [76.8, 76.81, null],
+    "valueTypeIsArray": false,
+    "custom": false,
+    "allNull": false
+  },
+  {
+    "type": "moving",
+    "data": [true, true, false],
+    "custom": false,
+    "allNull": false
+  },
+  {
+    "type": "athlete_custom_channel",
+    "name": "Synthetic custom channel",
+    "data": [null, 1.5, 1.7],
+    "anomalies": [
+      {
+        "start_index": 0,
+        "end_index": 1,
+        "value": 0,
+        "valueEnd": 1
+      }
+    ],
+    "custom": true,
+    "allNull": false,
+    "brand_new_metadata": "preserved"
+  },
+  {
+    "type": "empty_channel",
+    "data": [null, null],
+    "custom": true,
+    "allNull": true
+  }
+]

@@ -37,6 +37,7 @@ export async function callHook<K extends keyof Hooks>(
   try {
     await (fn as (info: any) => void | Promise<void>)(info);
   } catch (e) {
+    // oxlint-disable-next-line no-console -- Hook failures stay observable without failing requests.
     console.warn(`[intervals-icu-api] Hook "${name}" threw:`, e);
   }
 }

@@ -7,19 +7,25 @@ type AthleteUpdate = components["schemas"]["AthleteUpdateDTO"];
 
 export class AthleteResource extends BaseResource {
   async get(): Promise<Result<Athlete>> {
-    return this.http.requestJson("GET", "/athlete/{id}", () =>
-      this.api.GET("/api/v1/athlete/{id}", {
-        params: { path: { id: this.athleteId } },
-      }),
+    return this.http.requestJson(
+      "GET",
+      "/athlete/{id}",
+      () =>
+        this.api.GET("/api/v1/athlete/{id}", {
+          params: { path: { id: this.athleteId } },
+        }),
       AthleteSchema,
     );
   }
 
   async getProfile(): Promise<Result<Athlete>> {
-    return this.http.requestJson("GET", "/athlete/{id}/profile", () =>
-      this.api.GET("/api/v1/athlete/{id}/profile", {
-        params: { path: { id: this.athleteId } },
-      }),
+    return this.http.requestJson(
+      "GET",
+      "/athlete/{id}/profile",
+      () =>
+        this.api.GET("/api/v1/athlete/{id}/profile", {
+          params: { path: { id: this.athleteId } },
+        }),
       AthleteSchema,
     );
   }

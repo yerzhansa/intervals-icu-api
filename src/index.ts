@@ -1,22 +1,89 @@
 export { IntervalsClient, type IntervalsClientOptions } from "./client.js";
 export { type AuthConfig, type ApiKeyAuth, type BearerAuth } from "./auth.js";
-export { type Result, type ApiError, type ValidationIssue, ok, err, isOk, isErr, unwrap, mapResult, toValidationIssues } from "./result.js";
+export {
+  type Result,
+  type ApiError,
+  type ValidationIssue,
+  ok,
+  err,
+  isOk,
+  isErr,
+  unwrap,
+  mapResult,
+  toValidationIssues,
+} from "./result.js";
 export { decode, decodeArray } from "./decode.js";
-export { camelCaseKeys, snakeCaseKeys, toCamelCase, toSnakeCase } from "./transform.js";
+export {
+  camelCaseKeys,
+  snakeCaseKeys,
+  toCamelCase,
+  toSnakeCase,
+  type CamelCase,
+  type CamelCaseKeys,
+} from "./transform.js";
+export type {
+  BinaryDownload,
+  BinaryOnlyOptions,
+  BinaryMetadataOptions,
+  SensorDownloadOptions,
+  SensorDownloadMetadataOptions,
+  WorkoutZipOptions,
+  WorkoutZipMetadataOptions,
+} from "./download.js";
 export { type RetryOptions } from "./retry.js";
 export { type Hooks } from "./hooks.js";
 export { AthleteResource } from "./resources/athlete.js";
-export { ActivitiesResource } from "./resources/activities.js";
+export {
+  ActivitiesResource,
+  type ActivityIntervals,
+  type ActivityIntervalsWire,
+} from "./resources/activities.js";
 export { WellnessResource } from "./resources/wellness.js";
 export { EventsResource } from "./resources/events.js";
 export { WorkoutsResource } from "./resources/workouts.js";
 export { PowerCurvesResource } from "./resources/power-curves.js";
 export { FoldersResource } from "./resources/folders.js";
 export { GearResource } from "./resources/gear.js";
-export { AthleteSchema, type Athlete, decodeAthlete } from "./schemas/athlete.js";
-export { ActivitySchema, type Activity, decodeActivity, decodeActivities } from "./schemas/activity.js";
-export { WellnessSchema, type WellnessRecord, decodeWellness } from "./schemas/wellness.js";
-export { EventSchema, type Event, decodeEvent, decodeEvents } from "./schemas/event.js";
-export { WorkoutSchema, type Workout } from "./schemas/workout.js";
-export { PowerCurveSchema, type PowerCurve } from "./schemas/power-curve.js";
-export type { paths, components, operations } from "./generated/schema.js";
+export { AthleteSchema, type Athlete, type AthleteWire, decodeAthlete } from "./schemas/athlete.js";
+export {
+  ActivitySchema,
+  type Activity,
+  type ActivityWire,
+  decodeActivity,
+  decodeActivities,
+} from "./schemas/activity.js";
+export {
+  WellnessSchema,
+  type WellnessRecord,
+  type WellnessRecordWire,
+  decodeWellness,
+} from "./schemas/wellness.js";
+export {
+  EventSchema,
+  type Event,
+  type EventWire,
+  decodeEvent,
+  decodeEvents,
+} from "./schemas/event.js";
+export { WorkoutSchema, type Workout, type WorkoutWire } from "./schemas/workout.js";
+export { PowerCurveSchema, type PowerCurve, type PowerCurveWire } from "./schemas/power-curve.js";
+export {
+  KNOWN_ACTIVITY_STREAM_TYPES,
+  ActivityStreamSchema,
+  ActivityStreamAnomalySchema,
+  type KnownActivityStreamType,
+  type ActivityStreamType,
+  type ActivityStream,
+  type ActivityStreamWire,
+  type ActivityStreamAnomaly,
+  type ActivityStreamAnomalyWire,
+  type GetStreamsOptions,
+} from "./schemas/activity-stream.js";
+export type {
+  paths,
+  paths as WirePaths,
+  components,
+  components as WireComponents,
+  operations,
+  operations as WireOperations,
+} from "./generated/schema.js";

@@ -51,7 +51,7 @@ describe("Schema validation", () => {
   });
 
   it("rejects activity missing required id", () => {
-    const { id, ...noId } = activityFixture;
+    const { id: _id, ...noId } = activityFixture;
     const result = v.safeParse(ActivitySchema, noId);
     expect(result.success).toBe(false);
   });

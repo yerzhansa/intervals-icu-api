@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import type { CamelCaseKeys } from "../transform.js";
 
 export const WorkoutSchema = v.looseObject({
   id: v.number(),
@@ -15,4 +16,8 @@ export const WorkoutSchema = v.looseObject({
   updated: v.nullish(v.string()),
 });
 
-export type Workout = v.InferOutput<typeof WorkoutSchema>;
+/** Validated Intervals.icu response before convenience response key transformation. */
+export type WorkoutWire = v.InferOutput<typeof WorkoutSchema>;
+
+/** Workout returned by managed convenience resources. */
+export type Workout = CamelCaseKeys<WorkoutWire>;

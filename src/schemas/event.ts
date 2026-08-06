@@ -1,5 +1,6 @@
 import * as v from "valibot";
 import { decode, decodeArray } from "../decode.js";
+import type { CamelCaseKeys } from "../transform.js";
 
 export const EventSchema = v.looseObject({
   id: v.number(),
@@ -18,7 +19,11 @@ export const EventSchema = v.looseObject({
   hide_from_athlete: v.nullish(v.boolean()),
 });
 
-export type Event = v.InferOutput<typeof EventSchema>;
+/** Validated Intervals.icu response before convenience response key transformation. */
+export type EventWire = v.InferOutput<typeof EventSchema>;
+
+/** Event returned by managed convenience resources. */
+export type Event = CamelCaseKeys<EventWire>;
 
 export const decodeEvent = (data: unknown) => decode(EventSchema, data);
 export const decodeEvents = (data: unknown) => decodeArray(EventSchema, data);

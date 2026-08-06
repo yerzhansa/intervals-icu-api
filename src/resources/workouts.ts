@@ -1,4 +1,6 @@
 import type { components } from "../generated/schema.js";
+import type { BinaryDownload, WorkoutZipMetadataOptions, WorkoutZipOptions } from "../download.js";
+import { encodePathSegment } from "../path.js";
 import type { Result } from "../result.js";
 import { BaseResource } from "./base.js";
 
@@ -38,7 +40,54 @@ export class WorkoutsResource extends BaseResource {
     );
   }
 
-  async downloadZip(): Promise<Result<ArrayBuffer>> {
-    return this.http.requestBinary("GET", "/athlete/{id}/workouts.zip", `/api/v1/athlete/${this.athleteId}/workouts.zip`);
+  async downloadZip(): Promise<Result<ArrayBuffer>>;
+  async downloadZip(options: WorkoutZipMetadataOptions): Promise<Result<BinaryDownload>>;
+  async downloadZip(options: WorkoutZipOptions): Promise<Result<ArrayBuffer>>;
+  async downloadZip(
+    options?: WorkoutZipOptions | WorkoutZipMetadataOptions,
+  ): Promise<Result<ArrayBuffer | BinaryDownload>> {
+    if (!isWorkoutZipOptions(options)) {
+      return this.http.rejectValidation("GET", "/athlete/{id}/workouts.zip", [
+        {
+          path: "options",
+          message: "Workout ZIP downloads require format, oldest, and newest",
+          expected: "WorkoutZipOptions",
+          received: options,
+        },
+      ]);
+    }
+
+    const query = new URLSearchParams({
+      ext: options.format,
+      oldest: options.oldest,
+      newest: options.newest,
+    });
+    if (options.powerRange !== undefined) query.set("powerRange", String(options.powerRange));
+    if (options.hrRange !== undefined) query.set("hrRange", String(options.hrRange));
+    if (options.paceRange !== undefined) query.set("paceRange", String(options.paceRange));
+    if (options.locale !== undefined) query.set("locale", options.locale);
+
+    const urlPath = `/api/v1/athlete/${encodePathSegment(this.athleteId)}/workouts.zip?${query.toString()}`;
+    return options.includeMetadata
+      ? this.http.requestBinaryDownload("GET", "/athlete/{id}/workouts.zip", urlPath)
+      : this.http.requestBinary("GET", "/athlete/{id}/workouts.zip", urlPath);
   }
+}
+
+const WORKOUT_ZIP_FORMATS = new Set<WorkoutZipOptions["format"]>(["zwo", "mrc", "erg", "fit"]);
+
+function isWorkoutZipOptions(
+  options: WorkoutZipOptions | WorkoutZipMetadataOptions | undefined,
+): options is WorkoutZipOptions | WorkoutZipMetadataOptions {
+  if (options === undefined || typeof options !== "object" || options === null) return false;
+
+  const candidate = options as Partial<WorkoutZipOptions>;
+  return (
+    typeof candidate.format === "string" &&
+    WORKOUT_ZIP_FORMATS.has(candidate.format as WorkoutZipOptions["format"]) &&
+    typeof candidate.oldest === "string" &&
+    candidate.oldest.trim().length > 0 &&
+    typeof candidate.newest === "string" &&
+    candidate.newest.trim().length > 0
+  );
 }

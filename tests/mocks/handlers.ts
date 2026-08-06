@@ -27,17 +27,24 @@ export const handlers = [
   http.get(`${BASE}/api/v1/athlete/:id/events`, () => HttpResponse.json(eventsFixture)),
   http.get(`${BASE}/api/v1/athlete/:id/events/:eventId`, () => HttpResponse.json(eventFixture)),
   http.post(`${BASE}/api/v1/athlete/:id/events`, async ({ request }) => {
-    const body = await request.json() as Record<string, unknown>;
-    return HttpResponse.json({ id: 99999, category: "WORKOUT", start_date_local: "2026-04-14T00:00:00", ...body });
+    const body = (await request.json()) as Record<string, unknown>;
+    return HttpResponse.json({
+      id: 99999,
+      category: "WORKOUT",
+      start_date_local: "2026-04-14T00:00:00",
+      ...body,
+    });
   }),
 
   // Power curves
   http.get(`${BASE}/api/v1/athlete/:id/power-curves`, () => HttpResponse.json(powerCurveFixture)),
 
   // File downloads
-  http.get(`${BASE}/api/v1/activity/:id/fit-file`, () =>
-    new HttpResponse(new Uint8Array([0x2e, 0x46, 0x49, 0x54]).buffer, {
-      headers: { "Content-Type": "application/octet-stream" },
-    }),
+  http.get(
+    `${BASE}/api/v1/activity/:id/fit-file`,
+    () =>
+      new HttpResponse(new Uint8Array([0x2e, 0x46, 0x49, 0x54]).buffer, {
+        headers: { "Content-Type": "application/octet-stream" },
+      }),
   ),
 ];

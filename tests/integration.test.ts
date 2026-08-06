@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterEach, afterAll, beforeEach } from "vitest";
+import { describe, it, expect, beforeAll, afterEach, afterAll } from "vitest";
 import { http, HttpResponse } from "msw";
 import { server } from "./mocks/server.js";
 import { IntervalsClient } from "../src/index.js";
@@ -149,8 +149,9 @@ describe("Files", () => {
 
   it("handles download error", async () => {
     server.use(
-      http.get("https://intervals.icu/api/v1/activity/:id/fit-file", () =>
-        new HttpResponse(null, { status: 404 }),
+      http.get(
+        "https://intervals.icu/api/v1/activity/:id/fit-file",
+        () => new HttpResponse(null, { status: 404 }),
       ),
     );
     const result = await client.activities.downloadFitFile("nonexistent");
@@ -160,10 +161,12 @@ describe("Files", () => {
 
   it("exports activities as CSV", async () => {
     server.use(
-      http.get("https://intervals.icu/api/v1/athlete/:id/activities.csv*", () =>
-        new HttpResponse("id,name,type\n1,Morning Ride,Ride\n", {
-          headers: { "Content-Type": "text/csv" },
-        }),
+      http.get(
+        "https://intervals.icu/api/v1/athlete/:id/activities.csv*",
+        () =>
+          new HttpResponse("id,name,type\n1,Morning Ride,Ride\n", {
+            headers: { "Content-Type": "text/csv" },
+          }),
       ),
     );
     const result = await client.activities.exportCsv({ oldest: "2026-01-01" });

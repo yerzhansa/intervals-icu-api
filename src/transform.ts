@@ -33,7 +33,12 @@ function transformKeys(obj: unknown, fn: (key: string) => string): unknown {
     const result: Record<string, unknown> = {};
     for (const key in obj) {
       if (Object.hasOwn(obj as object, key)) {
-        result[fn(key)] = transformKeys((obj as Record<string, unknown>)[key], fn);
+        Object.defineProperty(result, fn(key), {
+          value: transformKeys((obj as Record<string, unknown>)[key], fn),
+          enumerable: true,
+          configurable: true,
+          writable: true,
+        });
       }
     }
     return result;
