@@ -1,0 +1,26 @@
+name: OpenAPI drift
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run schema:upstream-diff -- --output openapi-upstream-diff.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: openapi-upstream-diff
+          path: openapi-upstream-diff.md
+          if-no-files-found: error

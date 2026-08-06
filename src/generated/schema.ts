@@ -4,79 +4,44 @@
  */
 
 export interface paths {
-  "/api/v1/chats/{id}/messages/{msgId}/seen": {
+  "/api/v1/activity/{id}": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get?: never;
-    /** Update last seen message for the chat */
-    put: operations["updateLastSeenMessageId"];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/workouts/{workoutId}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get a workout */
-    get: operations["showWorkout"];
-    /** Update a workout */
-    put: operations["updateWorkout"];
-    post?: never;
     /**
-     * Delete a workout (and optionally others added at the same time if the workout is on a plan)
-     * @description Returns the ids of the deleted workout(s)
+     * Get an activity
+     * @description An empty stub object is returned for Strava activities
      */
-    delete: operations["deleteWorkout"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/wellness/{date}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get wellness record for date (local ISO-8601 day) */
-    get: operations["getRecord"];
+    get: operations["getActivity"];
     /**
-     * Update the wellness record for the date (ISO-8601)
-     * @description Only fields provided are changed
+     * Update activity
+     * @description Strava activities cannot be updated
      */
-    put: operations["updateWellness"];
+    put: operations["updateActivity"];
     post?: never;
-    delete?: never;
+    /** Delete an activity */
+    delete: operations["deleteActivity"];
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/api/v1/athlete/{id}/wellness-bulk": {
+  "/api/v1/activity/{id}/best-efforts": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get?: never;
     /**
-     * Update an array of wellness records all for the same athlete
-     * @description The id of each record is the day (ISO-8601). Only fields provided are changed
+     * Find best efforts in the activity
+     * @description One of duration or distance is required
      */
-    put: operations["updateWellnessBulk"];
+    get: operations["findBestEfforts"];
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -84,7 +49,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/athlete/{id}/wellness": {
+  "/api/v1/activity/{id}/delete-intervals": {
     parameters: {
       query?: never;
       header?: never;
@@ -92,30 +57,45 @@ export interface paths {
       cookie?: never;
     };
     get?: never;
+    /** Delete intervals */
+    put: operations["deleteIntervals"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/file": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Download original activity file, Strava activities not supported */
+    get: operations["downloadActivityFile"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/fit-file": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
     /**
-     * Update a wellness record, id is the day (ISO-8601)
-     * @description Only fields provided are changed
+     * Download Intervals.icu generated activity fit file
+     * @description Not supported for Strava activities
      */
-    put: operations["updateWellness_1"];
-    /** Upload wellness records in CSV format as multipart/form-data */
-    post: operations["uploadWellness"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/weather-config": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get the athlete's weather forecast configuration */
-    get: operations["getWeatherConfig"];
-    /** Update the athlete's weather forecast configuration */
-    put: operations["updateWeatherConfig"];
+    get: operations["downloadActivityFitFile"];
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -123,17 +103,16 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/athlete/{id}/training-plan": {
+  "/api/v1/activity/{id}/gap-histogram": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** Get the athlete's training plan */
-    get: operations["getAthleteTrainingPlan"];
-    /** Change the athlete's training plan */
-    put: operations["updateAthletePlan"];
+    /** Get activity gradient adjusted pace histogram */
+    get: operations["getGapHistogram"];
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -141,145 +120,19 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/athlete/{id}/routes/{route_id}": {
+  "/api/v1/activity/{id}/gpx-file": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** Get a route for an athlete */
-    get: operations["getAthleteRoute"];
-    /** Update a route for an athlete */
-    put: operations["updateAthleteRoute"];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/gear/{gearId}/reminder/{reminderId}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    /** Update a reminder */
-    put: operations["updateReminder"];
-    post?: never;
-    /** Delete a reminder */
-    delete: operations["deleteReminder"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/gear/{gearId}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    /** Update a gear or component */
-    put: operations["updateGear"];
-    post?: never;
-    /** Delete a gear or component */
-    delete: operations["deleteGear"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/folders/{folderId}/workouts": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    /** Update a range of workouts on a plan. Currently only hide_from_athlete can be changed */
-    put: operations["updatePlanWorkouts"];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/folders/{folderId}/shared-with": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List athletes that the folder or plan has been shared with */
-    get: operations["listFolderSharedWith"];
-    /** Add/remove athletes from the share list for the folder */
-    put: operations["updateFolderSharedWith"];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/folders/{folderId}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    /** Update a workout folder or plan */
-    put: operations["updateFolder"];
-    post?: never;
-    /** Delete a workout folder or plan including all workouts */
-    delete: operations["deleteFolder"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/events/{eventId}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get an event (planned workout, note etc.) */
-    get: operations["showEvent"];
-    /** Update an event (planned workout, note etc.) */
-    put: operations["updateEvent"];
-    post?: never;
-    /** Delete an event (planned workout, notes etc.) from an athlete's calendar */
-    delete: operations["deleteEvent"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/events/bulk-delete": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
     /**
-     * Delete events from an athlete's calendar by id or external_id
-     * @description Delete events by id or by external_id. If external_id is supplied then the event must have been created by the calling OAuth application. If both id and external_id are supplied then external_id is used. Events that do not exist are ignored.
+     * Download Intervals.icu generated activity gpx file
+     * @description Not supported for Strava activities and activities without GPS data
      */
-    put: operations["deleteEventsBulk"];
+    get: operations["downloadActivityGpxFile"];
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -287,7 +140,93 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/athlete/{id}/events": {
+  "/api/v1/activity/{id}/hr-curve{ext}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get activity heart rate curve in JSON or CSV (use .csv ext) format */
+    get: operations["getActivityHRCurve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/hr-histogram": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get activity heart rate histogram */
+    get: operations["getHRHistogram"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/hr-load-model": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get activity heart rate training load model */
+    get: operations["getHRTrainingLoadModel"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/interval-stats": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Return interval like stats for part of the activity */
+    get: operations["getIntervalStats"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/intervals": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get activity intervals */
+    get: operations["getIntervals"];
+    /** Update intervals for an activity */
+    put: operations["updateIntervals"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/intervals/{intervalId}": {
     parameters: {
       query?: never;
       header?: never;
@@ -295,40 +234,187 @@ export interface paths {
       cookie?: never;
     };
     get?: never;
-    /** Update all events for a date range at once. Only hide_from_athlete and athlete_cannot_edit can be updated */
-    put: operations["updateEvents"];
-    /**
-     * Create an event (planned workout, note etc.) on the athlete's calendar
-     * @description This endpoint accepts workouts in native Intervals.icu format ('description' field) as well as zwo, mrc, erg and fit files (use 'file_contents' or 'file_contents_base64')
-     */
-    post: operations["createEvent"];
-    /** Delete a range of events (planned workouts, notes etc.) from the athlete's calendar */
-    delete: operations["deleteEvents"];
+    /** Update/create an interval */
+    put: operations["updateInterval"];
+    post?: never;
+    delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/api/v1/athlete/{id}/custom-item/{itemId}": {
+  "/api/v1/activity/{id}/map": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** Get a custom item */
-    get: operations["getCustomItem"];
-    /** Update a custom item */
-    put: operations["updateCustomItem"];
+    /** Get activity map data */
+    get: operations["getActivityMap"];
+    put?: never;
     post?: never;
-    /** Delete a custom item */
-    delete: operations["deleteCustomItem"];
+    delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/api/v1/athlete/{id}/custom-item-indexes": {
+  "/api/v1/activity/{id}/messages": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List all messages (comments) for the activity */
+    get: operations["listActivityMessages"];
+    put?: never;
+    /** Add a message (comment) to an activity */
+    post: operations["sendActivityMessage"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/pace-curve{ext}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get activity pace curve in JSON or CSV (use .csv ext) format */
+    get: operations["getActivityPaceCurve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/pace-histogram": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get activity pace histogram */
+    get: operations["getPaceHistogram"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/power-curves{ext}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get activity power curves for one or more streams in JSON or CSV (use .csv ext) format */
+    get: operations["listActivityPowerCurves_1"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/power-curve{ext}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get activity power curve in JSON or CSV (use .csv ext) format */
+    get: operations["getActivityPowerCurve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/power-histogram": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get activity power histogram */
+    get: operations["getPowerHistogram"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/power-spike-model": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get activity power spike detection model */
+    get: operations["getActivityPowerSpikeModel"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/power-vs-hr{ext}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get activity power vs heart rate data in JSON or CSV (use .csv ext) format */
+    get: operations["getPowerVsHR"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/segments": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get activity segments */
+    get: operations["getActivitySegments"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/split-interval": {
     parameters: {
       query?: never;
       header?: never;
@@ -336,8 +422,8 @@ export interface paths {
       cookie?: never;
     };
     get?: never;
-    /** Re-order custom items */
-    put: operations["updateCustomItemIndexes"];
+    /** Split an interval */
+    put: operations["splitInterval"];
     post?: never;
     delete?: never;
     options?: never;
@@ -345,7 +431,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/athlete/{id}/apply-plan-changes": {
+  "/api/v1/activity/{id}/streams": {
     parameters: {
       query?: never;
       header?: never;
@@ -353,101 +439,8 @@ export interface paths {
       cookie?: never;
     };
     get?: never;
-    /**
-     * Apply any changes from the athlete's current plan to the athlete's calendar
-     * @description Only workouts from today or in the future are updated
-     */
-    put: operations["applyCurrentPlanChanges"];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get the athlete with sportSettings and custom_items */
-    get: operations["getAthlete"];
-    /** Update an athlete */
-    put: operations["updateAthlete"];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{athleteId}/sport-settings/{id}/apply": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    /** Apply sport settings to matching activities (updates zones), done asynchronously */
-    put: operations["applyToActivities"];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{athleteId}/sport-settings/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get sport settings by id or activity type e.g. Run, Ride etc. */
-    get: operations["getSettings_1"];
-    /** Update sport settings by id or activity type e.g. Run, Ride etc. */
-    put: operations["updateSettings"];
-    post?: never;
-    /** Delete sport settings */
-    delete: operations["deleteSettings"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{athleteId}/sport-settings": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List sport settings for the athlete */
-    get: operations["listSettings"];
-    /** Update multiple sport settings */
-    put: operations["updateSettingsMulti"];
-    /** Create settings for a sport with default values */
-    post: operations["createSettings"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete-plans": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    /** Change training plans for a list of athletes */
-    put: operations["updateAthletePlans"];
+    /** Update streams for the activity from JSON */
+    put: operations["updateActivityStreams"];
     post?: never;
     delete?: never;
     options?: never;
@@ -475,16 +468,19 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/activity/{id}/streams": {
+  "/api/v1/activity/{id}/streams{ext}": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get?: never;
-    /** Update streams for the activity from JSON */
-    put: operations["updateActivityStreams"];
+    /**
+     * List streams for the activity
+     * @description Note that this endpoint will return 'fixed_watts' as 'watts'. If 'raw_watts' is asked for or types is null then the 'watts' stream is renamed to 'raw_watts'. If ext is .csv then CSV data is returned instead of JSON
+     */
+    get: operations["getActivityStreams"];
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -492,16 +488,16 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/activity/{id}/split-interval": {
+  "/api/v1/activity/{id}/time-at-hr": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get?: never;
-    /** Split an interval */
-    put: operations["splitInterval"];
+    /** Get activity time at heart rate data */
+    get: operations["getTimeAtHR"];
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -509,7 +505,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/activity/{id}/intervals/{intervalId}": {
+  "/api/v1/activity/{id}/tombstone": {
     parameters: {
       query?: never;
       header?: never;
@@ -517,8 +513,25 @@ export interface paths {
       cookie?: never;
     };
     get?: never;
-    /** Update/create an interval */
-    put: operations["updateInterval"];
+    put?: never;
+    post?: never;
+    /** Delete an activity tombstone */
+    delete: operations["deleteTombstone"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/activity/{id}/weather-summary": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get activity weather summary information */
+    get: operations["getActivityWeatherSummary"];
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -526,17 +539,16 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/activity/{id}/intervals": {
+  "/api/v1/athlete-plans": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** Get activity intervals */
-    get: operations["getIntervals"];
-    /** Update intervals for an activity */
-    put: operations["updateIntervals"];
+    get?: never;
+    /** Change training plans for a list of athletes */
+    put: operations["updateAthletePlans"];
     post?: never;
     delete?: never;
     options?: never;
@@ -544,16 +556,19 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/activity/{id}/delete-intervals": {
+  "/api/v1/athlete/{athleteId}/activities/{ids}": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get?: never;
-    /** Delete intervals */
-    put: operations["deleteIntervals"];
+    /**
+     * Fetch multiple activities by id. Missing activities are ignored
+     * @description Strava activities are returned as empty stubs
+     */
+    get: operations["getActivities"];
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -561,32 +576,45 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/activity/{id}": {
+  "/api/v1/athlete/{athleteId}/sport-settings": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /**
-     * Get an activity
-     * @description An empty stub object is returned for Strava activities
-     */
-    get: operations["getActivity"];
-    /**
-     * Update activity
-     * @description Strava activities cannot be updated
-     */
-    put: operations["updateActivity"];
+    /** List sport settings for the athlete */
+    get: operations["listSettings"];
+    /** Update multiple sport settings */
+    put: operations["updateSettingsMulti"];
+    /** Create settings for a sport with default values */
+    post: operations["createSettings"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{athleteId}/sport-settings/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get sport settings by id or activity type e.g. Run, Ride etc. */
+    get: operations["getSettings_1"];
+    /** Update sport settings by id or activity type e.g. Run, Ride etc. */
+    put: operations["updateSettings"];
     post?: never;
-    /** Delete an activity */
-    delete: operations["deleteActivity"];
+    /** Delete sport settings */
+    delete: operations["deleteSettings"];
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/api/v1/download-workout{ext}": {
+  "/api/v1/athlete/{athleteId}/sport-settings/{id}/apply": {
     parameters: {
       query?: never;
       header?: never;
@@ -594,355 +622,61 @@ export interface paths {
       cookie?: never;
     };
     get?: never;
-    put?: never;
-    /**
-     * Convert a workout to .zwo (Zwift), .mrc, .erg or .fit
-     * @description The athlete to use is extracted from the bearer token and used to resolve power targets etc.. Note that the create workout endpoint can convert workouts and might be more convenient.
-     */
-    post: operations["downloadWorkout"];
+    /** Apply sport settings to matching activities (updates zones), done asynchronously */
+    put: operations["applyToActivities"];
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/api/v1/chats/send-message": {
+  "/api/v1/athlete/{athleteId}/sport-settings/{id}/matching-activities": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get?: never;
+    /** List activities matching the settings */
+    get: operations["listMatchingActivities"];
     put?: never;
-    /**
-     * Send a message
-     * @description Returns the new message id. If a new chat was created then it is also returned.
-     */
-    post: operations["sendMessage"];
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/api/v1/athlete/{id}/workouts/bulk": {
+  "/api/v1/athlete/{athleteId}/sport-settings/{id}/pace_distances": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get?: never;
+    /** List pace curve distances and best effort defaults for the sport */
+    get: operations["listPaceDistancesForSport"];
     put?: never;
-    /** Create multiple new workouts in a folder or plan in the athlete's workout library */
-    post: operations["createMultipleWorkouts"];
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/api/v1/athlete/{id}/workouts": {
+  "/api/v1/athlete/{id}": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** List all the workouts in the athlete's library */
-    get: operations["listWorkouts"];
-    put?: never;
-    /**
-     * Create a new workout in a folder or plan in the athlete's workout library
-     * @description This endpoint accepts workouts in native Intervals.icu format ('description' field) as well as zwo, mrc, erg and fit files (use 'file_contents' or 'file_contents_base64')
-     */
-    post: operations["createWorkout"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/gear/{gearId}/replace": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Retire a component and replace it with a copy with the same reminders etc. */
-    post: operations["replaceGear"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/gear/{gearId}/reminder": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Create a new reminder */
-    post: operations["createReminder"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/gear": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Create a new gear or component */
-    post: operations["createGear"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/folders/{folderId}/import-workout": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Create new workout from .zwo, .mrc, .erg or .fit file in a folder */
-    post: operations["importWorkoutFile"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/folders": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List all the athlete's folders, plans and workouts */
-    get: operations["listFolders"];
-    put?: never;
-    /** Create a new workout folder or plan */
-    post: operations["createFolder"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/events/{eventId}/mark-done": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Create a manual activity to match a planned workout */
-    post: operations["markEventAsDone"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/events/bulk": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Create multiple events (planned workouts, notes etc.) on the athlete's calendar
-     * @description This endpoint accepts workouts in native Intervals.icu format ('description' field) as well as zwo, mrc, erg and fit files (use 'file_contents' or 'file_contents_base64')
-     */
-    post: operations["createMultipleEvents"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/events/apply-plan": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations["applyPlan"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/duplicate-workouts": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Duplicate workouts on a plan */
-    post: operations["duplicateWorkouts"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/duplicate-events": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Duplicate one or more events (planned workouts, notes etc.) on the athlete's calendar */
-    post: operations["duplicateEvents"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/download-workout{ext}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Convert a workout to .zwo (Zwift), .mrc, .erg or .fit.
-     * @description The athlete's settings are used to resolve power targets etc.. Note that the create workout endpoint can convert workouts and might be more convenient.
-     */
-    post: operations["downloadWorkoutForAthlete"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/download-fit-files": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Download zip of Intervals.icu generated activity fit files
-     * @description Strava activities are not included
-     */
-    post: operations["downloadActivityFitFiles"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/custom-item/{itemId}/image": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Upload a new image for a custom item as multipart/form-data */
-    post: operations["updateCustomItemImage"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/custom-item": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List custom items (charts, custom fields etc.) */
-    get: operations["listCustomItems"];
-    put?: never;
-    /** Create a custom item */
-    post: operations["createCustomItem"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/activities/manual/bulk": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Create multiple manual activities with upsert on external_id
-     * @description Existing activities with matching external_id, created by the same OAuth application are updated. Activities created/updated are returned. Activities with no external_id are always created.
-     */
-    post: operations["createMultipleManualActivities"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/activities/manual": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Create a manual activity */
-    post: operations["createManualActivity"];
+    /** Get the athlete with sportSettings and custom_items */
+    get: operations["getAthlete"];
+    /** Update an athlete */
+    put: operations["updateAthlete"];
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -973,178 +707,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/activity/{id}/messages": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List all messages (comments) for the activity */
-    get: operations["listActivityMessages"];
-    put?: never;
-    /** Add a message (comment) to an activity */
-    post: operations["sendActivityMessage"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/shared-event/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get a shared event (e.g. race) */
-    get: operations["getSharedEvent"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/pace_distances": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List pace curve distances */
-    get: operations["listPaceDistances"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/chats/{id}/messages": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List messages for the chat, most recent first */
-    get: operations["listMessages"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/chats/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get a chat by id */
-    get: operations["showChat"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/workouts.zip": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Download one or more workouts from the athlete's calendar in a zip file */
-    get: operations["downloadWorkouts"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/workout-tags": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List all tags that have been applied to workouts in the athlete's library */
-    get: operations["listTags"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/wellness{ext}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List wellness records for date range (use .csv for CSV format) */
-    get: operations["listWellnessRecords"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/weather-forecast": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get weather forecast information */
-    get: operations["getForecast"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/settings/{deviceClass}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get the athlete's settings for phone, tablet or desktop */
-    get: operations["getSettings"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/routes/{route_id}/similarity/{other_id}": {
+  "/api/v1/athlete/{id}/activities-around": {
     parameters: {
       query?: never;
       header?: never;
@@ -1152,10 +715,10 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * How similar is this route to another?
-     * @description Returned routes include path information
+     * List activities before and after another activity in closest first order
+     * @description An empty stub object is returned for Strava activities
      */
-    get: operations["checkMerge"];
+    get: operations["listActivitiesAround"];
     put?: never;
     post?: never;
     delete?: never;
@@ -1164,368 +727,15 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/athlete/{id}/routes": {
+  "/api/v1/athlete/{id}/activities.csv": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /**
-     * List routes for an athlete with activity counts
-     * @description The path (latlngs) is not included
-     */
-    get: operations["listAthleteRoutes"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/profile": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get athlete profile info */
-    get: operations["getAthleteProfile"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/power-hr-curve": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get the athlete's power vs heart rate curve for a date range */
-    get: operations["getPowerHRCurve"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/power-curves{ext}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List best power curves for the athlete
-     * @description Curves are specified as follows: 1y (past year), 2y (past 2 years) etc., 42d (past 42 days) etc., s0 (current season), s1 (previous season) etc., all (all time), r.2023-10-01.2023-10-31 (date range). Curves can also have a -kj0 or -kj1 suffix to return fatigued curves. If several of f1, f2 and f3 filter parameters are specified then each curve is returned once for each filter, for comparing curves.
-     */
-    get: operations["listAthletePowerCurves"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/pace-curves{ext}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List best pace curves for the athlete
-     * @description Curves are specified as follows: 1y (past year), 2y (past 2 years) etc., 42d (past 42 days) etc., s0 (current season), s1 (previous season) etc., all (all time), r.2023-10-01.2023-10-31 (date range). If several of f1, f2 and f3 filter parameters are specified then each curve is returned once for each filter, for comparing curves.
-     */
-    get: operations["listAthletePaceCurves"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/mmp-model": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get the power model used to resolve %MMP steps in workouts for the athlete */
-    get: operations["getAthleteMMPModel"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/hr-curves{ext}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List best heart rate curves for the athlete
-     * @description Curves are specified as follows: 1y (past year), 2y (past 2 years) etc., 42d (past 42 days) etc., s0 (current season), s1 (previous season) etc., all (all time), r.2023-10-01.2023-10-31 (date range). If several of the f1, f2 and f3 filter parameters are specified then each curve is returned once for each filter, for comparing curves.
-     */
-    get: operations["listAthleteHRCurves"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/gear{ext}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List athlete gear (use .csv for CSV format) */
-    get: operations["listGear"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/gear/{gearId}/calc": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Recalculate gear stats */
-    get: operations["calcDistanceEtc"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/fitness-model-events": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List events that influence the athlete's fitness calculation in ascending date order
-     * @description These have category FITNESS_DAYS (days for fitness and fatigue), SET_FITNESS (set starting fitness and fatigue) and SET_EFTP (set eFTP)
-     */
-    get: operations["listFitnessModelEvents"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/events/{eventId}/download{ext}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Download a planned workout in zwo, mrc, erg or fit format */
-    get: operations["downloadWorkout_1"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/event-tags": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List all tags that have been applied to events on the athlete's calendar */
-    get: operations["listTags_1"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/chats": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List chats for the athlete, most recently active first
-     * @description Only returns activity chats that have new_msg_count > 0 or that have been updated recently
-     */
-    get: operations["listChats"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/athlete-summary{ext}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Summary information for followed athletes
-     * @description Note that when this endpoint is called with a bearer token then only the athlete the token is for is returned
-     */
-    get: operations["getAthleteSummary"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/activity-tags": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List all tags that have been applied to the athlete's activities */
-    get: operations["listTags_2"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/activity-power-curves{ext}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get best power for a range of durations for matching activities in the date range
-     * @description Use ext of .csv to get results in CSV format
-     */
-    get: operations["listActivityPowerCurves"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/activity-pace-curves{ext}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get best pace for a range of distances for matching activities in the date range
-     * @description Use ext of .csv to get results in CSV format
-     */
-    get: operations["listActivityPaceCurves"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/activity-hr-curves{ext}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get best HR for a range of durations for matching activities in the date range
-     * @description Use ext of .csv to get results in CSV format
-     */
-    get: operations["listActivityHRCurves"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/activities/search-full": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Search for activities by name or tag, returns full activities */
-    get: operations["searchForActivitiesFull"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{id}/activities/search": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Search for activities by name or tag, returns summary info */
-    get: operations["searchForActivities"];
+    /** Download activities as CSV */
+    get: operations["downloadActivitiesAsCSV"];
     put?: never;
     post?: never;
     delete?: never;
@@ -1554,15 +764,52 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/athlete/{id}/activities.csv": {
+  "/api/v1/athlete/{id}/activities/manual": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** Download activities as CSV */
-    get: operations["downloadActivitiesAsCSV"];
+    get?: never;
+    put?: never;
+    /** Create a manual activity */
+    post: operations["createManualActivity"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/activities/manual/bulk": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Create multiple manual activities with upsert on external_id
+     * @description Existing activities with matching external_id, created by the same OAuth application are updated. Activities created/updated are returned. Activities with no external_id are always created.
+     */
+    post: operations["createMultipleManualActivities"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/activities/search": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Search for activities by name or tag, returns summary info */
+    get: operations["searchForActivities"];
     put?: never;
     post?: never;
     delete?: never;
@@ -1571,7 +818,24 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/athlete/{id}/activities-around": {
+  "/api/v1/athlete/{id}/activities/search-full": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Search for activities by name or tag, returns full activities */
+    get: operations["searchForActivitiesFull"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/activity-hr-curves{ext}": {
     parameters: {
       query?: never;
       header?: never;
@@ -1579,10 +843,10 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * List activities before and after another activity in closest first order
-     * @description An empty stub object is returned for Strava activities
+     * Get best HR for a range of durations for matching activities in the date range
+     * @description Use ext of .csv to get results in CSV format
      */
-    get: operations["listActivitiesAround"];
+    get: operations["listActivityHRCurves"];
     put?: never;
     post?: never;
     delete?: never;
@@ -1591,41 +855,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/athlete/{athleteId}/sport-settings/{id}/pace_distances": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List pace curve distances and best effort defaults for the sport */
-    get: operations["listPaceDistancesForSport"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{athleteId}/sport-settings/{id}/matching-activities": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** List activities matching the settings */
-    get: operations["listMatchingActivities"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/athlete/{athleteId}/activities/{ids}": {
+  "/api/v1/athlete/{id}/activity-pace-curves{ext}": {
     parameters: {
       query?: never;
       header?: never;
@@ -1633,10 +863,10 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * Fetch multiple activities by id. Missing activities are ignored
-     * @description Strava activities are returned as empty stubs
+     * Get best pace for a range of distances for matching activities in the date range
+     * @description Use ext of .csv to get results in CSV format
      */
-    get: operations["getActivities"];
+    get: operations["listActivityPaceCurves"];
     put?: never;
     post?: never;
     delete?: never;
@@ -1645,41 +875,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/activity/{id}/weather-summary": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get activity weather summary information */
-    get: operations["getActivityWeatherSummary"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/activity/{id}/time-at-hr": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get activity time at heart rate data */
-    get: operations["getTimeAtHR"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/activity/{id}/streams{ext}": {
+  "/api/v1/athlete/{id}/activity-power-curves{ext}": {
     parameters: {
       query?: never;
       header?: never;
@@ -1687,10 +883,10 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * List streams for the activity
-     * @description Note that this endpoint will return 'fixed_watts' as 'watts'. If 'raw_watts' is asked for or types is null then the 'watts' stream is renamed to 'raw_watts'. If ext is .csv then CSV data is returned instead of JSON
+     * Get best power for a range of durations for matching activities in the date range
+     * @description Use ext of .csv to get results in CSV format
      */
-    get: operations["getActivityStreams"];
+    get: operations["listActivityPowerCurves"];
     put?: never;
     post?: never;
     delete?: never;
@@ -1699,15 +895,15 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/activity/{id}/segments": {
+  "/api/v1/athlete/{id}/activity-tags": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** Get activity segments */
-    get: operations["getActivitySegments"];
+    /** List all tags that have been applied to the athlete's activities */
+    get: operations["listTags_2"];
     put?: never;
     post?: never;
     delete?: never;
@@ -1716,16 +912,19 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/activity/{id}/power-vs-hr{ext}": {
+  "/api/v1/athlete/{id}/apply-plan-changes": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** Get activity power vs heart rate data in JSON or CSV (use .csv ext) format */
-    get: operations["getPowerVsHR"];
-    put?: never;
+    get?: never;
+    /**
+     * Apply any changes from the athlete's current plan to the athlete's calendar
+     * @description Only workouts from today or in the future are updated
+     */
+    put: operations["applyCurrentPlanChanges"];
     post?: never;
     delete?: never;
     options?: never;
@@ -1733,194 +932,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/activity/{id}/power-spike-model": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get activity power spike detection model */
-    get: operations["getActivityPowerSpikeModel"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/activity/{id}/power-histogram": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get activity power histogram */
-    get: operations["getPowerHistogram"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/activity/{id}/power-curve{ext}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get activity power curve in JSON or CSV (use .csv ext) format */
-    get: operations["getActivityPowerCurve"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/activity/{id}/power-curves{ext}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get activity power curves for one or more streams in JSON or CSV (use .csv ext) format */
-    get: operations["listActivityPowerCurves_1"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/activity/{id}/pace-histogram": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get activity pace histogram */
-    get: operations["getPaceHistogram"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/activity/{id}/pace-curve{ext}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get activity pace curve in JSON or CSV (use .csv ext) format */
-    get: operations["getActivityPaceCurve"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/activity/{id}/map": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get activity map data */
-    get: operations["getActivityMap"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/activity/{id}/interval-stats": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Return interval like stats for part of the activity */
-    get: operations["getIntervalStats"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/activity/{id}/hr-load-model": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get activity heart rate training load model */
-    get: operations["getHRTrainingLoadModel"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/activity/{id}/hr-histogram": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get activity heart rate histogram */
-    get: operations["getHRHistogram"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/activity/{id}/hr-curve{ext}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get activity heart rate curve in JSON or CSV (use .csv ext) format */
-    get: operations["getActivityHRCurve"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/activity/{id}/gpx-file": {
+  "/api/v1/athlete/{id}/athlete-summary{ext}": {
     parameters: {
       query?: never;
       header?: never;
@@ -1928,10 +940,10 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * Download Intervals.icu generated activity gpx file
-     * @description Not supported for Strava activities and activities without GPS data
+     * Summary information for followed athletes
+     * @description Note that when this endpoint is called with a bearer token then only the athlete the token is for is returned
      */
-    get: operations["downloadActivityGpxFile"];
+    get: operations["getAthleteSummary"];
     put?: never;
     post?: never;
     delete?: never;
@@ -1940,24 +952,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/activity/{id}/gap-histogram": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get activity gradient adjusted pace histogram */
-    get: operations["getGapHistogram"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/activity/{id}/fit-file": {
+  "/api/v1/athlete/{id}/chats": {
     parameters: {
       query?: never;
       header?: never;
@@ -1965,10 +960,10 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * Download Intervals.icu generated activity fit file
-     * @description Not supported for Strava activities
+     * List chats (including groups) for the athlete, most recently active first
+     * @description Only returns activity chats that have new_msg_count > 0 or that have been updated recently
      */
-    get: operations["downloadActivityFitFile"];
+    get: operations["listChats"];
     put?: never;
     post?: never;
     delete?: never;
@@ -1977,15 +972,15 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/activity/{id}/file": {
+  "/api/v1/athlete/{id}/connections": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** Download original activity file, Strava activities not supported */
-    get: operations["downloadActivityFile"];
+    /** Get devices and platform apps the athlete has connected */
+    get: operations["getAthleteConnections"];
     put?: never;
     post?: never;
     delete?: never;
@@ -1994,20 +989,293 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/activity/{id}/best-efforts": {
+  "/api/v1/athlete/{id}/custom-item": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
+    /** List custom items (charts, custom fields etc.) */
+    get: operations["listCustomItems"];
+    put?: never;
+    /** Create a custom item */
+    post: operations["createCustomItem"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/custom-item-indexes": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Re-order custom items */
+    put: operations["updateCustomItemIndexes"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/custom-item/{itemId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get a custom item */
+    get: operations["getCustomItem"];
+    /** Update a custom item */
+    put: operations["updateCustomItem"];
+    post?: never;
+    /** Delete a custom item */
+    delete: operations["deleteCustomItem"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/custom-item/{itemId}/image": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Upload a new image for a custom item as multipart/form-data */
+    post: operations["updateCustomItemImage"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/download-fit-files": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
     /**
-     * Find best efforts in the activity
-     * @description One of duration or distance is required
+     * Download zip of Intervals.icu generated activity fit files
+     * @description Strava activities are not included
      */
-    get: operations["findBestEfforts"];
+    post: operations["downloadActivityFitFiles"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/download-workout{ext}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Convert a workout to .zwo (Zwift), .mrc, .erg or .fit.
+     * @description The athlete's settings are used to resolve power targets etc.. Note that the create workout endpoint can convert workouts and might be more convenient.
+     */
+    post: operations["downloadWorkoutForAthlete"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/duplicate-events": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Duplicate one or more events (planned workouts, notes etc.) on the athlete's calendar */
+    post: operations["duplicateEvents"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/duplicate-workouts": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Duplicate workouts on a plan */
+    post: operations["duplicateWorkouts"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/event-tags": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List all tags that have been applied to events on the athlete's calendar */
+    get: operations["listTags_1"];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/events": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Update all events for a date range at once. Only hide_from_athlete and athlete_cannot_edit can be updated */
+    put: operations["updateEvents"];
+    /**
+     * Create an event (planned workout, note etc.) on the athlete's calendar
+     * @description This endpoint accepts workouts in native Intervals.icu format ('description' field) as well as zwo, mrc, erg and fit files (use 'file_contents' or 'file_contents_base64')
+     */
+    post: operations["createEvent"];
+    /** Delete a range of events (planned workouts, notes etc.) from the athlete's calendar */
+    delete: operations["deleteEvents"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/events/apply-plan": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations["applyPlan"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/events/bulk": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Create multiple events (planned workouts, notes etc.) on the athlete's calendar
+     * @description This endpoint accepts workouts in native Intervals.icu format ('description' field) as well as zwo, mrc, erg and fit files (use 'file_contents' or 'file_contents_base64')
+     */
+    post: operations["createMultipleEvents"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/events/bulk-delete": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Delete events from an athlete's calendar by id or external_id
+     * @description Delete events by id or by external_id. If external_id is supplied then the event must have been created by the calling OAuth application. If both id and external_id are supplied then external_id is used. Events that do not exist are ignored.
+     */
+    put: operations["deleteEventsBulk"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/events/{eventId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get an event (planned workout, note etc.) */
+    get: operations["showEvent"];
+    /** Update an event (planned workout, note etc.) */
+    put: operations["updateEvent"];
+    post?: never;
+    /** Delete an event (planned workout, notes etc.) from an athlete's calendar */
+    delete: operations["deleteEvent"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/events/{eventId}/download{ext}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Download a planned workout in zwo, mrc, erg or fit format */
+    get: operations["downloadWorkout_1"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/events/{eventId}/mark-done": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Create a manual activity to match a planned workout */
+    post: operations["markEventAsDone"];
     delete?: never;
     options?: never;
     head?: never;
@@ -2024,6 +1292,776 @@ export interface paths {
     /** List events (planned workouts, notes etc.) on the athlete's calendar, add .csv for CSV output */
     get: operations["listEvents"];
     put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/fitness-model-events": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List events that influence the athlete's fitness calculation in ascending date order
+     * @description These have category FITNESS_DAYS (days for fitness and fatigue), SET_FITNESS (set starting fitness and fatigue) and SET_EFTP (set eFTP)
+     */
+    get: operations["listFitnessModelEvents"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/folders": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List all the athlete's folders, plans and workouts */
+    get: operations["listFolders"];
+    put?: never;
+    /** Create a new workout folder or plan */
+    post: operations["createFolder"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/folders/{folderId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Update a workout folder or plan */
+    put: operations["updateFolder"];
+    post?: never;
+    /** Delete a workout folder or plan including all workouts */
+    delete: operations["deleteFolder"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/folders/{folderId}/import-workout": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Create new workout from .zwo, .mrc, .erg or .fit file in a folder */
+    post: operations["importWorkoutFile"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/folders/{folderId}/shared-with": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List athletes that the folder or plan has been shared with */
+    get: operations["listFolderSharedWith"];
+    /** Add/remove athletes from the share list for the folder */
+    put: operations["updateFolderSharedWith"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/folders/{folderId}/workouts": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Update a range of workouts on a plan. Currently only hide_from_athlete can be changed */
+    put: operations["updatePlanWorkouts"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/gear": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Create a new gear or component */
+    post: operations["createGear"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/gear/{gearId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Update a gear or component */
+    put: operations["updateGear"];
+    post?: never;
+    /** Delete a gear or component */
+    delete: operations["deleteGear"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/gear/{gearId}/calc": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Recalculate gear stats */
+    get: operations["calcDistanceEtc"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/gear/{gearId}/reminder": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Create a new reminder */
+    post: operations["createReminder"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/gear/{gearId}/reminder/{reminderId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Update a reminder */
+    put: operations["updateReminder"];
+    post?: never;
+    /** Delete a reminder */
+    delete: operations["deleteReminder"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/gear/{gearId}/replace": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Retire a component and replace it with a copy with the same reminders etc. */
+    post: operations["replaceGear"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/gear{ext}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List athlete gear (use .csv for CSV format) */
+    get: operations["listGear"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/groups": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List groups for the athlete in name order */
+    get: operations["listGroups"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/hr-curves{ext}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List best heart rate curves for the athlete
+     * @description Curves are specified as follows: 1y (past year), 2y (past 2 years) etc., 42d (past 42 days) etc., s0 (current season), s1 (previous season) etc., all (all time), r.2023-10-01.2023-10-31 (date range). If several of the f1, f2 and f3 filter parameters are specified then each curve is returned once for each filter, for comparing curves.
+     */
+    get: operations["listAthleteHRCurves"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/mmp-model": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get the power model used to resolve %MMP steps in workouts for the athlete */
+    get: operations["getAthleteMMPModel"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/pace-curves{ext}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List best pace curves for the athlete
+     * @description Curves are specified as follows: 1y (past year), 2y (past 2 years) etc., 42d (past 42 days) etc., s0 (current season), s1 (previous season) etc., all (all time), r.2023-10-01.2023-10-31 (date range). If several of f1, f2 and f3 filter parameters are specified then each curve is returned once for each filter, for comparing curves.
+     */
+    get: operations["listAthletePaceCurves"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/power-curves{ext}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List best power curves for the athlete
+     * @description Curves are specified as follows: 1y (past year), 2y (past 2 years) etc., 42d (past 42 days) etc., s0 (current season), s1 (previous season) etc., all (all time), r.2023-10-01.2023-10-31 (date range). Curves can also have a -kj0 or -kj1 suffix to return fatigued curves. If several of f1, f2 and f3 filter parameters are specified then each curve is returned once for each filter, for comparing curves.
+     */
+    get: operations["listAthletePowerCurves"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/power-hr-curve": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get the athlete's power vs heart rate curve for a date range */
+    get: operations["getPowerHRCurve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/profile": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get athlete profile info */
+    get: operations["getAthleteProfile"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/routes": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List routes for an athlete with activity counts
+     * @description The path (latlngs) is not included
+     */
+    get: operations["listAthleteRoutes"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/routes/{route_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get a route for an athlete */
+    get: operations["getAthleteRoute"];
+    /** Update a route for an athlete */
+    put: operations["updateAthleteRoute"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/routes/{route_id}/similarity/{other_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * How similar is this route to another?
+     * @description Returned routes include path information
+     */
+    get: operations["checkMerge"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/settings/{deviceClass}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get the athlete's settings for phone, tablet or desktop */
+    get: operations["getSettings"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/training-plan": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get the athlete's training plan */
+    get: operations["getAthleteTrainingPlan"];
+    /** Change the athlete's training plan */
+    put: operations["updateAthletePlan"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/weather-config": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get the athlete's weather forecast configuration */
+    get: operations["getWeatherConfig"];
+    /** Update the athlete's weather forecast configuration */
+    put: operations["updateWeatherConfig"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/weather-forecast": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get weather forecast information */
+    get: operations["getForecast"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/wellness": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Update a wellness record, id is the day (ISO-8601)
+     * @description Only fields provided are changed
+     */
+    put: operations["updateWellness_1"];
+    /** Upload wellness records in CSV format as multipart/form-data */
+    post: operations["uploadWellness"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/wellness-bulk": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Update an array of wellness records all for the same athlete
+     * @description The id of each record is the day (ISO-8601). Only fields provided are changed
+     */
+    put: operations["updateWellnessBulk"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/wellness/{date}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get wellness record for date (local ISO-8601 day) */
+    get: operations["getRecord"];
+    /**
+     * Update the wellness record for the date (ISO-8601)
+     * @description Only fields provided are changed
+     */
+    put: operations["updateWellness"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/wellness{ext}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List wellness records for date range (use .csv for CSV format) */
+    get: operations["listWellnessRecords"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/workout-tags": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List all tags that have been applied to workouts in the athlete's library */
+    get: operations["listTags"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/workouts": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List all the workouts in the athlete's library */
+    get: operations["listWorkouts"];
+    put?: never;
+    /**
+     * Create a new workout in a folder or plan in the athlete's workout library
+     * @description This endpoint accepts workouts in native Intervals.icu format ('description' field) as well as zwo, mrc, erg and fit files (use 'file_contents' or 'file_contents_base64')
+     */
+    post: operations["createWorkout"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/workouts.zip": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Download one or more workouts from the athlete's calendar in a zip file */
+    get: operations["downloadWorkouts"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/workouts/bulk": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Create multiple new workouts in a folder or plan in the athlete's workout library */
+    post: operations["createMultipleWorkouts"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athlete/{id}/workouts/{workoutId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get a workout */
+    get: operations["showWorkout"];
+    /** Update a workout */
+    put: operations["updateWorkout"];
+    post?: never;
+    /**
+     * Delete a workout (and optionally others added at the same time if the workout is on a plan)
+     * @description Returns the ids of the deleted workout(s)
+     */
+    delete: operations["deleteWorkout"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/athletes": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List athletes the caller is following or coaching, including the caller
+     * @description This endpoint cannot be called with a bearer token, an API_KEY is required
+     */
+    get: operations["listAthletes"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/chats/send-message": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Send a message
+     * @description Returns the new message id. If a new chat was created then it is also returned.
+     */
+    post: operations["sendMessage"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/chats/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get a chat by id */
+    get: operations["showChat"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/chats/{id}/messages": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List messages for the chat, most recent first */
+    get: operations["listMessages"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/chats/{id}/messages/{msgId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Update a message
+     * @description Only the content or answer can be updated
+     */
+    put: operations["updateMessage"];
+    post?: never;
+    /** Delete a message */
+    delete: operations["deleteMessage"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/chats/{id}/messages/{msgId}/seen": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Update last seen message for the chat */
+    put: operations["updateLastSeenMessageId"];
     post?: never;
     delete?: never;
     options?: never;
@@ -2048,7 +2086,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/chats/{id}/messages/{msgId}": {
+  "/api/v1/download-workout{ext}": {
     parameters: {
       query?: never;
       header?: never;
@@ -2057,9 +2095,46 @@ export interface paths {
     };
     get?: never;
     put?: never;
+    /**
+     * Convert a workout to .zwo (Zwift), .mrc, .erg or .fit
+     * @description The athlete to use is extracted from the bearer token and used to resolve power targets etc.. Note that the create workout endpoint can convert workouts and might be more convenient.
+     */
+    post: operations["downloadWorkout"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/pace_distances": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List pace curve distances */
+    get: operations["listPaceDistances"];
+    put?: never;
     post?: never;
-    /** Delete a message */
-    delete: operations["deleteMessage"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/shared-event/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get a shared event (e.g. race) */
+    get: operations["getSharedEvent"];
+    put?: never;
+    post?: never;
+    delete?: never;
     options?: never;
     head?: never;
     patch?: never;
@@ -2069,463 +2144,354 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
-    Attachment: {
-      id?: string;
-      filename?: string;
-      mimetype?: string;
-      url?: string;
-    };
-    WorkoutEx: {
-      athlete_id?: string;
-      /** Format: int32 */
-      id?: number;
-      /** Format: int32 */
-      icu_training_load?: number;
-      name?: string;
-      description?: string;
-      type?: string;
-      indoor?: boolean;
-      color?: string;
-      /** Format: int32 */
-      moving_time?: number;
+    Activity: {
+      analysis_issues?: components["schemas"]["ActivityAnalysisIssue"][];
       /** Format: date-time */
-      updated?: string;
+      analyzed?: string;
       /** Format: int32 */
-      joules?: number;
-      /** Format: int32 */
-      joules_above_ftp?: number;
-      workout_doc?: {
-        [key: string]: Record<string, never>;
-      };
-      /** Format: int32 */
-      folder_id?: number;
-      /** Format: int32 */
-      day?: number;
-      /** Format: int32 */
-      days?: number;
-      /** Format: date-time */
-      plan_applied?: string;
-      hide_from_athlete?: boolean;
-      /** @enum {string} */
-      target?: "AUTO" | "POWER" | "HR" | "PACE";
-      targets?: ("AUTO" | "POWER" | "HR" | "PACE")[];
-      /** Format: int32 */
-      carbs_per_hour?: number;
-      tags?: string[];
+      athlete_max_hr?: number;
       attachments?: components["schemas"]["Attachment"][];
-      time?: string;
-      /** @enum {string} */
-      sub_type?: "NONE" | "COMMUTE" | "WARMUP" | "COOLDOWN" | "RACE";
-      for_week?: boolean;
-      file_contents?: string;
-      file_contents_base64?: string;
-      filename?: string;
+      /** Format: float */
+      average_altitude?: number;
+      /** Format: float */
+      average_cadence?: number;
+      /** Format: int32 */
+      average_clouds?: number;
+      /** Format: float */
+      average_feels_like?: number;
+      /** Format: int32 */
+      average_heartrate?: number;
+      /** Format: float */
+      average_impact_loading_rate?: number;
+      /** Format: float */
+      average_leg_spring_stiffness?: number;
+      /** Format: float */
+      average_speed?: number;
+      /** Format: float */
+      average_stance_time?: number;
+      /** Format: float */
+      average_stance_time_balance?: number;
+      /** Format: float */
+      average_stance_time_percent?: number;
+      /** Format: float */
+      average_step_length?: number;
+      /** Format: float */
+      average_stride?: number;
+      /** Format: float */
+      average_temp?: number;
+      /** Format: float */
+      average_vertical_oscillation?: number;
+      /** Format: float */
+      average_vertical_ratio?: number;
+      /** Format: float */
+      average_vertical_speed?: number;
+      /** Format: float */
+      average_weather_temp?: number;
+      /** Format: float */
+      average_wind_gust?: number;
+      /** Format: float */
+      average_wind_speed?: number;
+      /** Format: float */
+      avg_lr_balance?: number;
+      /** Format: int32 */
+      calories?: number;
+      /** Format: int32 */
+      carbs_ingested?: number;
+      /** Format: int32 */
+      carbs_used?: number;
+      /** Format: int32 */
+      coach_tick?: number;
+      /** Format: int32 */
+      coasting_time?: number;
+      commute?: boolean;
+      /** Format: float */
+      compliance?: number;
+      /** Format: float */
+      crank_length?: number;
+      /** Format: date-time */
+      created?: string;
+      custom_zones?: components["schemas"]["ZoneSet"][];
+      /** Format: float */
+      decoupling?: number;
+      description?: string;
+      device_name?: string;
+      device_watts?: boolean;
       /** Format: float */
       distance?: number;
+      /** Format: int32 */
+      elapsed_time?: number;
+      external_id?: string;
+      /** Format: int32 */
+      feel?: number;
+      /** Format: int32 */
+      file_sport_index?: number;
+      file_type?: string;
+      /** Format: float */
+      gap?: number;
+      /** @enum {string} */
+      gap_model?: "NONE" | "STRAVA_RUN";
+      gap_zone_times?: number[];
+      gear?: components["schemas"]["StravaGear"];
+      group?: string;
+      has_heartrate?: boolean;
+      has_segments?: boolean;
+      has_weather?: boolean;
+      /** Format: float */
+      headwind_percent?: number;
+      /** Format: int32 */
+      hr_load?: number;
+      /** @enum {string} */
+      hr_load_type?: "AVG_HR" | "HR_ZONES" | "HRSS";
+      icu_achievements?: components["schemas"]["IcuAchievement"][];
+      icu_athlete_id?: string;
+      /** Format: float */
+      icu_atl?: number;
+      /** Format: int32 */
+      icu_average_watts?: number;
+      /** Format: int32 */
+      icu_cadence_z2?: number;
+      /** Format: int32 */
+      icu_chat_id?: number;
+      icu_color?: string;
+      /** Format: int32 */
+      icu_cooldown_time?: number;
+      /** Format: float */
+      icu_ctl?: number;
+      /** Format: float */
+      icu_distance?: number;
+      /** Format: float */
+      icu_efficiency_factor?: number;
+      /** Format: int32 */
+      icu_ftp?: number;
+      icu_hr_zone_times?: number[];
+      icu_hr_zones?: number[];
+      icu_hrr?: components["schemas"]["HRRecovery"];
+      icu_ignore_hr?: boolean;
+      icu_ignore_power?: boolean;
+      icu_ignore_time?: boolean;
       /** Format: float */
       icu_intensity?: number;
-    };
-    Workout: {
-      athlete_id?: string;
+      icu_intervals_edited?: boolean;
       /** Format: int32 */
-      id?: number;
+      icu_joules?: number;
+      /** Format: int32 */
+      icu_joules_above_ftp?: number;
+      /** Format: int32 */
+      icu_lap_count?: number;
+      /** Format: int32 */
+      icu_max_wbal_depletion?: number;
+      /** Format: int32 */
+      icu_median_time_delta?: number;
+      /** Format: int32 */
+      icu_pm_cp?: number;
+      /** Format: int32 */
+      icu_pm_ftp?: number;
+      /** Format: int32 */
+      icu_pm_ftp_secs?: number;
+      /** Format: int32 */
+      icu_pm_ftp_watts?: number;
+      /** Format: int32 */
+      icu_pm_p_max?: number;
+      /** Format: int32 */
+      icu_pm_w_prime?: number;
+      /** Format: float */
+      icu_power_hr?: number;
+      /** Format: float */
+      icu_power_hr_z2?: number;
+      /** Format: int32 */
+      icu_power_hr_z2_mins?: number;
+      /** Format: int32 */
+      icu_power_spike_threshold?: number;
+      icu_power_zones?: number[];
+      /** Format: int32 */
+      icu_recording_time?: number;
+      /** Format: int32 */
+      icu_resting_hr?: number;
+      /** Format: float */
+      icu_rolling_cp?: number;
+      /** Format: int32 */
+      icu_rolling_ftp?: number;
+      /** Format: int32 */
+      icu_rolling_ftp_delta?: number;
+      /** Format: float */
+      icu_rolling_p_max?: number;
+      /** Format: float */
+      icu_rolling_w_prime?: number;
+      /** Format: int32 */
+      icu_rpe?: number;
+      /** Format: int32 */
+      icu_sweet_spot_max?: number;
+      /** Format: int32 */
+      icu_sweet_spot_min?: number;
+      /** Format: date-time */
+      icu_sync_date?: string;
+      icu_sync_error?: string;
       /** Format: int32 */
       icu_training_load?: number;
-      name?: string;
-      description?: string;
-      type?: string;
-      indoor?: boolean;
-      color?: string;
+      /** Format: int32 */
+      icu_training_load_data?: number;
+      /** Format: float */
+      icu_variability_index?: number;
+      /** Format: int32 */
+      icu_w_prime?: number;
+      /** Format: int32 */
+      icu_warmup_time?: number;
+      /** Format: float */
+      icu_weight?: number;
+      /** Format: int32 */
+      icu_weighted_avg_watts?: number;
+      icu_zone_times?: components["schemas"]["ZoneTime"][];
+      id?: string;
+      ignore_pace?: boolean;
+      ignore_parts?: components["schemas"]["Ignore"][];
+      ignore_velocity?: boolean;
+      interval_summary?: string[];
+      /** Format: float */
+      kg_lifted?: number;
+      /** Format: int32 */
+      lengths?: number;
+      lock_intervals?: boolean;
+      /** Format: int32 */
+      lthr?: number;
+      /** Format: float */
+      max_altitude?: number;
+      /** Format: float */
+      max_feels_like?: number;
+      /** Format: int32 */
+      max_heartrate?: number;
+      /** Format: float */
+      max_rain?: number;
+      /** Format: float */
+      max_snow?: number;
+      /** Format: float */
+      max_speed?: number;
+      /** Format: int32 */
+      max_temp?: number;
+      /** Format: float */
+      max_weather_temp?: number;
+      /** Format: float */
+      min_altitude?: number;
+      /** Format: float */
+      min_feels_like?: number;
+      /** Format: int32 */
+      min_temp?: number;
+      /** Format: float */
+      min_weather_temp?: number;
       /** Format: int32 */
       moving_time?: number;
-      /** Format: date-time */
-      updated?: string;
-      /** Format: int32 */
-      joules?: number;
-      /** Format: int32 */
-      joules_above_ftp?: number;
-      workout_doc?: {
-        [key: string]: Record<string, never>;
-      };
-      /** Format: int32 */
-      folder_id?: number;
-      /** Format: int32 */
-      day?: number;
-      /** Format: int32 */
-      days?: number;
-      /** Format: date-time */
-      plan_applied?: string;
-      hide_from_athlete?: boolean;
-      /** @enum {string} */
-      target?: "AUTO" | "POWER" | "HR" | "PACE";
-      targets?: ("AUTO" | "POWER" | "HR" | "PACE")[];
-      /** Format: int32 */
-      carbs_per_hour?: number;
-      tags?: string[];
-      attachments?: components["schemas"]["Attachment"][];
-      time?: string;
-      /** @enum {string} */
-      sub_type?: "NONE" | "COMMUTE" | "WARMUP" | "COOLDOWN" | "RACE";
-      for_week?: boolean;
-      /** Format: float */
-      distance?: number;
-      /** Format: float */
-      icu_intensity?: number;
-    };
-    SportInfo: {
-      /** @enum {string} */
-      type?:
-        | "Ride"
-        | "Run"
-        | "Swim"
-        | "WeightTraining"
-        | "Hike"
-        | "Walk"
-        | "AlpineSki"
-        | "BackcountrySki"
-        | "Badminton"
-        | "Canoeing"
-        | "Crossfit"
-        | "EBikeRide"
-        | "EMountainBikeRide"
-        | "Elliptical"
-        | "Golf"
-        | "GravelRide"
-        | "TrackRide"
-        | "Handcycle"
-        | "HighIntensityIntervalTraining"
-        | "Hockey"
-        | "IceSkate"
-        | "InlineSkate"
-        | "Kayaking"
-        | "Kitesurf"
-        | "MountainBikeRide"
-        | "Cyclocross"
-        | "NordicSki"
-        | "OpenWaterSwim"
-        | "Padel"
-        | "Pilates"
-        | "Pickleball"
-        | "Racquetball"
-        | "Rugby"
-        | "RockClimbing"
-        | "RollerSki"
-        | "Rowing"
-        | "Sail"
-        | "Skateboard"
-        | "Snowboard"
-        | "Snowshoe"
-        | "Soccer"
-        | "Squash"
-        | "StairStepper"
-        | "StandUpPaddling"
-        | "Surfing"
-        | "TableTennis"
-        | "Tennis"
-        | "TrailRun"
-        | "Transition"
-        | "Velomobile"
-        | "VirtualRide"
-        | "VirtualRow"
-        | "VirtualRun"
-        | "VirtualSki"
-        | "WaterSport"
-        | "Wheelchair"
-        | "Windsurf"
-        | "Workout"
-        | "Yoga"
-        | "Other";
-      /** Format: float */
-      eftp?: number;
-      /** Format: float */
-      wPrime?: number;
-      /** Format: float */
-      pMax?: number;
-    };
-    Wellness: {
-      id?: string;
-      /** Format: float */
-      ctl?: number;
-      /** Format: float */
-      atl?: number;
-      /** Format: float */
-      rampRate?: number;
-      /** Format: float */
-      ctlLoad?: number;
-      /** Format: float */
-      atlLoad?: number;
-      sportInfo?: components["schemas"]["SportInfo"][];
-      /** Format: date-time */
-      updated?: string;
-      /** Format: float */
-      weight?: number;
-      /** Format: int32 */
-      restingHR?: number;
-      /** Format: float */
-      hrv?: number;
-      /** Format: float */
-      hrvSDNN?: number;
-      /** @enum {string} */
-      menstrualPhase?: "PERIOD" | "FOLLICULAR" | "OVULATING" | "LUTEAL" | "NONE";
-      /** @enum {string} */
-      menstrualPhasePredicted?: "PERIOD" | "FOLLICULAR" | "OVULATING" | "LUTEAL" | "NONE";
-      /** Format: int32 */
-      kcalConsumed?: number;
-      /** Format: int32 */
-      sleepSecs?: number;
-      /** Format: float */
-      sleepScore?: number;
-      /** Format: int32 */
-      sleepQuality?: number;
-      /** Format: float */
-      avgSleepingHR?: number;
-      /** Format: int32 */
-      soreness?: number;
-      /** Format: int32 */
-      fatigue?: number;
-      /** Format: int32 */
-      stress?: number;
-      /** Format: int32 */
-      mood?: number;
-      /** Format: int32 */
-      motivation?: number;
-      /** Format: int32 */
-      injury?: number;
-      /** Format: float */
-      spO2?: number;
-      /** Format: int32 */
-      systolic?: number;
-      /** Format: int32 */
-      diastolic?: number;
-      /** Format: int32 */
-      hydration?: number;
-      /** Format: float */
-      hydrationVolume?: number;
-      /** Format: float */
-      readiness?: number;
-      /** Format: float */
-      baevskySI?: number;
-      /** Format: float */
-      bloodGlucose?: number;
-      /** Format: float */
-      lactate?: number;
-      /** Format: float */
-      bodyFat?: number;
-      /** Format: float */
-      abdomen?: number;
-      /** Format: float */
-      vo2max?: number;
-      comments?: string;
-      /** Format: int32 */
-      steps?: number;
-      /** Format: float */
-      respiration?: number;
-      /** Format: float */
-      carbohydrates?: number;
-      /** Format: float */
-      protein?: number;
-      /** Format: float */
-      fatTotal?: number;
-      locked?: boolean;
-      tempWeight?: boolean;
-      tempRestingHR?: boolean;
-    };
-    Forecast: {
-      /** Format: int32 */
-      id?: number;
-      /** @enum {string} */
-      provider?: "OPEN_WEATHER";
-      location?: string;
-      label?: string;
-      /** Format: float */
-      lat?: number;
-      /** Format: float */
-      lon?: number;
-      enabled?: boolean;
-    };
-    WeatherConfig: {
-      forecasts?: components["schemas"]["Forecast"][];
-    };
-    AthleteTrainingPlanUpdate: {
-      id?: string;
-      /** Format: int32 */
-      training_plan_id?: number;
-      training_plan_start_date?: string;
-      training_plan_alias?: string;
-    };
-    AthleteSearchResult: {
-      id?: string;
       name?: string;
-      profile_medium?: string;
-      city?: string;
-      state?: string;
-      country?: string;
-      timezone?: string;
-      sex?: string;
-      bio?: string;
-      website?: string;
-      email?: string;
-    };
-    AthleteTrainingPlan: {
-      athlete_id?: string;
       /** Format: int32 */
-      training_plan_id?: number;
-      training_plan_start_date?: string;
-      timezone?: string;
-      /** Format: date-time */
-      training_plan_last_applied?: string;
-      training_plan?: components["schemas"]["Folder"];
-      training_plan_alias?: string;
-    };
-    Folder: {
-      athlete_id?: string;
+      oauth_client_id?: number;
+      oauth_client_name?: string;
+      /** Format: float */
+      p30s_exponent?: number;
       /** Format: int32 */
-      id?: number;
+      p_max?: number;
+      /** Format: float */
+      pace?: number;
+      /** Format: int32 */
+      pace_load?: number;
       /** @enum {string} */
-      type?: "FOLDER" | "PLAN";
-      name?: string;
-      description?: string;
-      children?: components["schemas"]["Workout"][];
-      /** @enum {string} */
-      visibility?: "PRIVATE" | "PUBLIC";
-      start_date_local?: string;
+      pace_load_type?: "SWIM" | "RUN";
+      pace_zone_times?: number[];
+      pace_zones?: number[];
       /** Format: int32 */
-      rollout_weeks?: number;
+      paired_event_id?: number;
+      /** Format: float */
+      perceived_exertion?: number;
+      /** Format: float */
+      polarization_index?: number;
+      /** Format: float */
+      pool_length?: number;
+      power_field?: string;
+      power_field_names?: string[];
       /** Format: int32 */
-      auto_rollout_day?: number;
-      read_only_workouts?: boolean;
+      power_load?: number;
+      power_meter?: string;
+      power_meter_battery?: string;
+      power_meter_serial?: string;
       /** Format: int32 */
-      starting_ctl?: number;
-      /** Format: int32 */
-      starting_atl?: number;
-      activity_types?: (
-        | "Ride"
-        | "Run"
-        | "Swim"
-        | "WeightTraining"
-        | "Hike"
-        | "Walk"
-        | "AlpineSki"
-        | "BackcountrySki"
-        | "Badminton"
-        | "Canoeing"
-        | "Crossfit"
-        | "EBikeRide"
-        | "EMountainBikeRide"
-        | "Elliptical"
-        | "Golf"
-        | "GravelRide"
-        | "TrackRide"
-        | "Handcycle"
-        | "HighIntensityIntervalTraining"
-        | "Hockey"
-        | "IceSkate"
-        | "InlineSkate"
-        | "Kayaking"
-        | "Kitesurf"
-        | "MountainBikeRide"
-        | "Cyclocross"
-        | "NordicSki"
-        | "OpenWaterSwim"
-        | "Padel"
-        | "Pilates"
-        | "Pickleball"
-        | "Racquetball"
-        | "Rugby"
-        | "RockClimbing"
-        | "RollerSki"
-        | "Rowing"
-        | "Sail"
-        | "Skateboard"
-        | "Snowboard"
-        | "Snowshoe"
-        | "Soccer"
-        | "Squash"
-        | "StairStepper"
-        | "StandUpPaddling"
-        | "Surfing"
-        | "TableTennis"
-        | "Tennis"
-        | "TrailRun"
-        | "Transition"
-        | "Velomobile"
-        | "VirtualRide"
-        | "VirtualRow"
-        | "VirtualRun"
-        | "VirtualSki"
-        | "WaterSport"
-        | "Wheelchair"
-        | "Windsurf"
-        | "Workout"
-        | "Yoga"
-        | "Other"
-      )[];
-      /** Format: int32 */
-      num_workouts?: number;
-      /** Format: int32 */
-      duration_weeks?: number;
-      /** Format: int32 */
-      hours_per_week_min?: number;
-      /** Format: int32 */
-      hours_per_week_max?: number;
-      workout_targets?: ("AUTO" | "POWER" | "HR" | "PACE")[];
-      blurb?: string;
-      canEdit?: boolean;
-      /** Format: int32 */
-      sharedWithCount?: number;
-      shareToken?: string;
-      owner?: components["schemas"]["AthleteSearchResult"];
-    };
-    AthleteRoute: {
-      athlete_id?: string;
+      prevailing_wind_deg?: number;
+      race?: boolean;
+      recording_stops?: number[];
       /** Format: int64 */
       route_id?: number;
-      name?: string;
-      rename_activities?: boolean;
-      commute?: boolean;
+      /** Format: int32 */
+      session_rpe?: number;
+      skyline_chart_bytes?: string[];
+      /** @enum {string} */
+      source?:
+        | "STRAVA"
+        | "UPLOAD"
+        | "MANUAL"
+        | "GARMIN_CONNECT"
+        | "OAUTH_CLIENT"
+        | "DROPBOX"
+        | "POLAR"
+        | "SUUNTO"
+        | "COROS"
+        | "WAHOO"
+        | "ZWIFT"
+        | "ZEPP"
+        | "CONCEPT2"
+        | "HUAWEI";
+      /** Format: float */
+      ss_cp?: number;
+      /** Format: float */
+      ss_p_max?: number;
+      /** Format: float */
+      ss_w_prime?: number;
+      start_date?: string;
+      start_date_local?: string;
+      /** Format: float */
+      strain_score?: number;
+      strava_id?: string;
+      stream_types?: string[];
+      /** @enum {string} */
+      sub_type?: "NONE" | "COMMUTE" | "WARMUP" | "COOLDOWN" | "RACE";
       tags?: string[];
-      description?: string;
-      /** Format: int64 */
-      replaced_by_route_id?: number;
-      latlngs?: number[][];
+      /** Format: float */
+      tailwind_percent?: number;
+      /** Format: float */
+      threshold_pace?: number;
+      timezone?: string;
+      /** @enum {string} */
+      tiz_order?:
+        | "POWER_HR_PACE"
+        | "POWER_PACE_HR"
+        | "HR_POWER_PACE"
+        | "HR_PACE_POWER"
+        | "PACE_POWER_HR"
+        | "PACE_HR_POWER";
+      /** Format: float */
+      total_elevation_gain?: number;
+      /** Format: float */
+      total_elevation_loss?: number;
+      trainer?: boolean;
+      /** Format: float */
+      trimp?: number;
+      type?: string;
+      use_elevation_correction?: boolean;
+      use_gap_zone_times?: boolean;
+      /** Format: int32 */
+      workout_shift_secs?: number;
     };
-    GearReminder: {
+    ActivityAnalysisIssue: {
       /** Format: int32 */
-      id?: number;
-      gear_id?: string;
-      name?: string;
-      /** Format: float */
-      distance?: number;
-      /** Format: float */
-      time?: number;
-      /** Format: int32 */
-      activities?: number;
-      /** Format: int32 */
-      days?: number;
-      /** Format: date-time */
-      last_reset?: string;
-      /** Format: float */
-      starting_distance?: number;
-      /** Format: float */
-      starting_time?: number;
-      /** Format: int32 */
-      starting_activities?: number;
-      /** Format: date-time */
-      snoozed_until?: string;
-      /** Format: float */
-      percent_used?: number;
-      /** Format: float */
-      distance_used?: number;
-      /** Format: float */
-      time_used?: number;
-      /** Format: int32 */
-      activities_used?: number;
-      /** Format: int32 */
-      days_used?: number;
+      custom_item_id?: number;
+      message?: string;
+      /** @enum {string} */
+      type?: "script_failed";
+    };
+    ActivityCharts: {
+      data?: components["schemas"]["Pos"][];
+      home?: components["schemas"]["Pos"][];
+      hr?: components["schemas"]["Pos"][];
+      pace?: components["schemas"]["Pos"][];
+      power?: components["schemas"]["Pos"][];
     };
     ActivityFilter: {
-      /** Format: int32 */
-      id?: number;
+      code?: string;
       /** @enum {string} */
       field_id?:
         | "type"
@@ -2582,640 +2548,535 @@ export interface components {
         | "max_altitude"
         | "start_time"
         | "route_id";
-      code?: string;
+      /** Format: int32 */
+      id?: number;
+      not?: boolean;
       operator?: string;
       value?: Record<string, never>;
-      not?: boolean;
     };
-    Gear: {
+    ActivityHRCurve: {
+      bpm?: number[];
       id?: string;
-      athlete_id?: string;
-      /** @enum {string} */
-      type?:
-        | "Bike"
-        | "Shoes"
-        | "Wetsuit"
-        | "RowingMachine"
-        | "Skis"
-        | "Snowboard"
-        | "Boat"
-        | "Board"
-        | "Equipment"
-        | "Accessories"
-        | "Apparel"
-        | "Computer"
-        | "Light"
-        | "Battery"
-        | "Brake"
-        | "BrakePads"
-        | "Rotor"
-        | "Drivetrain"
-        | "BottomBracket"
-        | "Cassette"
-        | "Chain"
-        | "Chainrings"
-        | "Crankset"
-        | "Derailleur"
-        | "Pedals"
-        | "Lever"
-        | "Cable"
-        | "Frame"
-        | "Fork"
-        | "Handlebar"
-        | "Headset"
-        | "Saddle"
-        | "Seatpost"
-        | "Shock"
-        | "Stem"
-        | "Axel"
-        | "Hub"
-        | "Trainer"
-        | "Tube"
-        | "Tyre"
-        | "Wheel"
-        | "Wheelset"
-        | "PowerMeter"
-        | "Cleats"
-        | "CyclingShoes"
-        | "Paddle";
-      name?: string;
-      purchased?: string;
-      notes?: string;
-      /** Format: float */
-      distance?: number;
-      /** Format: float */
-      time?: number;
-      /** Format: int32 */
-      activities?: number;
-      use_elapsed_time?: boolean;
-      retired?: string;
-      component_ids?: string[];
-      reminders?: components["schemas"]["GearReminder"][];
-      activity_filters?: components["schemas"]["ActivityFilter"][];
-      component?: boolean;
-    };
-    SharedWith: {
-      id?: string;
-      name?: string;
-      profile_medium?: string;
-      city?: string;
-      state?: string;
-      country?: string;
-      timezone?: string;
-      sex?: string;
-      bio?: string;
-      website?: string;
-      email?: string;
-      canEdit?: boolean;
-    };
-    EventEx: {
-      /** Format: int32 */
-      id?: number;
       start_date_local?: string;
-      /** Format: int32 */
-      icu_training_load?: number;
-      /** Format: float */
-      icu_atl?: number;
-      /** Format: float */
-      icu_ctl?: number;
-      type?: string;
-      /** Format: int32 */
-      carbs_used?: number;
-      /** Format: float */
-      ss_p_max?: number;
-      /** Format: float */
-      ss_w_prime?: number;
-      /** Format: float */
-      ss_cp?: number;
-      /** Format: int32 */
-      calendar_id?: number;
-      uid?: string;
-      athlete_id?: string;
-      /** @enum {string} */
-      category?:
-        | "WORKOUT"
-        | "RACE_A"
-        | "RACE_B"
-        | "RACE_C"
-        | "NOTE"
-        | "PLAN"
-        | "HOLIDAY"
-        | "SICK"
-        | "INJURED"
-        | "SET_EFTP"
-        | "FITNESS_DAYS"
-        | "SEASON_START"
-        | "TARGET"
-        | "SET_FITNESS";
-      end_date_local?: string;
-      name?: string;
-      description?: string;
-      indoor?: boolean;
-      color?: string;
-      /** Format: int32 */
-      moving_time?: number;
-      /** Format: int32 */
-      icu_ftp?: number;
-      /** Format: int32 */
-      w_prime?: number;
-      /** Format: int32 */
-      p_max?: number;
-      /** Format: int32 */
-      atl_days?: number;
-      /** Format: int32 */
-      ctl_days?: number;
-      /** Format: date-time */
-      updated?: string;
-      not_on_fitness_chart?: boolean;
-      show_as_note?: boolean;
-      show_on_ctl_line?: boolean;
-      for_week?: boolean;
-      /** @enum {string} */
-      target?: "AUTO" | "POWER" | "HR" | "PACE";
-      /** Format: int32 */
-      joules?: number;
-      /** Format: int32 */
-      joules_above_ftp?: number;
-      workout_doc?: {
-        [key: string]: Record<string, never>;
-      };
-      push_errors?: components["schemas"]["PushError"][];
-      athlete_cannot_edit?: boolean;
-      hide_from_athlete?: boolean;
-      structure_read_only?: boolean;
-      created_by_id?: string;
-      /** Format: int32 */
-      shared_event_id?: number;
-      entered?: boolean;
-      /** Format: int32 */
-      carbs_per_hour?: number;
-      /** @enum {string} */
-      sub_type?: "NONE" | "COMMUTE" | "WARMUP" | "COOLDOWN" | "RACE";
-      /** Format: float */
-      distance?: number;
-      tags?: string[];
-      attachments?: components["schemas"]["Attachment"][];
-      /** Format: int32 */
-      oauth_client_id?: number;
-      external_id?: string;
-      /** Format: int32 */
-      load_target?: number;
-      /** Format: int32 */
-      time_target?: number;
-      /** Format: float */
-      distance_target?: number;
-      /** @enum {string} */
-      training_availability?: "NORMAL" | "LIMITED" | "UNAVAILABLE";
-      /** Format: int32 */
-      max_training_time?: number;
-      can_train_sports?: (
-        | "Ride"
-        | "Run"
-        | "Swim"
-        | "WeightTraining"
-        | "Hike"
-        | "Walk"
-        | "AlpineSki"
-        | "BackcountrySki"
-        | "Badminton"
-        | "Canoeing"
-        | "Crossfit"
-        | "EBikeRide"
-        | "EMountainBikeRide"
-        | "Elliptical"
-        | "Golf"
-        | "GravelRide"
-        | "TrackRide"
-        | "Handcycle"
-        | "HighIntensityIntervalTraining"
-        | "Hockey"
-        | "IceSkate"
-        | "InlineSkate"
-        | "Kayaking"
-        | "Kitesurf"
-        | "MountainBikeRide"
-        | "Cyclocross"
-        | "NordicSki"
-        | "OpenWaterSwim"
-        | "Padel"
-        | "Pilates"
-        | "Pickleball"
-        | "Racquetball"
-        | "Rugby"
-        | "RockClimbing"
-        | "RollerSki"
-        | "Rowing"
-        | "Sail"
-        | "Skateboard"
-        | "Snowboard"
-        | "Snowshoe"
-        | "Soccer"
-        | "Squash"
-        | "StairStepper"
-        | "StandUpPaddling"
-        | "Surfing"
-        | "TableTennis"
-        | "Tennis"
-        | "TrailRun"
-        | "Transition"
-        | "Velomobile"
-        | "VirtualRide"
-        | "VirtualRow"
-        | "VirtualRun"
-        | "VirtualSki"
-        | "WaterSport"
-        | "Wheelchair"
-        | "Windsurf"
-        | "Workout"
-        | "Yoga"
-        | "Other"
-      )[];
-      plan_athlete_id?: string;
-      /** Format: int32 */
-      plan_folder_id?: number;
-      /** Format: int32 */
-      plan_workout_id?: number;
-      /** Format: date-time */
-      plan_applied?: string;
-      workout?: components["schemas"]["Workout"];
-      file_contents?: string;
-      file_contents_base64?: string;
-      filename?: string;
-      /** Format: float */
-      icu_intensity?: number;
-      /** Format: float */
-      strain_score?: number;
-    };
-    PushError: {
-      service?: string;
-      message?: string;
-      /** Format: date-time */
-      date?: string;
-    };
-    Event: {
-      /** Format: int32 */
-      id?: number;
-      start_date_local?: string;
-      /** Format: int32 */
-      icu_training_load?: number;
-      /** Format: float */
-      icu_atl?: number;
-      /** Format: float */
-      icu_ctl?: number;
-      type?: string;
-      /** Format: int32 */
-      carbs_used?: number;
-      /** Format: float */
-      ss_p_max?: number;
-      /** Format: float */
-      ss_w_prime?: number;
-      /** Format: float */
-      ss_cp?: number;
-      /** Format: int32 */
-      calendar_id?: number;
-      uid?: string;
-      athlete_id?: string;
-      /** @enum {string} */
-      category?:
-        | "WORKOUT"
-        | "RACE_A"
-        | "RACE_B"
-        | "RACE_C"
-        | "NOTE"
-        | "PLAN"
-        | "HOLIDAY"
-        | "SICK"
-        | "INJURED"
-        | "SET_EFTP"
-        | "FITNESS_DAYS"
-        | "SEASON_START"
-        | "TARGET"
-        | "SET_FITNESS";
-      end_date_local?: string;
-      name?: string;
-      description?: string;
-      indoor?: boolean;
-      color?: string;
-      /** Format: int32 */
-      moving_time?: number;
-      /** Format: int32 */
-      icu_ftp?: number;
-      /** Format: int32 */
-      w_prime?: number;
-      /** Format: int32 */
-      p_max?: number;
-      /** Format: int32 */
-      atl_days?: number;
-      /** Format: int32 */
-      ctl_days?: number;
-      /** Format: date-time */
-      updated?: string;
-      not_on_fitness_chart?: boolean;
-      show_as_note?: boolean;
-      show_on_ctl_line?: boolean;
-      for_week?: boolean;
-      /** @enum {string} */
-      target?: "AUTO" | "POWER" | "HR" | "PACE";
-      /** Format: int32 */
-      joules?: number;
-      /** Format: int32 */
-      joules_above_ftp?: number;
-      workout_doc?: {
-        [key: string]: Record<string, never>;
-      };
-      push_errors?: components["schemas"]["PushError"][];
-      athlete_cannot_edit?: boolean;
-      hide_from_athlete?: boolean;
-      structure_read_only?: boolean;
-      created_by_id?: string;
-      /** Format: int32 */
-      shared_event_id?: number;
-      entered?: boolean;
-      /** Format: int32 */
-      carbs_per_hour?: number;
-      /** @enum {string} */
-      sub_type?: "NONE" | "COMMUTE" | "WARMUP" | "COOLDOWN" | "RACE";
-      /** Format: float */
-      distance?: number;
-      tags?: string[];
-      attachments?: components["schemas"]["Attachment"][];
-      /** Format: int32 */
-      oauth_client_id?: number;
-      external_id?: string;
-      /** Format: int32 */
-      load_target?: number;
-      /** Format: int32 */
-      time_target?: number;
-      /** Format: float */
-      distance_target?: number;
-      /** @enum {string} */
-      training_availability?: "NORMAL" | "LIMITED" | "UNAVAILABLE";
-      /** Format: int32 */
-      max_training_time?: number;
-      can_train_sports?: (
-        | "Ride"
-        | "Run"
-        | "Swim"
-        | "WeightTraining"
-        | "Hike"
-        | "Walk"
-        | "AlpineSki"
-        | "BackcountrySki"
-        | "Badminton"
-        | "Canoeing"
-        | "Crossfit"
-        | "EBikeRide"
-        | "EMountainBikeRide"
-        | "Elliptical"
-        | "Golf"
-        | "GravelRide"
-        | "TrackRide"
-        | "Handcycle"
-        | "HighIntensityIntervalTraining"
-        | "Hockey"
-        | "IceSkate"
-        | "InlineSkate"
-        | "Kayaking"
-        | "Kitesurf"
-        | "MountainBikeRide"
-        | "Cyclocross"
-        | "NordicSki"
-        | "OpenWaterSwim"
-        | "Padel"
-        | "Pilates"
-        | "Pickleball"
-        | "Racquetball"
-        | "Rugby"
-        | "RockClimbing"
-        | "RollerSki"
-        | "Rowing"
-        | "Sail"
-        | "Skateboard"
-        | "Snowboard"
-        | "Snowshoe"
-        | "Soccer"
-        | "Squash"
-        | "StairStepper"
-        | "StandUpPaddling"
-        | "Surfing"
-        | "TableTennis"
-        | "Tennis"
-        | "TrailRun"
-        | "Transition"
-        | "Velomobile"
-        | "VirtualRide"
-        | "VirtualRow"
-        | "VirtualRun"
-        | "VirtualSki"
-        | "WaterSport"
-        | "Wheelchair"
-        | "Windsurf"
-        | "Workout"
-        | "Yoga"
-        | "Other"
-      )[];
-      plan_athlete_id?: string;
-      /** Format: int32 */
-      plan_folder_id?: number;
-      /** Format: int32 */
-      plan_workout_id?: number;
-      /** Format: date-time */
-      plan_applied?: string;
-      /** Format: float */
-      icu_intensity?: number;
-      /** Format: float */
-      strain_score?: number;
-    };
-    DoomedEvent: {
-      /** Format: int32 */
-      id?: number;
-      external_id?: string;
-    };
-    DeleteEventsResponse: {
-      /** Format: int32 */
-      eventsDeleted?: number;
-    };
-    CustomItem: {
-      /** Format: int32 */
-      id?: number;
-      athlete_id?: string;
-      /** @enum {string} */
-      type?:
-        | "FITNESS_CHART"
-        | "FITNESS_TABLE"
-        | "TRACE_CHART"
-        | "INPUT_FIELD"
-        | "ACTIVITY_FIELD"
-        | "INTERVAL_FIELD"
-        | "ACTIVITY_STREAM"
-        | "ACTIVITY_CHART"
-        | "ACTIVITY_HISTOGRAM"
-        | "ACTIVITY_HEATMAP"
-        | "ACTIVITY_MAP"
-        | "ACTIVITY_PANEL"
-        | "ZONES";
-      /** @enum {string} */
-      visibility?: "PRIVATE" | "FOLLOWERS" | "PUBLIC";
-      name?: string;
-      description?: string;
-      image?: string;
-      content?: {
-        [key: string]: Record<string, never>;
-      };
-      /** Format: int32 */
-      usage_count?: number;
-      /** Format: int32 */
-      index?: number;
-      hide_script?: boolean;
-      hidden_by_id?: string;
-      /** Format: date-time */
-      updated?: string;
-      from_athlete?: components["schemas"]["AthleteSearchResult"];
-      /** Format: int32 */
-      from_id?: number;
-    };
-    AthleteTrainingAvailability: {
-      /** Format: int32 */
-      day_of_week?: number;
-      /** @enum {string} */
-      training_availability?: "NORMAL" | "LIMITED" | "UNAVAILABLE";
-      /** Format: int32 */
-      max_training_time?: number;
-      can_train_sports?: (
-        | "Ride"
-        | "Run"
-        | "Swim"
-        | "WeightTraining"
-        | "Hike"
-        | "Walk"
-        | "AlpineSki"
-        | "BackcountrySki"
-        | "Badminton"
-        | "Canoeing"
-        | "Crossfit"
-        | "EBikeRide"
-        | "EMountainBikeRide"
-        | "Elliptical"
-        | "Golf"
-        | "GravelRide"
-        | "TrackRide"
-        | "Handcycle"
-        | "HighIntensityIntervalTraining"
-        | "Hockey"
-        | "IceSkate"
-        | "InlineSkate"
-        | "Kayaking"
-        | "Kitesurf"
-        | "MountainBikeRide"
-        | "Cyclocross"
-        | "NordicSki"
-        | "OpenWaterSwim"
-        | "Padel"
-        | "Pilates"
-        | "Pickleball"
-        | "Racquetball"
-        | "Rugby"
-        | "RockClimbing"
-        | "RollerSki"
-        | "Rowing"
-        | "Sail"
-        | "Skateboard"
-        | "Snowboard"
-        | "Snowshoe"
-        | "Soccer"
-        | "Squash"
-        | "StairStepper"
-        | "StandUpPaddling"
-        | "Surfing"
-        | "TableTennis"
-        | "Tennis"
-        | "TrailRun"
-        | "Transition"
-        | "Velomobile"
-        | "VirtualRide"
-        | "VirtualRow"
-        | "VirtualRun"
-        | "VirtualSki"
-        | "WaterSport"
-        | "Wheelchair"
-        | "Windsurf"
-        | "Workout"
-        | "Yoga"
-        | "Other"
-      )[];
-    };
-    AthleteUpdateDTO: {
-      id?: string;
-      name?: string;
-      firstname?: string;
-      lastname?: string;
-      profile_medium?: string;
-      measurement_preference?: string;
-      weight_pref_lb?: boolean;
-      fahrenheit?: boolean;
-      /** @enum {string} */
-      wind_speed?: "MPS" | "KNOTS" | "KMH" | "MPH" | "BFT";
-      /** @enum {string} */
-      rain?: "MM" | "INCHES";
       /** Format: float */
       weight?: number;
-      email?: string;
-      sex?: string;
-      city?: string;
-      state?: string;
-      country?: string;
-      countries?: string[];
-      languages?: string[];
-      bikes?: components["schemas"]["StravaGear"][];
-      shoes?: components["schemas"]["StravaGear"][];
-      timezone?: string;
-      locale?: string;
-      date_format?: string;
-      time_format?: string;
-      /** @enum {string} */
-      visibility?: "PRIVATE" | "PUBLIC" | "HIDDEN";
+    };
+    ActivityHRCurvePayload: {
+      curves?: components["schemas"]["ActivityHRCurve"][];
+      secs?: number[];
+    };
+    ActivityId: {
+      icu_athlete_id?: string;
+      id?: string;
+    };
+    ActivityMini: {
+      id?: string;
+      name?: string;
+      start_date_local?: string;
+      type?: string;
+    };
+    ActivityPowerCurve: {
+      id?: string;
+      start_date_local?: string;
+      watts?: number[];
+      /** Format: float */
+      weight?: number;
+    };
+    ActivityPowerCurvePayload: {
+      /** Format: int32 */
+      after_kj?: number;
+      curves?: components["schemas"]["ActivityPowerCurve"][];
+      secs?: number[];
+    };
+    ActivitySearchResult: {
+      description?: string;
+      /** Format: float */
+      distance?: number;
+      id?: string;
+      /** Format: int32 */
+      moving_time?: number;
+      name?: string;
+      race?: boolean;
+      start_date_local?: string;
+      tags?: string[];
+      type?: string;
+    };
+    ActivityStream: {
+      allNull?: boolean;
+      anomalies?: components["schemas"]["Anomaly"][];
+      custom?: boolean;
+      data?: Record<string, never>;
+      data2?: Record<string, never>;
+      name?: string;
+      type?: string;
+      valueTypeIsArray?: boolean;
+    };
+    ActivityWeather: {
+      closest_points?: components["schemas"]["Closest"][];
+      points?: components["schemas"]["WeatherPoint"][];
+    };
+    ActivityWeatherSummary: {
+      apparent_wind_gust?: components["schemas"]["WindRose"];
+      apparent_wind_speed?: components["schemas"]["WindRose"];
+      /** Format: int32 */
+      average_clouds?: number;
+      /** Format: float */
+      average_feels_like?: number;
+      /** Format: float */
+      average_temp?: number;
+      /** Format: float */
+      average_weather_temp?: number;
+      /** Format: float */
+      average_wind_gust?: number;
+      /** Format: float */
+      average_wind_speed?: number;
+      /** Format: float */
+      average_yaw?: number;
+      description?: string;
+      /** Format: int32 */
+      end_index?: number;
+      /** Format: int32 */
+      end_secs?: number;
+      /** Format: float */
+      headwind_percent?: number;
+      /** Format: float */
+      max_feels_like?: number;
+      /** Format: float */
+      max_rain?: number;
+      /** Format: float */
+      max_showers?: number;
+      /** Format: float */
+      max_snow?: number;
+      /** Format: int32 */
+      max_temp?: number;
+      /** Format: float */
+      max_weather_temp?: number;
+      /** Format: float */
+      max_wind_gust?: number;
+      /** Format: float */
+      max_wind_speed?: number;
+      /** Format: float */
+      min_feels_like?: number;
+      /** Format: int32 */
+      min_temp?: number;
+      /** Format: float */
+      min_weather_temp?: number;
+      /** Format: float */
+      min_wind_gust?: number;
+      /** Format: float */
+      min_wind_speed?: number;
+      /** Format: int32 */
+      moving_time?: number;
+      /** Format: int32 */
+      prevailing_wind_deg?: number;
+      /** Format: int32 */
+      start_index?: number;
+      /** Format: int32 */
+      start_secs?: number;
+      /** Format: float */
+      tailwind_percent?: number;
+      whole_activity?: boolean;
+      wind_gust?: components["schemas"]["WindRose"];
+      wind_speed?: components["schemas"]["WindRose"];
+    };
+    ActivityWithIntervals: {
+      analysis_issues?: components["schemas"]["ActivityAnalysisIssue"][];
       /** Format: date-time */
-      icu_last_seen?: string;
-      /** @enum {string} */
-      status?: "ACTIVE" | "DORMANT" | "ARCHIVED";
+      analyzed?: string;
+      /** Format: int32 */
+      athlete_max_hr?: number;
+      attachments?: components["schemas"]["Attachment"][];
+      /** Format: float */
+      average_altitude?: number;
+      /** Format: float */
+      average_cadence?: number;
+      /** Format: int32 */
+      average_clouds?: number;
+      /** Format: float */
+      average_feels_like?: number;
+      /** Format: int32 */
+      average_heartrate?: number;
+      /** Format: float */
+      average_impact_loading_rate?: number;
+      /** Format: float */
+      average_leg_spring_stiffness?: number;
+      /** Format: float */
+      average_speed?: number;
+      /** Format: float */
+      average_stance_time?: number;
+      /** Format: float */
+      average_stance_time_balance?: number;
+      /** Format: float */
+      average_stance_time_percent?: number;
+      /** Format: float */
+      average_step_length?: number;
+      /** Format: float */
+      average_stride?: number;
+      /** Format: float */
+      average_temp?: number;
+      /** Format: float */
+      average_vertical_oscillation?: number;
+      /** Format: float */
+      average_vertical_ratio?: number;
+      /** Format: float */
+      average_vertical_speed?: number;
+      /** Format: float */
+      average_weather_temp?: number;
+      /** Format: float */
+      average_wind_gust?: number;
+      /** Format: float */
+      average_wind_speed?: number;
+      /** Format: float */
+      avg_lr_balance?: number;
+      /** Format: int32 */
+      calories?: number;
+      /** Format: int32 */
+      carbs_ingested?: number;
+      /** Format: int32 */
+      carbs_used?: number;
+      /** Format: int32 */
+      coach_tick?: number;
+      /** Format: int32 */
+      coasting_time?: number;
+      commute?: boolean;
+      /** Format: float */
+      compliance?: number;
+      /** Format: float */
+      crank_length?: number;
       /** Format: date-time */
-      status_updated?: string;
+      created?: string;
+      custom_zones?: components["schemas"]["ZoneSet"][];
+      /** Format: float */
+      decoupling?: number;
+      description?: string;
+      device_name?: string;
+      device_watts?: boolean;
+      /** Format: float */
+      distance?: number;
+      /** Format: int32 */
+      elapsed_time?: number;
+      external_id?: string;
+      /** Format: int32 */
+      feel?: number;
+      /** Format: int32 */
+      file_sport_index?: number;
+      file_type?: string;
+      /** Format: float */
+      gap?: number;
+      /** @enum {string} */
+      gap_model?: "NONE" | "STRAVA_RUN";
+      gap_zone_times?: number[];
+      gear?: components["schemas"]["StravaGear"];
+      group?: string;
+      has_heartrate?: boolean;
+      has_segments?: boolean;
+      has_weather?: boolean;
+      /** Format: float */
+      headwind_percent?: number;
+      /** Format: int32 */
+      hr_load?: number;
+      /** @enum {string} */
+      hr_load_type?: "AVG_HR" | "HR_ZONES" | "HRSS";
+      icu_achievements?: components["schemas"]["IcuAchievement"][];
+      icu_athlete_id?: string;
+      /** Format: float */
+      icu_atl?: number;
+      /** Format: int32 */
+      icu_average_watts?: number;
+      /** Format: int32 */
+      icu_cadence_z2?: number;
+      /** Format: int32 */
+      icu_chat_id?: number;
+      icu_color?: string;
+      /** Format: int32 */
+      icu_cooldown_time?: number;
+      /** Format: float */
+      icu_ctl?: number;
+      /** Format: float */
+      icu_distance?: number;
+      /** Format: float */
+      icu_efficiency_factor?: number;
+      /** Format: int32 */
+      icu_ftp?: number;
+      icu_groups?: components["schemas"]["IntervalGroup"][];
+      icu_hr_zone_times?: number[];
+      icu_hr_zones?: number[];
+      icu_hrr?: components["schemas"]["HRRecovery"];
+      icu_ignore_hr?: boolean;
+      icu_ignore_power?: boolean;
+      icu_ignore_time?: boolean;
+      /** Format: float */
+      icu_intensity?: number;
+      icu_intervals?: components["schemas"]["Interval"][];
+      icu_intervals_edited?: boolean;
+      /** Format: int32 */
+      icu_joules?: number;
+      /** Format: int32 */
+      icu_joules_above_ftp?: number;
+      /** Format: int32 */
+      icu_lap_count?: number;
+      /** Format: int32 */
+      icu_max_wbal_depletion?: number;
+      /** Format: int32 */
+      icu_median_time_delta?: number;
+      /** Format: int32 */
+      icu_pm_cp?: number;
+      /** Format: int32 */
+      icu_pm_ftp?: number;
+      /** Format: int32 */
+      icu_pm_ftp_secs?: number;
+      /** Format: int32 */
+      icu_pm_ftp_watts?: number;
+      /** Format: int32 */
+      icu_pm_p_max?: number;
+      /** Format: int32 */
+      icu_pm_w_prime?: number;
+      /** Format: float */
+      icu_power_hr?: number;
+      /** Format: float */
+      icu_power_hr_z2?: number;
+      /** Format: int32 */
+      icu_power_hr_z2_mins?: number;
+      /** Format: int32 */
+      icu_power_spike_threshold?: number;
+      icu_power_zones?: number[];
+      /** Format: int32 */
+      icu_recording_time?: number;
       /** Format: int32 */
       icu_resting_hr?: number;
       /** Format: float */
-      icu_weight?: number;
-      /** @enum {string} */
-      icu_weight_sync?: "NONE" | "STRAVA";
+      icu_rolling_cp?: number;
+      /** Format: int32 */
+      icu_rolling_ftp?: number;
+      /** Format: int32 */
+      icu_rolling_ftp_delta?: number;
+      /** Format: float */
+      icu_rolling_p_max?: number;
+      /** Format: float */
+      icu_rolling_w_prime?: number;
+      /** Format: int32 */
+      icu_rpe?: number;
+      /** Format: int32 */
+      icu_sweet_spot_max?: number;
+      /** Format: int32 */
+      icu_sweet_spot_min?: number;
       /** Format: date-time */
-      icu_activated?: string;
+      icu_sync_date?: string;
+      icu_sync_error?: string;
       /** Format: int32 */
-      icu_queue_pos?: number;
-      icu_admin?: boolean;
-      icu_friend_invite_token?: string;
-      /** @enum {string} */
-      icu_permission?: "NONE" | "READ" | "WRITE";
-      icu_effort_secs?: number[];
-      icu_coach?: boolean;
-      bio?: string;
-      website?: string;
-      icu_date_of_birth?: string;
-      icu_api_key?: string;
-      icu_type_settings?: components["schemas"]["Settings"][];
-      icu_form_as_percent?: boolean;
+      icu_training_load?: number;
       /** Format: int32 */
-      icu_mmp_days?: number;
-      icu_wellness_prompt?: boolean;
-      wellness_last_prompt_date?: string;
-      icu_wellness_keys?: string[];
-      private_wellness_keys?: string[];
-      icu_track_menstrual_cycle?: boolean;
+      icu_training_load_data?: number;
+      /** Format: float */
+      icu_variability_index?: number;
+      /** Format: int32 */
+      icu_w_prime?: number;
+      /** Format: int32 */
+      icu_warmup_time?: number;
+      /** Format: float */
+      icu_weight?: number;
+      /** Format: int32 */
+      icu_weighted_avg_watts?: number;
+      icu_zone_times?: components["schemas"]["ZoneTime"][];
+      id?: string;
+      ignore_pace?: boolean;
+      ignore_parts?: components["schemas"]["Ignore"][];
+      ignore_velocity?: boolean;
+      interval_summary?: string[];
+      /** Format: float */
+      kg_lifted?: number;
+      /** Format: int32 */
+      lengths?: number;
+      lock_intervals?: boolean;
+      /** Format: int32 */
+      lthr?: number;
+      /** Format: float */
+      max_altitude?: number;
+      /** Format: float */
+      max_feels_like?: number;
+      /** Format: int32 */
+      max_heartrate?: number;
+      /** Format: float */
+      max_rain?: number;
+      /** Format: float */
+      max_snow?: number;
+      /** Format: float */
+      max_speed?: number;
+      /** Format: int32 */
+      max_temp?: number;
+      /** Format: float */
+      max_weather_temp?: number;
+      /** Format: float */
+      min_altitude?: number;
+      /** Format: float */
+      min_feels_like?: number;
+      /** Format: int32 */
+      min_temp?: number;
+      /** Format: float */
+      min_weather_temp?: number;
+      /** Format: int32 */
+      moving_time?: number;
+      name?: string;
+      /** Format: int32 */
+      oauth_client_id?: number;
+      oauth_client_name?: string;
+      /** Format: float */
+      p30s_exponent?: number;
+      /** Format: int32 */
+      p_max?: number;
+      /** Format: float */
+      pace?: number;
+      /** Format: int32 */
+      pace_load?: number;
       /** @enum {string} */
-      icu_menstrual_cycle_perm?: "NONE" | "READ" | "WRITE";
+      pace_load_type?: "SWIM" | "RUN";
+      pace_zone_times?: number[];
+      pace_zones?: number[];
+      /** Format: int32 */
+      paired_event_id?: number;
+      /** Format: float */
+      perceived_exertion?: number;
+      /** Format: float */
+      polarization_index?: number;
+      /** Format: float */
+      pool_length?: number;
+      power_field?: string;
+      power_field_names?: string[];
+      /** Format: int32 */
+      power_load?: number;
+      power_meter?: string;
+      power_meter_battery?: string;
+      power_meter_serial?: string;
+      /** Format: int32 */
+      prevailing_wind_deg?: number;
+      race?: boolean;
+      recording_stops?: number[];
+      /** Format: int64 */
+      route_id?: number;
+      /** Format: int32 */
+      session_rpe?: number;
+      skyline_chart_bytes?: string[];
+      /** @enum {string} */
+      source?:
+        | "STRAVA"
+        | "UPLOAD"
+        | "MANUAL"
+        | "GARMIN_CONNECT"
+        | "OAUTH_CLIENT"
+        | "DROPBOX"
+        | "POLAR"
+        | "SUUNTO"
+        | "COROS"
+        | "WAHOO"
+        | "ZWIFT"
+        | "ZEPP"
+        | "CONCEPT2"
+        | "HUAWEI";
+      /** Format: float */
+      ss_cp?: number;
+      /** Format: float */
+      ss_p_max?: number;
+      /** Format: float */
+      ss_w_prime?: number;
+      start_date?: string;
+      start_date_local?: string;
+      /** Format: float */
+      strain_score?: number;
+      strava_id?: string;
+      stream_types?: string[];
+      /** @enum {string} */
+      sub_type?: "NONE" | "COMMUTE" | "WARMUP" | "COOLDOWN" | "RACE";
+      tags?: string[];
+      /** Format: float */
+      tailwind_percent?: number;
+      /** Format: float */
+      threshold_pace?: number;
+      timezone?: string;
+      /** @enum {string} */
+      tiz_order?:
+        | "POWER_HR_PACE"
+        | "POWER_PACE_HR"
+        | "HR_POWER_PACE"
+        | "HR_PACE_POWER"
+        | "PACE_POWER_HR"
+        | "PACE_HR_POWER";
+      /** Format: float */
+      total_elevation_gain?: number;
+      /** Format: float */
+      total_elevation_loss?: number;
+      trainer?: boolean;
+      /** Format: float */
+      trimp?: number;
+      type?: string;
+      use_elevation_correction?: boolean;
+      use_gap_zone_times?: boolean;
+      /** Format: int32 */
+      workout_shift_secs?: number;
+    };
+    Anomaly: {
+      /** Format: int32 */
+      end_index?: number;
+      /** Format: int32 */
+      start_index?: number;
+      /** Format: int32 */
+      value?: number;
+      /** Format: int32 */
+      valueEnd?: number;
+    };
+    ApplyPlanDTO: {
+      extra_workouts?: components["schemas"]["Workout"][];
+      /** Format: int32 */
+      folder_id?: number;
+      start_date_local?: string;
+    };
+    Athlete: {
       activity_rpe_prompt?: boolean;
+      add_weather_to_strava_descr?: boolean;
+      beta_user?: boolean;
+      bikes?: components["schemas"]["StravaGear"][];
+      bio?: string;
+      city?: string;
       coach_ticks?: components["schemas"]["CoachTick"][];
-      icu_garmin_health?: boolean;
-      icu_garmin_training?: boolean;
-      icu_garmin_sync_activities?: boolean;
+      concept2_sync_activities?: boolean;
+      concept2_user_id?: string;
+      coros_download_wellness?: boolean;
+      /** Format: date-time */
+      coros_last_upload?: string;
+      coros_sync_activities?: boolean;
+      coros_upload_workouts?: boolean;
+      coros_user_id?: string;
+      countries?: string[];
+      country?: string;
+      currency?: string;
+      date_format?: string;
+      dropbox_scope?: string;
+      email?: string;
+      email_notifications?: (
+        | "NEWSLETTER"
+        | "ACHIEVEMENTS"
+        | "FOLLOW_REQUEST"
+        | "COACH_ME_REQUEST"
+        | "PRIVATE_CHAT"
+        | "PRIVATE_MSG"
+        | "GROUP_CHAT"
+        | "GROUP_MSG"
+        | "ACTIVITY_CHAT"
+        | "ACTIVITY_MSG"
+        | "COACH_TICK"
+        | "FOLLOWED_ACTIVITY_CHAT"
+        | "COACHED_ACTIVITY_CHAT"
+        | "FOLLOWED_NEW_ACTIVITY"
+        | "COACHED_NEW_ACTIVITY"
+        | "GEAR_ALERTS"
+        | "PLAN_FOR_WEEK"
+        | "NEW_ACTIVITY"
+      )[];
+      fahrenheit?: boolean;
+      firstname?: string;
+      /** Format: float */
+      garmin_pace_range?: number;
+      /** @enum {string} */
+      garmin_power_target?: "POWER_LAP" | "POWER" | "POWER_3S" | "POWER_10S" | "POWER_30S";
       garmin_sync_activity_types?: (
         | "Ride"
         | "Run"
@@ -3280,22 +3141,97 @@ export interface components {
       )[];
       /** Format: date-time */
       garmin_sync_after?: string;
-      icu_garmin_download_wellness?: boolean;
-      icu_garmin_upload_workouts?: boolean;
+      google_scope?: string;
+      google_wellness_keys?: string[];
+      has_password?: boolean;
+      has_push_subscriptions?: boolean;
       /** Format: float */
-      icu_garmin_outdoor_power_range?: number;
+      height?: number;
+      /** @enum {string} */
+      height_units?: "CM" | "FEET";
+      huawei_download_wellness?: boolean;
+      huawei_sync_activities?: boolean;
+      huawei_upload_workouts?: boolean;
+      huawei_user_id?: string;
+      /** Format: date-time */
+      icu_activated?: string;
+      icu_admin?: boolean;
+      icu_api_key?: string;
+      icu_coach?: boolean;
+      icu_date_of_birth?: string;
+      icu_effort_secs?: number[];
+      icu_email_disabled?: string;
+      icu_email_verified?: boolean;
+      icu_form_as_percent?: boolean;
+      icu_friend_invite_token?: string;
+      icu_garmin_download_wellness?: boolean;
+      icu_garmin_health?: boolean;
       /** Format: float */
       icu_garmin_hr_range?: number;
-      /** Format: float */
-      garmin_pace_range?: number;
-      /** @enum {string} */
-      garmin_power_target?: "POWER_LAP" | "POWER" | "POWER_3S" | "POWER_10S" | "POWER_30S";
       /** Format: date-time */
       icu_garmin_last_upload?: string;
+      /** Format: float */
+      icu_garmin_outdoor_power_range?: number;
+      icu_garmin_sync_activities?: boolean;
+      icu_garmin_training?: boolean;
       icu_garmin_upload_filters?: components["schemas"]["ActivityFilter"][];
+      icu_garmin_upload_workouts?: boolean;
       icu_garmin_wellness_keys?: string[];
+      /** Format: date-time */
+      icu_last_seen?: string;
+      /** @enum {string} */
+      icu_menstrual_cycle_perm?: "NONE" | "READ" | "WRITE";
+      /** Format: int32 */
+      icu_mmp_days?: number;
+      /** @enum {string} */
+      icu_permission?: "NONE" | "READ" | "WRITE";
+      /** Format: int32 */
+      icu_queue_pos?: number;
+      /** Format: int32 */
+      icu_resting_hr?: number;
+      icu_send_achievements?: boolean;
+      icu_send_activity_chat?: boolean;
+      icu_send_activity_msg?: boolean;
+      icu_send_coach_me_req?: boolean;
+      icu_send_coach_tick?: boolean;
+      icu_send_coached_activity_chat?: boolean;
+      icu_send_coached_new_activity?: boolean;
+      icu_send_follow_req?: boolean;
+      icu_send_followed_activity_chat?: boolean;
+      icu_send_followed_new_activity?: boolean;
+      icu_send_gear_alerts?: boolean;
+      icu_send_group_chat?: boolean;
+      icu_send_group_msg?: boolean;
+      icu_send_newsletter?: boolean;
+      icu_send_plan_for_week?: boolean;
+      icu_send_private_chat?: boolean;
+      icu_send_private_msg?: boolean;
+      icu_track_menstrual_cycle?: boolean;
+      icu_type_settings?: components["schemas"]["Settings"][];
+      /** Format: float */
+      icu_weight?: number;
+      /** @enum {string} */
+      icu_weight_sync?: "NONE" | "STRAVA";
+      icu_wellness_keys?: string[];
+      icu_wellness_prompt?: boolean;
+      id?: string;
+      ignore_strava_gear?: boolean;
+      include_descr_in_plan_for_week?: boolean;
+      languages?: string[];
+      lastname?: string;
+      locale?: string;
+      measurement_preference?: string;
+      name?: string;
+      notification_athlete_tags_enabled?: string[];
       /** Format: int32 */
       open_step_duration?: number;
+      oura_scope?: string;
+      oura_wellness_keys?: string[];
+      /** @enum {string} */
+      plan?: "FREE" | "PREMIUM" | "SUPPORTER" | "WHITELABEL";
+      /** Format: date-time */
+      plan_expires?: string;
+      polar_download_wellness?: boolean;
       polar_scope?: string;
       polar_sync_activities?: boolean;
       polar_sync_activity_types?: (
@@ -3360,137 +3296,45 @@ export interface components {
         | "Yoga"
         | "Other"
       )[];
-      polar_download_wellness?: boolean;
       polar_wellness_keys?: string[];
-      suunto_scope?: string;
-      suunto_user_id?: string;
-      suunto_sync_activities?: boolean;
-      suunto_sync_activity_types?: (
-        | "Ride"
-        | "Run"
-        | "Swim"
-        | "WeightTraining"
-        | "Hike"
-        | "Walk"
-        | "AlpineSki"
-        | "BackcountrySki"
-        | "Badminton"
-        | "Canoeing"
-        | "Crossfit"
-        | "EBikeRide"
-        | "EMountainBikeRide"
-        | "Elliptical"
-        | "Golf"
-        | "GravelRide"
-        | "TrackRide"
-        | "Handcycle"
-        | "HighIntensityIntervalTraining"
-        | "Hockey"
-        | "IceSkate"
-        | "InlineSkate"
-        | "Kayaking"
-        | "Kitesurf"
-        | "MountainBikeRide"
-        | "Cyclocross"
-        | "NordicSki"
-        | "OpenWaterSwim"
-        | "Padel"
-        | "Pilates"
-        | "Pickleball"
-        | "Racquetball"
-        | "Rugby"
-        | "RockClimbing"
-        | "RollerSki"
-        | "Rowing"
-        | "Sail"
-        | "Skateboard"
-        | "Snowboard"
-        | "Snowshoe"
-        | "Soccer"
-        | "Squash"
-        | "StairStepper"
-        | "StandUpPaddling"
-        | "Surfing"
-        | "TableTennis"
-        | "Tennis"
-        | "TrailRun"
-        | "Transition"
-        | "Velomobile"
-        | "VirtualRide"
-        | "VirtualRow"
-        | "VirtualRun"
-        | "VirtualSki"
-        | "WaterSport"
-        | "Wheelchair"
-        | "Windsurf"
-        | "Workout"
-        | "Yoga"
-        | "Other"
+      private_wellness_keys?: string[];
+      profile_medium?: string;
+      push_notifications?: (
+        | "NEWSLETTER"
+        | "ACHIEVEMENTS"
+        | "FOLLOW_REQUEST"
+        | "COACH_ME_REQUEST"
+        | "PRIVATE_CHAT"
+        | "PRIVATE_MSG"
+        | "GROUP_CHAT"
+        | "GROUP_MSG"
+        | "ACTIVITY_CHAT"
+        | "ACTIVITY_MSG"
+        | "COACH_TICK"
+        | "FOLLOWED_ACTIVITY_CHAT"
+        | "COACHED_ACTIVITY_CHAT"
+        | "FOLLOWED_NEW_ACTIVITY"
+        | "COACHED_NEW_ACTIVITY"
+        | "GEAR_ALERTS"
+        | "PLAN_FOR_WEEK"
+        | "NEW_ACTIVITY"
       )[];
-      suunto_upload_workouts?: boolean;
-      /** Format: float */
-      suunto_outdoor_power_range?: number;
-      /** Format: float */
-      suunto_hr_range?: number;
-      /** Format: float */
-      suunto_pace_range?: number;
+      /** @enum {string} */
+      rain?: "MM" | "INCHES";
+      scope?: string;
+      sex?: string;
+      shoes?: components["schemas"]["StravaGear"][];
+      /** Format: int32 */
+      sponsored_by_chat_id?: number;
+      state?: string;
+      /** @enum {string} */
+      status?: "ACTIVE" | "DORMANT" | "ARCHIVED";
       /** Format: date-time */
-      suunto_last_upload?: string;
-      suunto_upload_filters?: components["schemas"]["ActivityFilter"][];
-      suunto_download_wellness?: boolean;
-      coros_user_id?: string;
-      coros_sync_activities?: boolean;
-      coros_upload_workouts?: boolean;
-      coros_download_wellness?: boolean;
-      /** Format: date-time */
-      coros_last_upload?: string;
-      concept2_user_id?: string;
-      concept2_sync_activities?: boolean;
-      zepp_user_id?: string;
-      zepp_sync_activities?: boolean;
-      zepp_upload_workouts?: boolean;
-      zepp_download_wellness?: boolean;
-      huawei_user_id?: string;
-      huawei_sync_activities?: boolean;
-      huawei_upload_workouts?: boolean;
-      huawei_download_wellness?: boolean;
-      wahoo_user_id?: string;
-      wahoo_sync_activities?: boolean;
-      wahoo_upload_workouts?: boolean;
-      zwift_user_id?: string;
-      zwift_sync_activities?: boolean;
-      zwift_upload_workouts?: boolean;
-      dropbox_scope?: string;
-      oura_scope?: string;
-      oura_wellness_keys?: string[];
-      whoop_scope?: string;
-      whoop_wellness_keys?: string[];
-      google_scope?: string;
-      google_wellness_keys?: string[];
-      icu_email_verified?: boolean;
-      icu_email_disabled?: string;
-      icu_send_achievements?: boolean;
-      icu_send_newsletter?: boolean;
-      icu_send_private_chat?: boolean;
-      icu_send_private_msg?: boolean;
-      icu_send_follow_req?: boolean;
-      icu_send_group_chat?: boolean;
-      icu_send_group_msg?: boolean;
-      icu_send_activity_chat?: boolean;
-      icu_send_followed_activity_chat?: boolean;
-      icu_send_coached_activity_chat?: boolean;
-      icu_send_activity_msg?: boolean;
-      icu_send_coach_me_req?: boolean;
-      icu_send_gear_alerts?: boolean;
-      icu_send_plan_for_week?: boolean;
-      include_descr_in_plan_for_week?: boolean;
-      icu_send_followed_new_activity?: boolean;
-      icu_send_coached_new_activity?: boolean;
-      icu_send_coach_tick?: boolean;
+      status_updated?: string;
       strava_allowed?: boolean;
+      strava_authorized?: boolean;
       /** Format: int32 */
       strava_id?: number;
-      scope?: string;
       strava_sync_activities?: boolean;
       strava_sync_activity_types?: (
         | "Ride"
@@ -3555,44 +3399,1261 @@ export interface components {
         | "Other"
       )[];
       strava_sync_other_activities?: boolean;
-      ignore_strava_gear?: boolean;
+      suunto_download_wellness?: boolean;
+      /** Format: float */
+      suunto_hr_range?: number;
+      /** Format: date-time */
+      suunto_last_upload?: string;
+      /** Format: float */
+      suunto_outdoor_power_range?: number;
+      /** Format: float */
+      suunto_pace_range?: number;
+      suunto_scope?: string;
+      suunto_sync_activities?: boolean;
+      suunto_sync_activity_types?: (
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other"
+      )[];
+      suunto_upload_filters?: components["schemas"]["ActivityFilter"][];
+      suunto_upload_workouts?: boolean;
+      suunto_user_id?: string;
+      time_format?: string;
+      timezone?: string;
+      training_availability?: components["schemas"]["AthleteTrainingAvailability"][];
+      /** Format: int32 */
+      training_plan_id?: number;
+      training_plan_start_date?: string;
+      /** Format: date-time */
+      trial_end_date?: string;
       update_strava_name?: boolean;
+      /** @enum {string} */
+      visibility?: "PRIVATE" | "PUBLIC" | "HIDDEN";
+      wahoo_sync_activities?: boolean;
+      wahoo_upload_workouts?: boolean;
+      wahoo_user_id?: string;
+      website?: string;
+      /** Format: float */
+      weight?: number;
+      weight_pref_lb?: boolean;
+      wellness_last_prompt_date?: string;
+      whoop_scope?: string;
+      whoop_wellness_keys?: string[];
+      /** @enum {string} */
+      wind_speed?: "MPS" | "KNOTS" | "KMH" | "MPH" | "BFT";
+      zepp_download_wellness?: boolean;
+      zepp_sync_activities?: boolean;
+      zepp_upload_workouts?: boolean;
+      zepp_user_id?: string;
+      zwift_sync_activities?: boolean;
+      zwift_upload_workouts?: boolean;
+      zwift_user_id?: string;
+    };
+    AthleteConnections: {
+      biketerra_connected?: boolean;
+      concept2_connected?: boolean;
+      coros_connected?: boolean;
+      dropbox_connected?: boolean;
+      garmin_health_connected?: boolean;
+      garmin_training_connected?: boolean;
+      hammerhead_connected?: boolean;
+      huawei_connected?: boolean;
+      id?: string;
+      mywhoosh_connected?: boolean;
+      oura_connected?: boolean;
+      polar_connected?: boolean;
+      rouvy_connected?: boolean;
+      strava_connected?: boolean;
+      suunto_connected?: boolean;
+      tp_virtual_connected?: boolean;
+      tymewear_connected?: boolean;
+      wahoo_connected?: boolean;
+      whoop_connected?: boolean;
+      zepp_connected?: boolean;
+      zwift_connected?: boolean;
+    };
+    AthleteForProfile: {
+      bio?: string;
+      city?: string;
+      countries?: string[];
+      country?: string;
+      email?: string;
+      icu_coach?: boolean;
+      id?: string;
+      languages?: string[];
+      name?: string;
+      profile_medium?: string;
+      sex?: string;
+      state?: string;
+      timezone?: string;
+      website?: string;
+    };
+    AthleteProfile: {
+      athlete?: components["schemas"]["AthleteForProfile"];
+      customItems?: components["schemas"]["CustomItem"][];
+      sharedFolders?: components["schemas"]["Folder"][];
+    };
+    AthleteRoute: {
+      athlete_id?: string;
+      commute?: boolean;
+      description?: string;
+      latlngs?: number[][];
+      name?: string;
+      rename_activities?: boolean;
+      /** Format: int64 */
+      replaced_by_route_id?: number;
+      /** Format: int64 */
+      route_id?: number;
+      tags?: string[];
+    };
+    AthleteSearchResult: {
+      bio?: string;
+      city?: string;
+      country?: string;
+      email?: string;
+      id?: string;
+      name?: string;
+      profile_medium?: string;
+      sex?: string;
+      state?: string;
+      timezone?: string;
+      website?: string;
+    };
+    AthleteTrainingAvailability: {
+      can_train_sports?: (
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other"
+      )[];
+      /** Format: int32 */
+      day_of_week?: number;
+      /** Format: int32 */
+      max_training_time?: number;
+      /** @enum {string} */
+      training_availability?: "NORMAL" | "LIMITED" | "UNAVAILABLE";
+    };
+    AthleteTrainingPlan: {
+      athlete_id?: string;
+      timezone?: string;
+      training_plan?: components["schemas"]["Folder"];
+      training_plan_alias?: string;
+      /** Format: int32 */
+      training_plan_id?: number;
+      /** Format: date-time */
+      training_plan_last_applied?: string;
+      training_plan_start_date?: string;
+    };
+    AthleteTrainingPlanUpdate: {
+      id?: string;
+      training_plan_alias?: string;
+      /** Format: int32 */
+      training_plan_id?: number;
+      training_plan_start_date?: string;
+    };
+    AthleteUpdateDTO: {
+      activity_rpe_prompt?: boolean;
       add_weather_to_strava_descr?: boolean;
+      applyToAll?: boolean;
+      beta_user?: boolean;
+      bikes?: components["schemas"]["StravaGear"][];
+      bio?: string;
+      city?: string;
+      coach_ticks?: components["schemas"]["CoachTick"][];
+      concept2_sync_activities?: boolean;
+      concept2_user_id?: string;
+      coros_download_wellness?: boolean;
+      /** Format: date-time */
+      coros_last_upload?: string;
+      coros_sync_activities?: boolean;
+      coros_upload_workouts?: boolean;
+      coros_user_id?: string;
+      countries?: string[];
+      country?: string;
+      currency?: string;
+      date_format?: string;
+      dropbox_scope?: string;
+      email?: string;
+      email_notifications?: (
+        | "NEWSLETTER"
+        | "ACHIEVEMENTS"
+        | "FOLLOW_REQUEST"
+        | "COACH_ME_REQUEST"
+        | "PRIVATE_CHAT"
+        | "PRIVATE_MSG"
+        | "GROUP_CHAT"
+        | "GROUP_MSG"
+        | "ACTIVITY_CHAT"
+        | "ACTIVITY_MSG"
+        | "COACH_TICK"
+        | "FOLLOWED_ACTIVITY_CHAT"
+        | "COACHED_ACTIVITY_CHAT"
+        | "FOLLOWED_NEW_ACTIVITY"
+        | "COACHED_NEW_ACTIVITY"
+        | "GEAR_ALERTS"
+        | "PLAN_FOR_WEEK"
+        | "NEW_ACTIVITY"
+      )[];
+      fahrenheit?: boolean;
+      firstname?: string;
+      /** Format: float */
+      garmin_pace_range?: number;
+      /** @enum {string} */
+      garmin_power_target?: "POWER_LAP" | "POWER" | "POWER_3S" | "POWER_10S" | "POWER_30S";
+      garmin_sync_activity_types?: (
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other"
+      )[];
+      /** Format: date-time */
+      garmin_sync_after?: string;
+      google_scope?: string;
+      google_wellness_keys?: string[];
+      has_password?: boolean;
+      has_push_subscriptions?: boolean;
       /** Format: float */
       height?: number;
       /** @enum {string} */
       height_units?: "CM" | "FEET";
+      huawei_download_wellness?: boolean;
+      huawei_sync_activities?: boolean;
+      huawei_upload_workouts?: boolean;
+      huawei_user_id?: string;
+      /** Format: date-time */
+      icu_activated?: string;
+      icu_admin?: boolean;
+      icu_api_key?: string;
+      icu_coach?: boolean;
+      icu_date_of_birth?: string;
+      icu_effort_secs?: number[];
+      icu_email_disabled?: string;
+      icu_email_verified?: boolean;
+      icu_form_as_percent?: boolean;
+      icu_friend_invite_token?: string;
+      icu_garmin_download_wellness?: boolean;
+      icu_garmin_health?: boolean;
+      /** Format: float */
+      icu_garmin_hr_range?: number;
+      /** Format: date-time */
+      icu_garmin_last_upload?: string;
+      /** Format: float */
+      icu_garmin_outdoor_power_range?: number;
+      icu_garmin_sync_activities?: boolean;
+      icu_garmin_training?: boolean;
+      icu_garmin_upload_filters?: components["schemas"]["ActivityFilter"][];
+      icu_garmin_upload_workouts?: boolean;
+      icu_garmin_wellness_keys?: string[];
+      /** Format: date-time */
+      icu_last_seen?: string;
+      /** @enum {string} */
+      icu_menstrual_cycle_perm?: "NONE" | "READ" | "WRITE";
+      /** Format: int32 */
+      icu_mmp_days?: number;
+      icu_notes?: string;
+      /** @enum {string} */
+      icu_permission?: "NONE" | "READ" | "WRITE";
+      /** Format: int32 */
+      icu_queue_pos?: number;
+      /** Format: int32 */
+      icu_resting_hr?: number;
+      icu_send_achievements?: boolean;
+      icu_send_activity_chat?: boolean;
+      icu_send_activity_msg?: boolean;
+      icu_send_coach_me_req?: boolean;
+      icu_send_coach_tick?: boolean;
+      icu_send_coached_activity_chat?: boolean;
+      icu_send_coached_new_activity?: boolean;
+      icu_send_follow_req?: boolean;
+      icu_send_followed_activity_chat?: boolean;
+      icu_send_followed_new_activity?: boolean;
+      icu_send_gear_alerts?: boolean;
+      icu_send_group_chat?: boolean;
+      icu_send_group_msg?: boolean;
+      icu_send_newsletter?: boolean;
+      icu_send_plan_for_week?: boolean;
+      icu_send_private_chat?: boolean;
+      icu_send_private_msg?: boolean;
+      icu_tags?: string[];
+      icu_track_menstrual_cycle?: boolean;
+      icu_type_settings?: components["schemas"]["Settings"][];
+      /** Format: float */
+      icu_weight?: number;
+      /** @enum {string} */
+      icu_weight_sync?: "NONE" | "STRAVA";
+      icu_wellness_keys?: string[];
+      icu_wellness_prompt?: boolean;
+      id?: string;
+      ignore_strava_gear?: boolean;
+      include_descr_in_plan_for_week?: boolean;
+      languages?: string[];
+      lastname?: string;
+      localDate?: string;
+      locale?: string;
+      measurement_preference?: string;
+      name?: string;
+      notification_athlete_tags_enabled?: string[];
+      /** Format: int32 */
+      open_step_duration?: number;
+      oura_scope?: string;
+      oura_wellness_keys?: string[];
+      password?: string;
       /** @enum {string} */
       plan?: "FREE" | "PREMIUM" | "SUPPORTER" | "WHITELABEL";
       /** Format: date-time */
       plan_expires?: string;
-      /** Format: date-time */
-      trial_end_date?: string;
+      polar_download_wellness?: boolean;
+      polar_scope?: string;
+      polar_sync_activities?: boolean;
+      polar_sync_activity_types?: (
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other"
+      )[];
+      polar_wellness_keys?: string[];
+      private_wellness_keys?: string[];
+      profile_medium?: string;
+      push_notifications?: (
+        | "NEWSLETTER"
+        | "ACHIEVEMENTS"
+        | "FOLLOW_REQUEST"
+        | "COACH_ME_REQUEST"
+        | "PRIVATE_CHAT"
+        | "PRIVATE_MSG"
+        | "GROUP_CHAT"
+        | "GROUP_MSG"
+        | "ACTIVITY_CHAT"
+        | "ACTIVITY_MSG"
+        | "COACH_TICK"
+        | "FOLLOWED_ACTIVITY_CHAT"
+        | "COACHED_ACTIVITY_CHAT"
+        | "FOLLOWED_NEW_ACTIVITY"
+        | "COACHED_NEW_ACTIVITY"
+        | "GEAR_ALERTS"
+        | "PLAN_FOR_WEEK"
+        | "NEW_ACTIVITY"
+      )[];
+      /** @enum {string} */
+      rain?: "MM" | "INCHES";
+      recalcHrZones?: boolean;
+      scope?: string;
+      sex?: string;
+      shoes?: components["schemas"]["StravaGear"][];
       /** Format: int32 */
       sponsored_by_chat_id?: number;
-      has_password?: boolean;
-      beta_user?: boolean;
-      currency?: string;
+      state?: string;
+      /** @enum {string} */
+      status?: "ACTIVE" | "DORMANT" | "ARCHIVED";
+      /** Format: date-time */
+      status_updated?: string;
+      strava_allowed?: boolean;
+      strava_authorized?: boolean;
+      /** Format: int32 */
+      strava_id?: number;
+      strava_sync_activities?: boolean;
+      strava_sync_activity_types?: (
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other"
+      )[];
+      strava_sync_other_activities?: boolean;
+      suunto_download_wellness?: boolean;
+      /** Format: float */
+      suunto_hr_range?: number;
+      /** Format: date-time */
+      suunto_last_upload?: string;
+      /** Format: float */
+      suunto_outdoor_power_range?: number;
+      /** Format: float */
+      suunto_pace_range?: number;
+      suunto_scope?: string;
+      suunto_sync_activities?: boolean;
+      suunto_sync_activity_types?: (
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other"
+      )[];
+      suunto_upload_filters?: components["schemas"]["ActivityFilter"][];
+      suunto_upload_workouts?: boolean;
+      suunto_user_id?: string;
+      time_format?: string;
+      timezone?: string;
+      training_availability?: components["schemas"]["AthleteTrainingAvailability"][];
       /** Format: int32 */
       training_plan_id?: number;
       training_plan_start_date?: string;
-      training_availability?: components["schemas"]["AthleteTrainingAvailability"][];
-      recalcHrZones?: boolean;
-      applyToAll?: boolean;
-      localDate?: string;
-      password?: string;
-      icu_tags?: string[];
-      icu_notes?: string;
-      strava_authorized?: boolean;
-    };
-    CoachTick: {
-      /** Format: int32 */
-      id?: number;
-      text?: string;
-    };
-    Settings: {
+      /** Format: date-time */
+      trial_end_date?: string;
+      update_strava_name?: boolean;
       /** @enum {string} */
-      type?:
+      visibility?: "PRIVATE" | "PUBLIC" | "HIDDEN";
+      wahoo_sync_activities?: boolean;
+      wahoo_upload_workouts?: boolean;
+      wahoo_user_id?: string;
+      website?: string;
+      /** Format: float */
+      weight?: number;
+      weight_pref_lb?: boolean;
+      wellness_last_prompt_date?: string;
+      whoop_scope?: string;
+      whoop_wellness_keys?: string[];
+      /** @enum {string} */
+      wind_speed?: "MPS" | "KNOTS" | "KMH" | "MPH" | "BFT";
+      zepp_download_wellness?: boolean;
+      zepp_sync_activities?: boolean;
+      zepp_upload_workouts?: boolean;
+      zepp_user_id?: string;
+      zwift_sync_activities?: boolean;
+      zwift_upload_workouts?: boolean;
+      zwift_user_id?: string;
+    };
+    AthleteWithTags: {
+      activity_rpe_prompt?: boolean;
+      add_weather_to_strava_descr?: boolean;
+      beta_user?: boolean;
+      bikes?: components["schemas"]["StravaGear"][];
+      bio?: string;
+      city?: string;
+      coach_ticks?: components["schemas"]["CoachTick"][];
+      concept2_sync_activities?: boolean;
+      concept2_user_id?: string;
+      coros_download_wellness?: boolean;
+      /** Format: date-time */
+      coros_last_upload?: string;
+      coros_sync_activities?: boolean;
+      coros_upload_workouts?: boolean;
+      coros_user_id?: string;
+      countries?: string[];
+      country?: string;
+      currency?: string;
+      date_format?: string;
+      dropbox_scope?: string;
+      email?: string;
+      email_notifications?: (
+        | "NEWSLETTER"
+        | "ACHIEVEMENTS"
+        | "FOLLOW_REQUEST"
+        | "COACH_ME_REQUEST"
+        | "PRIVATE_CHAT"
+        | "PRIVATE_MSG"
+        | "GROUP_CHAT"
+        | "GROUP_MSG"
+        | "ACTIVITY_CHAT"
+        | "ACTIVITY_MSG"
+        | "COACH_TICK"
+        | "FOLLOWED_ACTIVITY_CHAT"
+        | "COACHED_ACTIVITY_CHAT"
+        | "FOLLOWED_NEW_ACTIVITY"
+        | "COACHED_NEW_ACTIVITY"
+        | "GEAR_ALERTS"
+        | "PLAN_FOR_WEEK"
+        | "NEW_ACTIVITY"
+      )[];
+      fahrenheit?: boolean;
+      firstname?: string;
+      /** Format: float */
+      garmin_pace_range?: number;
+      /** @enum {string} */
+      garmin_power_target?: "POWER_LAP" | "POWER" | "POWER_3S" | "POWER_10S" | "POWER_30S";
+      garmin_sync_activity_types?: (
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other"
+      )[];
+      /** Format: date-time */
+      garmin_sync_after?: string;
+      google_scope?: string;
+      google_wellness_keys?: string[];
+      has_password?: boolean;
+      has_push_subscriptions?: boolean;
+      /** Format: float */
+      height?: number;
+      /** @enum {string} */
+      height_units?: "CM" | "FEET";
+      huawei_download_wellness?: boolean;
+      huawei_sync_activities?: boolean;
+      huawei_upload_workouts?: boolean;
+      huawei_user_id?: string;
+      /** Format: date-time */
+      icu_activated?: string;
+      icu_admin?: boolean;
+      icu_api_key?: string;
+      icu_coach?: boolean;
+      icu_date_of_birth?: string;
+      icu_effort_secs?: number[];
+      icu_email_disabled?: string;
+      icu_email_verified?: boolean;
+      icu_form_as_percent?: boolean;
+      icu_friend_invite_token?: string;
+      icu_garmin_download_wellness?: boolean;
+      icu_garmin_health?: boolean;
+      /** Format: float */
+      icu_garmin_hr_range?: number;
+      /** Format: date-time */
+      icu_garmin_last_upload?: string;
+      /** Format: float */
+      icu_garmin_outdoor_power_range?: number;
+      icu_garmin_sync_activities?: boolean;
+      icu_garmin_training?: boolean;
+      icu_garmin_upload_filters?: components["schemas"]["ActivityFilter"][];
+      icu_garmin_upload_workouts?: boolean;
+      icu_garmin_wellness_keys?: string[];
+      /** Format: date-time */
+      icu_last_seen?: string;
+      /** @enum {string} */
+      icu_menstrual_cycle_perm?: "NONE" | "READ" | "WRITE";
+      /** Format: int32 */
+      icu_mmp_days?: number;
+      icu_notes?: string;
+      /** @enum {string} */
+      icu_permission?: "NONE" | "READ" | "WRITE";
+      /** Format: int32 */
+      icu_queue_pos?: number;
+      /** Format: int32 */
+      icu_resting_hr?: number;
+      icu_send_achievements?: boolean;
+      icu_send_activity_chat?: boolean;
+      icu_send_activity_msg?: boolean;
+      icu_send_coach_me_req?: boolean;
+      icu_send_coach_tick?: boolean;
+      icu_send_coached_activity_chat?: boolean;
+      icu_send_coached_new_activity?: boolean;
+      icu_send_follow_req?: boolean;
+      icu_send_followed_activity_chat?: boolean;
+      icu_send_followed_new_activity?: boolean;
+      icu_send_gear_alerts?: boolean;
+      icu_send_group_chat?: boolean;
+      icu_send_group_msg?: boolean;
+      icu_send_newsletter?: boolean;
+      icu_send_plan_for_week?: boolean;
+      icu_send_private_chat?: boolean;
+      icu_send_private_msg?: boolean;
+      icu_tags?: string[];
+      icu_track_menstrual_cycle?: boolean;
+      icu_type_settings?: components["schemas"]["Settings"][];
+      /** Format: float */
+      icu_weight?: number;
+      /** @enum {string} */
+      icu_weight_sync?: "NONE" | "STRAVA";
+      icu_wellness_keys?: string[];
+      icu_wellness_prompt?: boolean;
+      id?: string;
+      ignore_strava_gear?: boolean;
+      include_descr_in_plan_for_week?: boolean;
+      languages?: string[];
+      lastname?: string;
+      locale?: string;
+      measurement_preference?: string;
+      name?: string;
+      notification_athlete_tags_enabled?: string[];
+      /** Format: int32 */
+      open_step_duration?: number;
+      oura_scope?: string;
+      oura_wellness_keys?: string[];
+      /** @enum {string} */
+      plan?: "FREE" | "PREMIUM" | "SUPPORTER" | "WHITELABEL";
+      /** Format: date-time */
+      plan_expires?: string;
+      polar_download_wellness?: boolean;
+      polar_scope?: string;
+      polar_sync_activities?: boolean;
+      polar_sync_activity_types?: (
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other"
+      )[];
+      polar_wellness_keys?: string[];
+      private_wellness_keys?: string[];
+      profile_medium?: string;
+      push_notifications?: (
+        | "NEWSLETTER"
+        | "ACHIEVEMENTS"
+        | "FOLLOW_REQUEST"
+        | "COACH_ME_REQUEST"
+        | "PRIVATE_CHAT"
+        | "PRIVATE_MSG"
+        | "GROUP_CHAT"
+        | "GROUP_MSG"
+        | "ACTIVITY_CHAT"
+        | "ACTIVITY_MSG"
+        | "COACH_TICK"
+        | "FOLLOWED_ACTIVITY_CHAT"
+        | "COACHED_ACTIVITY_CHAT"
+        | "FOLLOWED_NEW_ACTIVITY"
+        | "COACHED_NEW_ACTIVITY"
+        | "GEAR_ALERTS"
+        | "PLAN_FOR_WEEK"
+        | "NEW_ACTIVITY"
+      )[];
+      /** @enum {string} */
+      rain?: "MM" | "INCHES";
+      scope?: string;
+      sex?: string;
+      shoes?: components["schemas"]["StravaGear"][];
+      /** Format: int32 */
+      sponsored_by_chat_id?: number;
+      state?: string;
+      /** @enum {string} */
+      status?: "ACTIVE" | "DORMANT" | "ARCHIVED";
+      /** Format: date-time */
+      status_updated?: string;
+      strava_allowed?: boolean;
+      strava_authorized?: boolean;
+      /** Format: int32 */
+      strava_id?: number;
+      strava_sync_activities?: boolean;
+      strava_sync_activity_types?: (
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other"
+      )[];
+      strava_sync_other_activities?: boolean;
+      suunto_download_wellness?: boolean;
+      /** Format: float */
+      suunto_hr_range?: number;
+      /** Format: date-time */
+      suunto_last_upload?: string;
+      /** Format: float */
+      suunto_outdoor_power_range?: number;
+      /** Format: float */
+      suunto_pace_range?: number;
+      suunto_scope?: string;
+      suunto_sync_activities?: boolean;
+      suunto_sync_activity_types?: (
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other"
+      )[];
+      suunto_upload_filters?: components["schemas"]["ActivityFilter"][];
+      suunto_upload_workouts?: boolean;
+      suunto_user_id?: string;
+      time_format?: string;
+      timezone?: string;
+      training_availability?: components["schemas"]["AthleteTrainingAvailability"][];
+      /** Format: int32 */
+      training_plan_id?: number;
+      training_plan_start_date?: string;
+      /** Format: date-time */
+      trial_end_date?: string;
+      update_strava_name?: boolean;
+      /** @enum {string} */
+      visibility?: "PRIVATE" | "PUBLIC" | "HIDDEN";
+      wahoo_sync_activities?: boolean;
+      wahoo_upload_workouts?: boolean;
+      wahoo_user_id?: string;
+      website?: string;
+      /** Format: float */
+      weight?: number;
+      weight_pref_lb?: boolean;
+      wellness_last_prompt_date?: string;
+      whoop_scope?: string;
+      whoop_wellness_keys?: string[];
+      /** @enum {string} */
+      wind_speed?: "MPS" | "KNOTS" | "KMH" | "MPH" | "BFT";
+      zepp_download_wellness?: boolean;
+      zepp_sync_activities?: boolean;
+      zepp_upload_workouts?: boolean;
+      zepp_user_id?: string;
+      zwift_sync_activities?: boolean;
+      zwift_upload_workouts?: boolean;
+      zwift_user_id?: string;
+    };
+    Attachment: {
+      filename?: string;
+      id?: string;
+      mimetype?: string;
+      url?: string;
+    };
+    BestEfforts: {
+      efforts?: components["schemas"]["Effort"][];
+    };
+    Bucket: {
+      /** Format: int32 */
+      cadence?: number;
+      /** Format: double */
+      hr?: number;
+      /** Format: int32 */
+      movingSecs?: number;
+      /** Format: int32 */
+      secs?: number;
+      /** Format: int32 */
+      start?: number;
+      /** Format: double */
+      watts?: number;
+    };
+    CategorySummary: {
+      /** Format: int32 */
+      calories?: number;
+      /** @enum {string} */
+      category?:
         | "Ride"
         | "Run"
         | "Swim"
@@ -3653,519 +4714,134 @@ export interface components {
         | "Workout"
         | "Yoga"
         | "Other";
-      /** Format: double */
-      ctlFactor?: number;
-      /** Format: double */
-      atlFactor?: number;
-    };
-    StravaGear: {
-      id?: string;
-      name?: string;
+      /** Format: int32 */
+      count?: number;
       /** Format: float */
       distance?: number;
-      primary?: boolean;
+      /** Format: float */
+      eftp?: number;
+      /** Format: float */
+      eftpPerKg?: number;
+      /** Format: int32 */
+      elapsed_time?: number;
+      /** Format: int32 */
+      moving_time?: number;
+      /** Format: int32 */
+      srpe?: number;
+      /** Format: int32 */
+      time?: number;
+      /** Format: float */
+      total_elevation_gain?: number;
+      /** Format: int32 */
+      training_load?: number;
     };
-    Athlete: {
-      id?: string;
-      name?: string;
-      firstname?: string;
-      lastname?: string;
-      profile_medium?: string;
-      measurement_preference?: string;
-      weight_pref_lb?: boolean;
-      fahrenheit?: boolean;
-      /** @enum {string} */
-      wind_speed?: "MPS" | "KNOTS" | "KMH" | "MPH" | "BFT";
-      /** @enum {string} */
-      rain?: "MM" | "INCHES";
-      /** Format: float */
-      weight?: number;
-      email?: string;
-      sex?: string;
-      city?: string;
-      state?: string;
-      country?: string;
-      countries?: string[];
-      languages?: string[];
-      bikes?: components["schemas"]["StravaGear"][];
-      shoes?: components["schemas"]["StravaGear"][];
-      timezone?: string;
-      locale?: string;
-      date_format?: string;
-      time_format?: string;
-      /** @enum {string} */
-      visibility?: "PRIVATE" | "PUBLIC" | "HIDDEN";
+    Chat: {
+      activity_id?: string;
+      athlete_id?: string;
       /** Format: date-time */
-      icu_last_seen?: string;
-      /** @enum {string} */
-      status?: "ACTIVE" | "DORMANT" | "ARCHIVED";
-      /** Format: date-time */
-      status_updated?: string;
-      /** Format: int32 */
-      icu_resting_hr?: number;
+      coaching_group?: string;
       /** Format: float */
-      icu_weight?: number;
-      /** @enum {string} */
-      icu_weight_sync?: "NONE" | "STRAVA";
-      /** Format: date-time */
-      icu_activated?: string;
-      /** Format: int32 */
-      icu_queue_pos?: number;
-      icu_admin?: boolean;
-      icu_friend_invite_token?: string;
-      /** @enum {string} */
-      icu_permission?: "NONE" | "READ" | "WRITE";
-      icu_effort_secs?: number[];
-      icu_coach?: boolean;
-      bio?: string;
-      website?: string;
-      icu_date_of_birth?: string;
-      icu_api_key?: string;
-      icu_type_settings?: components["schemas"]["Settings"][];
-      icu_form_as_percent?: boolean;
-      /** Format: int32 */
-      icu_mmp_days?: number;
-      icu_wellness_prompt?: boolean;
-      wellness_last_prompt_date?: string;
-      icu_wellness_keys?: string[];
-      private_wellness_keys?: string[];
-      icu_track_menstrual_cycle?: boolean;
-      /** @enum {string} */
-      icu_menstrual_cycle_perm?: "NONE" | "READ" | "WRITE";
-      activity_rpe_prompt?: boolean;
-      coach_ticks?: components["schemas"]["CoachTick"][];
-      icu_garmin_health?: boolean;
-      icu_garmin_training?: boolean;
-      icu_garmin_sync_activities?: boolean;
-      garmin_sync_activity_types?: (
-        | "Ride"
-        | "Run"
-        | "Swim"
-        | "WeightTraining"
-        | "Hike"
-        | "Walk"
-        | "AlpineSki"
-        | "BackcountrySki"
-        | "Badminton"
-        | "Canoeing"
-        | "Crossfit"
-        | "EBikeRide"
-        | "EMountainBikeRide"
-        | "Elliptical"
-        | "Golf"
-        | "GravelRide"
-        | "TrackRide"
-        | "Handcycle"
-        | "HighIntensityIntervalTraining"
-        | "Hockey"
-        | "IceSkate"
-        | "InlineSkate"
-        | "Kayaking"
-        | "Kitesurf"
-        | "MountainBikeRide"
-        | "Cyclocross"
-        | "NordicSki"
-        | "OpenWaterSwim"
-        | "Padel"
-        | "Pilates"
-        | "Pickleball"
-        | "Racquetball"
-        | "Rugby"
-        | "RockClimbing"
-        | "RollerSki"
-        | "Rowing"
-        | "Sail"
-        | "Skateboard"
-        | "Snowboard"
-        | "Snowshoe"
-        | "Soccer"
-        | "Squash"
-        | "StairStepper"
-        | "StandUpPaddling"
-        | "Surfing"
-        | "TableTennis"
-        | "Tennis"
-        | "TrailRun"
-        | "Transition"
-        | "Velomobile"
-        | "VirtualRide"
-        | "VirtualRow"
-        | "VirtualRun"
-        | "VirtualSki"
-        | "WaterSport"
-        | "Wheelchair"
-        | "Windsurf"
-        | "Workout"
-        | "Yoga"
-        | "Other"
-      )[];
-      /** Format: date-time */
-      garmin_sync_after?: string;
-      icu_garmin_download_wellness?: boolean;
-      icu_garmin_upload_workouts?: boolean;
-      /** Format: float */
-      icu_garmin_outdoor_power_range?: number;
-      /** Format: float */
-      icu_garmin_hr_range?: number;
-      /** Format: float */
-      garmin_pace_range?: number;
-      /** @enum {string} */
-      garmin_power_target?: "POWER_LAP" | "POWER" | "POWER_3S" | "POWER_10S" | "POWER_30S";
-      /** Format: date-time */
-      icu_garmin_last_upload?: string;
-      icu_garmin_upload_filters?: components["schemas"]["ActivityFilter"][];
-      icu_garmin_wellness_keys?: string[];
-      /** Format: int32 */
-      open_step_duration?: number;
-      polar_scope?: string;
-      polar_sync_activities?: boolean;
-      polar_sync_activity_types?: (
-        | "Ride"
-        | "Run"
-        | "Swim"
-        | "WeightTraining"
-        | "Hike"
-        | "Walk"
-        | "AlpineSki"
-        | "BackcountrySki"
-        | "Badminton"
-        | "Canoeing"
-        | "Crossfit"
-        | "EBikeRide"
-        | "EMountainBikeRide"
-        | "Elliptical"
-        | "Golf"
-        | "GravelRide"
-        | "TrackRide"
-        | "Handcycle"
-        | "HighIntensityIntervalTraining"
-        | "Hockey"
-        | "IceSkate"
-        | "InlineSkate"
-        | "Kayaking"
-        | "Kitesurf"
-        | "MountainBikeRide"
-        | "Cyclocross"
-        | "NordicSki"
-        | "OpenWaterSwim"
-        | "Padel"
-        | "Pilates"
-        | "Pickleball"
-        | "Racquetball"
-        | "Rugby"
-        | "RockClimbing"
-        | "RollerSki"
-        | "Rowing"
-        | "Sail"
-        | "Skateboard"
-        | "Snowboard"
-        | "Snowshoe"
-        | "Soccer"
-        | "Squash"
-        | "StairStepper"
-        | "StandUpPaddling"
-        | "Surfing"
-        | "TableTennis"
-        | "Tennis"
-        | "TrailRun"
-        | "Transition"
-        | "Velomobile"
-        | "VirtualRide"
-        | "VirtualRow"
-        | "VirtualRun"
-        | "VirtualSki"
-        | "WaterSport"
-        | "Wheelchair"
-        | "Windsurf"
-        | "Workout"
-        | "Yoga"
-        | "Other"
-      )[];
-      polar_download_wellness?: boolean;
-      polar_wellness_keys?: string[];
-      suunto_scope?: string;
-      suunto_user_id?: string;
-      suunto_sync_activities?: boolean;
-      suunto_sync_activity_types?: (
-        | "Ride"
-        | "Run"
-        | "Swim"
-        | "WeightTraining"
-        | "Hike"
-        | "Walk"
-        | "AlpineSki"
-        | "BackcountrySki"
-        | "Badminton"
-        | "Canoeing"
-        | "Crossfit"
-        | "EBikeRide"
-        | "EMountainBikeRide"
-        | "Elliptical"
-        | "Golf"
-        | "GravelRide"
-        | "TrackRide"
-        | "Handcycle"
-        | "HighIntensityIntervalTraining"
-        | "Hockey"
-        | "IceSkate"
-        | "InlineSkate"
-        | "Kayaking"
-        | "Kitesurf"
-        | "MountainBikeRide"
-        | "Cyclocross"
-        | "NordicSki"
-        | "OpenWaterSwim"
-        | "Padel"
-        | "Pilates"
-        | "Pickleball"
-        | "Racquetball"
-        | "Rugby"
-        | "RockClimbing"
-        | "RollerSki"
-        | "Rowing"
-        | "Sail"
-        | "Skateboard"
-        | "Snowboard"
-        | "Snowshoe"
-        | "Soccer"
-        | "Squash"
-        | "StairStepper"
-        | "StandUpPaddling"
-        | "Surfing"
-        | "TableTennis"
-        | "Tennis"
-        | "TrailRun"
-        | "Transition"
-        | "Velomobile"
-        | "VirtualRide"
-        | "VirtualRow"
-        | "VirtualRun"
-        | "VirtualSki"
-        | "WaterSport"
-        | "Wheelchair"
-        | "Windsurf"
-        | "Workout"
-        | "Yoga"
-        | "Other"
-      )[];
-      suunto_upload_workouts?: boolean;
-      /** Format: float */
-      suunto_outdoor_power_range?: number;
-      /** Format: float */
-      suunto_hr_range?: number;
-      /** Format: float */
-      suunto_pace_range?: number;
-      /** Format: date-time */
-      suunto_last_upload?: string;
-      suunto_upload_filters?: components["schemas"]["ActivityFilter"][];
-      suunto_download_wellness?: boolean;
-      coros_user_id?: string;
-      coros_sync_activities?: boolean;
-      coros_upload_workouts?: boolean;
-      coros_download_wellness?: boolean;
-      /** Format: date-time */
-      coros_last_upload?: string;
-      concept2_user_id?: string;
-      concept2_sync_activities?: boolean;
-      zepp_user_id?: string;
-      zepp_sync_activities?: boolean;
-      zepp_upload_workouts?: boolean;
-      zepp_download_wellness?: boolean;
-      huawei_user_id?: string;
-      huawei_sync_activities?: boolean;
-      huawei_upload_workouts?: boolean;
-      huawei_download_wellness?: boolean;
-      wahoo_user_id?: string;
-      wahoo_sync_activities?: boolean;
-      wahoo_upload_workouts?: boolean;
-      zwift_user_id?: string;
-      zwift_sync_activities?: boolean;
-      zwift_upload_workouts?: boolean;
-      dropbox_scope?: string;
-      oura_scope?: string;
-      oura_wellness_keys?: string[];
-      whoop_scope?: string;
-      whoop_wellness_keys?: string[];
-      google_scope?: string;
-      google_wellness_keys?: string[];
-      icu_email_verified?: boolean;
-      icu_email_disabled?: string;
-      icu_send_achievements?: boolean;
-      icu_send_newsletter?: boolean;
-      icu_send_private_chat?: boolean;
-      icu_send_private_msg?: boolean;
-      icu_send_follow_req?: boolean;
-      icu_send_group_chat?: boolean;
-      icu_send_group_msg?: boolean;
-      icu_send_activity_chat?: boolean;
-      icu_send_followed_activity_chat?: boolean;
-      icu_send_coached_activity_chat?: boolean;
-      icu_send_activity_msg?: boolean;
-      icu_send_coach_me_req?: boolean;
-      icu_send_gear_alerts?: boolean;
-      icu_send_plan_for_week?: boolean;
-      include_descr_in_plan_for_week?: boolean;
-      icu_send_followed_new_activity?: boolean;
-      icu_send_coached_new_activity?: boolean;
-      icu_send_coach_tick?: boolean;
-      strava_allowed?: boolean;
-      /** Format: int32 */
-      strava_id?: number;
-      scope?: string;
-      strava_sync_activities?: boolean;
-      strava_sync_activity_types?: (
-        | "Ride"
-        | "Run"
-        | "Swim"
-        | "WeightTraining"
-        | "Hike"
-        | "Walk"
-        | "AlpineSki"
-        | "BackcountrySki"
-        | "Badminton"
-        | "Canoeing"
-        | "Crossfit"
-        | "EBikeRide"
-        | "EMountainBikeRide"
-        | "Elliptical"
-        | "Golf"
-        | "GravelRide"
-        | "TrackRide"
-        | "Handcycle"
-        | "HighIntensityIntervalTraining"
-        | "Hockey"
-        | "IceSkate"
-        | "InlineSkate"
-        | "Kayaking"
-        | "Kitesurf"
-        | "MountainBikeRide"
-        | "Cyclocross"
-        | "NordicSki"
-        | "OpenWaterSwim"
-        | "Padel"
-        | "Pilates"
-        | "Pickleball"
-        | "Racquetball"
-        | "Rugby"
-        | "RockClimbing"
-        | "RollerSki"
-        | "Rowing"
-        | "Sail"
-        | "Skateboard"
-        | "Snowboard"
-        | "Snowshoe"
-        | "Soccer"
-        | "Squash"
-        | "StairStepper"
-        | "StandUpPaddling"
-        | "Surfing"
-        | "TableTennis"
-        | "Tennis"
-        | "TrailRun"
-        | "Transition"
-        | "Velomobile"
-        | "VirtualRide"
-        | "VirtualRow"
-        | "VirtualRun"
-        | "VirtualSki"
-        | "WaterSport"
-        | "Wheelchair"
-        | "Windsurf"
-        | "Workout"
-        | "Yoga"
-        | "Other"
-      )[];
-      strava_sync_other_activities?: boolean;
-      ignore_strava_gear?: boolean;
-      update_strava_name?: boolean;
-      add_weather_to_strava_descr?: boolean;
-      /** Format: float */
-      height?: number;
-      /** @enum {string} */
-      height_units?: "CM" | "FEET";
-      /** @enum {string} */
-      plan?: "FREE" | "PREMIUM" | "SUPPORTER" | "WHITELABEL";
-      /** Format: date-time */
-      plan_expires?: string;
-      /** Format: date-time */
-      trial_end_date?: string;
-      /** Format: int32 */
-      sponsored_by_chat_id?: number;
-      has_password?: boolean;
-      beta_user?: boolean;
-      currency?: string;
-      /** Format: int32 */
-      training_plan_id?: number;
-      training_plan_start_date?: string;
-      training_availability?: components["schemas"]["AthleteTrainingAvailability"][];
-      strava_authorized?: boolean;
-    };
-    ActivityCharts: {
-      home?: components["schemas"]["Pos"][];
-      power?: components["schemas"]["Pos"][];
-      hr?: components["schemas"]["Pos"][];
-      pace?: components["schemas"]["Pos"][];
-      data?: components["schemas"]["Pos"][];
-    };
-    Display: {
-      colorScheme?: string;
-      /** Format: int32 */
-      lowIntensity?: number;
-      /** Format: int32 */
-      highIntensity?: number;
-      /** Format: int32 */
-      lowLoad?: number;
-      /** Format: int32 */
-      highLoad?: number;
-      usePairedWorkoutColor?: boolean;
-      ignoreWorkoutColors?: boolean;
-      showAverageHR?: boolean;
-      showNormalizedWatts?: boolean;
-      showLoad?: boolean;
-      showWork?: boolean;
-      showWorkAboveFTP?: boolean;
-      showWeightLifted?: boolean;
-      showAveragePower?: boolean;
-      showRPE?: boolean;
-      showFeel?: boolean;
-      showPace?: boolean;
-      showGAP?: boolean;
-      showIntensity?: boolean;
-      showName?: boolean;
-      showIntervals?: boolean;
-      showSkylineChart?: boolean;
-      showPairedWorkoutChart?: boolean;
-      showDescription?: boolean;
-      showStartTime?: boolean;
-      preciseDistance?: boolean;
-      shrinkWarmup?: boolean;
-      shrinkCooldown?: boolean;
-      shrinkCommute?: boolean;
-      color?: string;
-      color2?: string;
-    };
-    Pos: {
-      id?: string;
-      width?: string;
-      height?: string;
-    };
-    PowerModel: {
-      /** @enum {string} */
-      type?: "MS_2P" | "MORTON_3P" | "FFT_CURVES" | "ECP";
-      /** Format: int32 */
-      criticalPower?: number;
-      /** Format: int32 */
-      wPrime?: number;
-      /** Format: int32 */
-      pMax?: number;
-      inputPointIndexes?: number[];
-      /** Format: int32 */
-      ftp?: number;
-    };
-    SportSettings: {
+      coins?: number;
+      description?: string;
+      follows_you?: string;
+      hide_members?: boolean;
       /** Format: int32 */
       id?: number;
+      /** @enum {string} */
+      join_policy?: "OPEN" | "ASK" | "INVITE_ONLY";
+      /** Format: date-time */
+      kicked?: string;
+      kicked_by_id?: string;
+      /** Format: int64 */
+      last_seen_message_id?: number;
+      members?: components["schemas"]["ChatMember"][];
+      members_cannot_chat?: boolean;
+      /** Format: date-time */
+      mute_until?: string;
+      name?: string;
+      /** Format: int32 */
+      new_message_count?: number;
+      other_athlete_id?: string;
+      other_athlete_sex?: string;
+      picture?: string;
+      primary_group?: boolean;
+      pub?: boolean;
+      /** @enum {string} */
+      role?: "MEMBER" | "FOLLOWER" | "COACH" | "ADMIN";
+      sharedFolders?: components["schemas"]["Folder"][];
+      sidebar_color?: string;
+      sidebar_dark?: boolean;
+      sidebar_logo?: string;
+      sidebar_top_color?: string;
+      slug?: string;
+      /** @enum {string} */
+      type?: "PRIVATE" | "GROUP" | "ACTIVITY";
+      /** Format: date-time */
+      updated?: string;
+      url?: string;
+      you_follow?: string;
+    };
+    ChatMember: {
+      /** Format: date-time */
+      accepted_coaching_group?: string;
       athlete_id?: string;
+      coach?: boolean;
+      name?: string;
+      /** @enum {string} */
+      plan?: "FREE" | "PREMIUM" | "SUPPORTER" | "WHITELABEL";
+      profile_medium?: string;
+      /** @enum {string} */
+      role?: "MEMBER" | "FOLLOWER" | "COACH" | "ADMIN";
+    };
+    Closest: {
+      /** Format: int32 */
+      p1_index?: number;
+      /** Format: int32 */
+      p2_index?: number;
+      /** Format: int32 */
+      p3_index?: number;
+      /** Format: int32 */
+      start_secs?: number;
+    };
+    CoachTick: {
+      /** Format: int32 */
+      id?: number;
+      text?: string;
+    };
+    Course: {
+      /** Format: float */
+      average_altitude?: number;
+      bounds?: number[][];
+      /** Format: date-time */
+      created?: string;
+      description?: string;
+      /** Format: float */
+      distance?: number;
+      /** Format: int32 */
+      file_sport_index?: number;
+      file_type?: string;
+      full?: boolean;
+      /** Format: int32 */
+      id?: number;
+      latlngs?: number[][];
+      markers?: components["schemas"]["Marker"][];
+      /** Format: float */
+      max_altitude?: number;
+      /** Format: float */
+      min_altitude?: number;
+      name?: string;
+      /** Format: int32 */
+      shared_event_id?: number;
+      /** Format: float */
+      start_lat?: number;
+      /** Format: float */
+      start_lng?: number;
+      start_time?: string;
+      streams?: components["schemas"]["ActivityStream"][];
+      /** Format: float */
+      total_elevation_gain?: number;
+      /** Format: float */
+      total_elevation_loss?: number;
       types?: (
         | "Ride"
         | "Run"
@@ -4228,1000 +4904,13 @@ export interface components {
         | "Yoga"
         | "Other"
       )[];
-      /** Format: int32 */
-      warmup_time?: number;
-      /** Format: int32 */
-      cooldown_time?: number;
-      /** Format: int32 */
-      ftp?: number;
-      /** Format: int32 */
-      indoor_ftp?: number;
-      /** Format: int32 */
-      w_prime?: number;
-      /** Format: int32 */
-      p_max?: number;
-      power_zones?: number[];
-      /** Format: int32 */
-      sweet_spot_min?: number;
-      /** Format: int32 */
-      sweet_spot_max?: number;
-      /** Format: int32 */
-      power_spike_threshold?: number;
-      power_zone_names?: string[];
-      /** Format: int32 */
-      ftp_est_min_secs?: number;
-      use_laps_for_power_intervals?: boolean;
-      keep_all_laps_for_power_intervals?: boolean;
-      power_intervals_start_locked?: boolean;
-      /** Format: int32 */
-      after_kj0?: number;
-      /** Format: int32 */
-      after_kj1?: number;
-      power_field?: string;
-      /** Format: int32 */
-      lthr?: number;
-      /** Format: int32 */
-      max_hr?: number;
-      hr_zones?: number[];
-      hr_zone_names?: string[];
-      /** @enum {string} */
-      hr_load_type?: "AVG_HR" | "HR_ZONES" | "HRSS";
-      /** Format: float */
-      hrrc_min_percent?: number;
-      /** Format: float */
-      threshold_pace?: number;
-      /** @enum {string} */
-      pace_units?:
-        | "SECS_100M"
-        | "SECS_100Y"
-        | "MINS_KM"
-        | "MINS_MILE"
-        | "SECS_500M"
-        | "SECS_400M"
-        | "SECS_250M"
-        | "NONE";
-      pace_zones?: number[];
-      pace_zone_names?: string[];
-      /** @enum {string} */
-      pace_load_type?: "SWIM" | "RUN";
-      /** @enum {string} */
-      gap_model?: "NONE" | "STRAVA_RUN";
-      /** @enum {string} */
-      elevation_correction?: "NO" | "AUTO" | "YES";
-      use_gap_zone_times?: boolean;
-      best_effort_distances?: number[];
-      /** Format: float */
-      pace_curve_start?: number;
-      /** @enum {string} */
-      load_order?:
-        | "POWER_HR_PACE"
-        | "POWER_PACE_HR"
-        | "HR_POWER_PACE"
-        | "HR_PACE_POWER"
-        | "PACE_POWER_HR"
-        | "PACE_HR_POWER";
-      /** @enum {string} */
-      tiz_order?:
-        | "POWER_HR_PACE"
-        | "POWER_PACE_HR"
-        | "HR_POWER_PACE"
-        | "HR_PACE_POWER"
-        | "PACE_POWER_HR"
-        | "PACE_HR_POWER";
-      /** @enum {string} */
-      workout_order?:
-        | "POWER_HR_PACE"
-        | "POWER_PACE_HR"
-        | "HR_POWER_PACE"
-        | "HR_PACE_POWER"
-        | "PACE_POWER_HR"
-        | "PACE_HR_POWER";
-      /** @enum {string} */
-      interval_display?:
-        | "POWER_HR_PACE"
-        | "POWER_PACE_HR"
-        | "HR_POWER_PACE"
-        | "HR_PACE_POWER"
-        | "PACE_POWER_HR"
-        | "PACE_HR_POWER";
-      default_gear_id?: string;
-      default_indoor_gear_id?: string;
-      extract_workouts?: boolean;
-      /** Format: int32 */
-      show_pauses?: number;
-      ignore_velocity?: boolean;
-      default_workout_time?: string;
-      update_activity_name_from_workout?: boolean;
-      /** Format: date-time */
-      created?: string;
       /** Format: date-time */
       updated?: string;
-      mmp_model?: components["schemas"]["PowerModel"];
-      display?: components["schemas"]["Display"];
-      activity_field_ids?: number[];
-      activity_charts?: components["schemas"]["ActivityCharts"];
-      custom_field_ids?: number[];
-      custom_field_values?: {
-        [key: string]: Record<string, never>;
-      };
-      custom_zones_ids?: number[];
-      /** Format: int32 */
-      calendar_tile_activity_panel_id?: number;
-      other?: boolean;
-      iseFTPSupported?: boolean;
-      use_distance_for_intervals?: boolean;
-    };
-    UpdateStreamsResult: {
-      updated?: string[];
-      deleted?: string[];
-    };
-    ActivityStream: {
-      type?: string;
-      name?: string;
-      data?: Record<string, never>;
-      data2?: Record<string, never>;
-      valueTypeIsArray?: boolean;
-      anomalies?: components["schemas"]["Anomaly"][];
-      custom?: boolean;
-      allNull?: boolean;
-    };
-    Anomaly: {
-      /** Format: int32 */
-      start_index?: number;
-      /** Format: int32 */
-      end_index?: number;
-      /** Format: int32 */
-      value?: number;
-      /** Format: int32 */
-      valueEnd?: number;
-    };
-    Interval: {
-      /** Format: int32 */
-      start_index?: number;
-      /** Format: float */
-      distance?: number;
-      /** Format: int32 */
-      moving_time?: number;
-      /** Format: int32 */
-      elapsed_time?: number;
-      /** Format: int32 */
-      average_watts?: number;
-      /** Format: int32 */
-      average_watts_alt?: number;
-      /** Format: int32 */
-      average_watts_alt_acc?: number;
-      /** Format: int32 */
-      min_watts?: number;
-      /** Format: int32 */
-      max_watts?: number;
-      /** Format: float */
-      average_watts_kg?: number;
-      /** Format: float */
-      max_watts_kg?: number;
-      /** Format: int32 */
-      intensity?: number;
-      /** Format: float */
-      w5s_variability?: number;
-      /** Format: int32 */
-      weighted_average_watts?: number;
-      /** Format: float */
-      training_load?: number;
-      /** Format: int32 */
-      joules?: number;
-      /** Format: int32 */
-      joules_above_ftp?: number;
-      /** Format: float */
-      decoupling?: number;
-      /** Format: float */
-      avg_lr_balance?: number;
-      /** Format: float */
-      average_dfa_a1?: number;
-      /** Format: float */
-      average_epoc?: number;
-      /** Format: int32 */
-      wbal_start?: number;
-      /** Format: int32 */
-      wbal_end?: number;
-      /** Format: float */
-      average_respiration?: number;
-      /** Format: float */
-      average_tidal_volume?: number;
-      /** Format: float */
-      average_tidal_volume_min?: number;
-      /** Format: int32 */
-      zone?: number;
-      /** Format: int32 */
-      zone_min_watts?: number;
-      /** Format: int32 */
-      zone_max_watts?: number;
-      /** Format: float */
-      average_speed?: number;
-      /** Format: float */
-      min_speed?: number;
-      /** Format: float */
-      max_speed?: number;
-      /** Format: float */
-      gap?: number;
-      /** Format: int32 */
-      average_heartrate?: number;
-      /** Format: int32 */
-      min_heartrate?: number;
-      /** Format: int32 */
-      max_heartrate?: number;
-      /** Format: float */
-      average_cadence?: number;
-      /** Format: int32 */
-      min_cadence?: number;
-      /** Format: int32 */
-      max_cadence?: number;
-      /** Format: float */
-      average_torque?: number;
-      /** Format: float */
-      min_torque?: number;
-      /** Format: float */
-      max_torque?: number;
-      /** Format: float */
-      total_elevation_gain?: number;
-      /** Format: float */
-      min_altitude?: number;
-      /** Format: float */
-      max_altitude?: number;
-      /** Format: float */
-      average_gradient?: number;
-      /** Format: float */
-      average_smo2?: number;
-      /** Format: float */
-      average_thb?: number;
-      /** Format: float */
-      average_smo2_2?: number;
-      /** Format: float */
-      average_thb_2?: number;
-      /** Format: float */
-      average_lactate?: number;
-      /** Format: float */
-      min_lactate?: number;
-      /** Format: float */
-      max_lactate?: number;
-      /** Format: float */
-      average_temp?: number;
-      /** Format: float */
-      average_weather_temp?: number;
-      /** Format: float */
-      average_feels_like?: number;
-      /** Format: float */
-      average_wind_speed?: number;
-      /** Format: float */
-      average_wind_gust?: number;
-      /** Format: int32 */
-      prevailing_wind_deg?: number;
-      /** Format: float */
-      average_yaw?: number;
-      /** Format: float */
-      headwind_percent?: number;
-      /** Format: float */
-      tailwind_percent?: number;
-      /** Format: float */
-      strain_score?: number;
-      /** Format: float */
-      ss_p_max?: number;
-      /** Format: float */
-      ss_w_prime?: number;
-      /** Format: float */
-      ss_cp?: number;
-      /** Format: int32 */
-      id?: number;
-      /** @enum {string} */
-      type?: "RECOVERY" | "WORK";
-      /** Format: int32 */
-      end_index?: number;
-      group_id?: string;
-      segment_effort_ids?: number[];
-      /** Format: int32 */
-      start_time?: number;
-      /** Format: int32 */
-      end_time?: number;
-      label?: string;
-      /** Format: float */
-      average_stride?: number;
-    };
-    IntervalGroup: {
-      /** Format: int32 */
-      start_index?: number;
-      /** Format: float */
-      distance?: number;
-      /** Format: int32 */
-      moving_time?: number;
-      /** Format: int32 */
-      elapsed_time?: number;
-      /** Format: int32 */
-      average_watts?: number;
-      /** Format: int32 */
-      average_watts_alt?: number;
-      /** Format: int32 */
-      average_watts_alt_acc?: number;
-      /** Format: int32 */
-      min_watts?: number;
-      /** Format: int32 */
-      max_watts?: number;
-      /** Format: float */
-      average_watts_kg?: number;
-      /** Format: float */
-      max_watts_kg?: number;
-      /** Format: int32 */
-      intensity?: number;
-      /** Format: float */
-      w5s_variability?: number;
-      /** Format: int32 */
-      weighted_average_watts?: number;
-      /** Format: float */
-      training_load?: number;
-      /** Format: int32 */
-      joules?: number;
-      /** Format: int32 */
-      joules_above_ftp?: number;
-      /** Format: float */
-      decoupling?: number;
-      /** Format: float */
-      avg_lr_balance?: number;
-      /** Format: float */
-      average_dfa_a1?: number;
-      /** Format: float */
-      average_epoc?: number;
-      /** Format: int32 */
-      wbal_start?: number;
-      /** Format: int32 */
-      wbal_end?: number;
-      /** Format: float */
-      average_respiration?: number;
-      /** Format: float */
-      average_tidal_volume?: number;
-      /** Format: float */
-      average_tidal_volume_min?: number;
-      /** Format: int32 */
-      zone?: number;
-      /** Format: int32 */
-      zone_min_watts?: number;
-      /** Format: int32 */
-      zone_max_watts?: number;
-      /** Format: float */
-      average_speed?: number;
-      /** Format: float */
-      min_speed?: number;
-      /** Format: float */
-      max_speed?: number;
-      /** Format: float */
-      gap?: number;
-      /** Format: int32 */
-      average_heartrate?: number;
-      /** Format: int32 */
-      min_heartrate?: number;
-      /** Format: int32 */
-      max_heartrate?: number;
-      /** Format: float */
-      average_cadence?: number;
-      /** Format: int32 */
-      min_cadence?: number;
-      /** Format: int32 */
-      max_cadence?: number;
-      /** Format: float */
-      average_torque?: number;
-      /** Format: float */
-      min_torque?: number;
-      /** Format: float */
-      max_torque?: number;
-      /** Format: float */
-      total_elevation_gain?: number;
-      /** Format: float */
-      min_altitude?: number;
-      /** Format: float */
-      max_altitude?: number;
-      /** Format: float */
-      average_gradient?: number;
-      /** Format: float */
-      average_smo2?: number;
-      /** Format: float */
-      average_thb?: number;
-      /** Format: float */
-      average_smo2_2?: number;
-      /** Format: float */
-      average_thb_2?: number;
-      /** Format: float */
-      average_lactate?: number;
-      /** Format: float */
-      min_lactate?: number;
-      /** Format: float */
-      max_lactate?: number;
-      /** Format: float */
-      average_temp?: number;
-      /** Format: float */
-      average_weather_temp?: number;
-      /** Format: float */
-      average_feels_like?: number;
-      /** Format: float */
-      average_wind_speed?: number;
-      /** Format: float */
-      average_wind_gust?: number;
-      /** Format: int32 */
-      prevailing_wind_deg?: number;
-      /** Format: float */
-      average_yaw?: number;
-      /** Format: float */
-      headwind_percent?: number;
-      /** Format: float */
-      tailwind_percent?: number;
-      /** Format: float */
-      strain_score?: number;
-      /** Format: float */
-      ss_p_max?: number;
-      /** Format: float */
-      ss_w_prime?: number;
-      /** Format: float */
-      ss_cp?: number;
-      id?: string;
-      /** Format: int32 */
-      count?: number;
-      /** Format: float */
-      average_stride?: number;
-    };
-    IntervalsDTO: {
-      id?: string;
+      weather?: components["schemas"]["ActivityWeather"];
       /** Format: date-time */
-      analyzed?: string;
-      icu_intervals?: components["schemas"]["Interval"][];
-      icu_groups?: components["schemas"]["IntervalGroup"][];
-    };
-    Activity: {
-      id?: string;
-      start_date_local?: string;
-      type?: string;
-      icu_ignore_time?: boolean;
-      /** Format: int32 */
-      icu_pm_cp?: number;
-      /** Format: int32 */
-      icu_pm_w_prime?: number;
-      /** Format: int32 */
-      icu_pm_p_max?: number;
-      /** Format: int32 */
-      icu_pm_ftp?: number;
-      /** Format: int32 */
-      icu_pm_ftp_secs?: number;
-      /** Format: int32 */
-      icu_pm_ftp_watts?: number;
-      icu_ignore_power?: boolean;
-      /** Format: float */
-      icu_rolling_cp?: number;
-      /** Format: float */
-      icu_rolling_w_prime?: number;
-      /** Format: float */
-      icu_rolling_p_max?: number;
-      /** Format: int32 */
-      icu_rolling_ftp?: number;
-      /** Format: int32 */
-      icu_rolling_ftp_delta?: number;
-      /** Format: int32 */
-      icu_training_load?: number;
-      /** Format: float */
-      icu_atl?: number;
-      /** Format: float */
-      icu_ctl?: number;
-      /** Format: float */
-      ss_p_max?: number;
-      /** Format: float */
-      ss_w_prime?: number;
-      /** Format: float */
-      ss_cp?: number;
-      /** Format: int32 */
-      paired_event_id?: number;
-      /** Format: int32 */
-      icu_ftp?: number;
-      /** Format: int32 */
-      icu_joules?: number;
-      /** Format: int32 */
-      icu_recording_time?: number;
-      /** Format: int32 */
-      elapsed_time?: number;
-      /** Format: int32 */
-      icu_weighted_avg_watts?: number;
-      /** Format: int32 */
-      carbs_used?: number;
-      name?: string;
-      description?: string;
-      start_date?: string;
-      /** Format: float */
-      distance?: number;
-      /** Format: float */
-      icu_distance?: number;
-      /** Format: int32 */
-      moving_time?: number;
-      /** Format: int32 */
-      coasting_time?: number;
-      /** Format: float */
-      total_elevation_gain?: number;
-      /** Format: float */
-      total_elevation_loss?: number;
-      timezone?: string;
-      trainer?: boolean;
-      /** @enum {string} */
-      sub_type?: "NONE" | "COMMUTE" | "WARMUP" | "COOLDOWN" | "RACE";
-      commute?: boolean;
-      race?: boolean;
-      /** Format: float */
-      max_speed?: number;
-      /** Format: float */
-      average_speed?: number;
-      device_watts?: boolean;
-      has_heartrate?: boolean;
-      /** Format: int32 */
-      max_heartrate?: number;
-      /** Format: int32 */
-      average_heartrate?: number;
-      /** Format: float */
-      average_cadence?: number;
-      /** Format: int32 */
-      calories?: number;
-      /** Format: float */
-      average_temp?: number;
-      /** Format: int32 */
-      min_temp?: number;
-      /** Format: int32 */
-      max_temp?: number;
-      /** Format: float */
-      avg_lr_balance?: number;
-      /** Format: float */
-      gap?: number;
-      /** @enum {string} */
-      gap_model?: "NONE" | "STRAVA_RUN";
-      use_elevation_correction?: boolean;
-      gear?: components["schemas"]["StravaGear"];
-      /** Format: float */
-      perceived_exertion?: number;
-      device_name?: string;
-      power_meter?: string;
-      power_meter_serial?: string;
-      power_meter_battery?: string;
-      /** Format: float */
-      crank_length?: number;
-      external_id?: string;
-      /** Format: int32 */
-      file_sport_index?: number;
-      file_type?: string;
-      icu_athlete_id?: string;
-      /** Format: date-time */
-      created?: string;
-      /** Format: date-time */
-      icu_sync_date?: string;
-      /** Format: date-time */
-      analyzed?: string;
-      /** Format: int32 */
-      icu_w_prime?: number;
-      /** Format: int32 */
-      p_max?: number;
-      /** Format: float */
-      threshold_pace?: number;
-      icu_hr_zones?: number[];
-      pace_zones?: number[];
-      /** Format: int32 */
-      lthr?: number;
-      /** Format: int32 */
-      icu_resting_hr?: number;
-      /** Format: float */
-      icu_weight?: number;
-      icu_power_zones?: number[];
-      /** Format: int32 */
-      icu_sweet_spot_min?: number;
-      /** Format: int32 */
-      icu_sweet_spot_max?: number;
-      /** Format: int32 */
-      icu_power_spike_threshold?: number;
-      /** Format: float */
-      trimp?: number;
-      /** Format: int32 */
-      icu_warmup_time?: number;
-      /** Format: int32 */
-      icu_cooldown_time?: number;
-      /** Format: int32 */
-      icu_chat_id?: number;
-      icu_ignore_hr?: boolean;
-      ignore_velocity?: boolean;
-      ignore_pace?: boolean;
-      ignore_parts?: components["schemas"]["Ignore"][];
-      /** Format: int32 */
-      icu_training_load_data?: number;
-      interval_summary?: string[];
-      skyline_chart_bytes?: string[];
-      stream_types?: string[];
-      has_weather?: boolean;
-      has_segments?: boolean;
-      power_field_names?: string[];
-      power_field?: string;
-      icu_zone_times?: components["schemas"]["ZoneTime"][];
-      icu_hr_zone_times?: number[];
-      pace_zone_times?: number[];
-      gap_zone_times?: number[];
-      use_gap_zone_times?: boolean;
-      custom_zones?: components["schemas"]["ZoneSet"][];
-      /** @enum {string} */
-      tiz_order?:
-        | "POWER_HR_PACE"
-        | "POWER_PACE_HR"
-        | "HR_POWER_PACE"
-        | "HR_PACE_POWER"
-        | "PACE_POWER_HR"
-        | "PACE_HR_POWER";
-      /** Format: float */
-      polarization_index?: number;
-      icu_achievements?: components["schemas"]["IcuAchievement"][];
-      icu_intervals_edited?: boolean;
-      lock_intervals?: boolean;
-      /** Format: int32 */
-      icu_lap_count?: number;
-      /** Format: int32 */
-      icu_joules_above_ftp?: number;
-      /** Format: int32 */
-      icu_max_wbal_depletion?: number;
-      icu_hrr?: components["schemas"]["HRRecovery"];
-      icu_sync_error?: string;
-      icu_color?: string;
-      /** Format: float */
-      icu_power_hr_z2?: number;
-      /** Format: int32 */
-      icu_power_hr_z2_mins?: number;
-      /** Format: int32 */
-      icu_cadence_z2?: number;
-      /** Format: int32 */
-      icu_rpe?: number;
-      /** Format: int32 */
-      feel?: number;
-      /** Format: float */
-      kg_lifted?: number;
-      /** Format: float */
-      decoupling?: number;
-      /** Format: int32 */
-      icu_median_time_delta?: number;
-      /** Format: float */
-      p30s_exponent?: number;
-      /** Format: int32 */
-      workout_shift_secs?: number;
-      strava_id?: string;
-      /** Format: int32 */
-      lengths?: number;
-      /** Format: float */
-      pool_length?: number;
-      /** Format: float */
-      compliance?: number;
-      /** Format: int32 */
-      coach_tick?: number;
-      /** @enum {string} */
-      source?:
-        | "STRAVA"
-        | "UPLOAD"
-        | "MANUAL"
-        | "GARMIN_CONNECT"
-        | "OAUTH_CLIENT"
-        | "DROPBOX"
-        | "POLAR"
-        | "SUUNTO"
-        | "COROS"
-        | "WAHOO"
-        | "ZWIFT"
-        | "ZEPP"
-        | "CONCEPT2"
-        | "HUAWEI";
-      /** Format: int32 */
-      oauth_client_id?: number;
-      oauth_client_name?: string;
-      /** Format: float */
-      average_altitude?: number;
-      /** Format: float */
-      min_altitude?: number;
-      /** Format: float */
-      max_altitude?: number;
-      /** Format: int32 */
-      power_load?: number;
-      /** Format: int32 */
-      hr_load?: number;
-      /** Format: int32 */
-      pace_load?: number;
-      /** @enum {string} */
-      hr_load_type?: "AVG_HR" | "HR_ZONES" | "HRSS";
-      /** @enum {string} */
-      pace_load_type?: "SWIM" | "RUN";
-      tags?: string[];
-      attachments?: components["schemas"]["Attachment"][];
-      recording_stops?: number[];
-      /** Format: float */
-      average_weather_temp?: number;
-      /** Format: float */
-      min_weather_temp?: number;
-      /** Format: float */
-      max_weather_temp?: number;
-      /** Format: float */
-      average_feels_like?: number;
-      /** Format: float */
-      min_feels_like?: number;
-      /** Format: float */
-      max_feels_like?: number;
-      /** Format: float */
-      average_wind_speed?: number;
-      /** Format: float */
-      average_wind_gust?: number;
-      /** Format: int32 */
-      prevailing_wind_deg?: number;
-      /** Format: float */
-      headwind_percent?: number;
-      /** Format: float */
-      tailwind_percent?: number;
-      /** Format: int32 */
-      average_clouds?: number;
-      /** Format: float */
-      max_rain?: number;
-      /** Format: float */
-      max_snow?: number;
-      /** Format: int32 */
-      carbs_ingested?: number;
-      /** Format: int64 */
-      route_id?: number;
-      /** Format: float */
-      pace?: number;
-      /** Format: int32 */
-      athlete_max_hr?: number;
-      group?: string;
-      /** Format: float */
-      icu_intensity?: number;
-      /** Format: float */
-      icu_efficiency_factor?: number;
-      /** Format: float */
-      icu_power_hr?: number;
-      /** Format: int32 */
-      session_rpe?: number;
-      /** Format: float */
-      average_stride?: number;
-      /** Format: int32 */
-      icu_average_watts?: number;
-      /** Format: float */
-      icu_variability_index?: number;
-      /** Format: float */
-      strain_score?: number;
-    };
-    DataCurvePt: {
-      /** Format: int32 */
-      start_index?: number;
-      /** Format: int32 */
-      end_index?: number;
-      /** Format: int32 */
-      secs?: number;
-      /** Format: int32 */
-      value?: number;
-    };
-    HRRecovery: {
-      /** Format: int32 */
-      start_index?: number;
-      /** Format: int32 */
-      end_index?: number;
-      /** Format: int32 */
-      start_time?: number;
-      /** Format: int32 */
-      end_time?: number;
-      /** Format: int32 */
-      start_bpm?: number;
-      /** Format: int32 */
-      end_bpm?: number;
-      /** Format: int32 */
-      average_watts?: number;
-      /** Format: int32 */
-      hrr?: number;
-    };
-    IcuAchievement: {
-      id?: string;
-      /** @enum {string} */
-      type?: "BEST_POWER" | "FTP_UP" | "LTHR_UP" | "BEST_PACE";
-      message?: string;
-      /** Format: int32 */
-      watts?: number;
-      /** Format: int32 */
-      secs?: number;
-      /** Format: int32 */
-      value?: number;
-      /** Format: float */
-      distance?: number;
-      /** Format: float */
-      pace?: number;
-      point?: components["schemas"]["DataCurvePt"];
-    };
-    Ignore: {
-      /** Format: int32 */
-      start_index?: number;
-      /** Format: int32 */
-      end_index?: number;
-      power?: boolean;
-      pace?: boolean;
-      hr?: boolean;
-    };
-    ZoneInfo: {
-      id?: string;
-      /** Format: float */
-      start?: number;
-      /** Format: float */
-      end?: number;
-      /** Format: float */
-      start_value?: number;
-      /** Format: float */
-      end_value?: number;
-      /** Format: int32 */
-      secs?: number;
-    };
-    ZoneSet: {
-      code?: string;
-      zones?: components["schemas"]["ZoneInfo"][];
-    };
-    ZoneTime: {
-      id?: string;
-      /** Format: int32 */
-      secs?: number;
-    };
-    NewMessage: {
-      /** Format: int64 */
-      id?: number;
-      athlete_id?: string;
-      name?: string;
-      /** Format: date-time */
-      created?: string;
-      /** @enum {string} */
-      type?:
-        | "TEXT"
-        | "FOLLOW_REQ"
-        | "COACH_REQ"
-        | "COACH_ME_REQ"
-        | "ACTIVITY"
-        | "NOTE"
-        | "JOIN_REQ"
-        | "ACCEPT_COACHING_GROUP";
-      content?: string;
-      activity_id?: string;
-      /** Format: int32 */
-      start_index?: number;
-      /** Format: int32 */
-      end_index?: number;
-      answer?: string;
-      activity?: components["schemas"]["Activity"];
-      attachment_url?: string;
-      attachment_mime_type?: string;
-      /** Format: date-time */
-      deleted?: string;
-      deleted_by_id?: string;
-      /** Format: int32 */
-      join_group_id?: number;
-      /** Format: int32 */
-      accept_coaching_group_id?: number;
-      seen?: boolean;
-      /** Format: int32 */
-      chat_id?: number;
-      to_athlete_id?: string;
-      to_activity_id?: string;
-      askACoach?: boolean;
-      attachment_id?: string;
-    };
-    Chat: {
-      /** Format: int32 */
-      id?: number;
-      /** @enum {string} */
-      type?: "PRIVATE" | "GROUP" | "ACTIVITY";
-      /** Format: date-time */
-      coaching_group?: string;
-      /** Format: date-time */
-      updated?: string;
-      name?: string;
-      picture?: string;
-      description?: string;
-      url?: string;
-      slug?: string;
-      pub?: boolean;
-      /** @enum {string} */
-      join_policy?: "OPEN" | "ASK" | "INVITE_ONLY";
-      sidebar_logo?: string;
-      sidebar_color?: string;
-      sidebar_dark?: boolean;
-      sidebar_top_color?: string;
-      hide_members?: boolean;
-      members_cannot_chat?: boolean;
-      primary_group?: boolean;
-      /** Format: float */
-      coins?: number;
-      members?: components["schemas"]["ChatMember"][];
-      athlete_id?: string;
-      activity_id?: string;
-      other_athlete_id?: string;
-      other_athlete_sex?: string;
-      follows_you?: string;
-      you_follow?: string;
-      /** @enum {string} */
-      role?: "MEMBER" | "FOLLOWER" | "COACH" | "ADMIN";
-      /** Format: int32 */
-      new_message_count?: number;
-      /** Format: date-time */
-      kicked?: string;
-      kicked_by_id?: string;
-      /** Format: int64 */
-      last_seen_message_id?: number;
-      /** Format: date-time */
-      mute_until?: string;
-      sharedFolders?: components["schemas"]["Folder"][];
-    };
-    ChatMember: {
-      athlete_id?: string;
-      name?: string;
-      profile_medium?: string;
-      /** @enum {string} */
-      role?: "MEMBER" | "FOLLOWER" | "COACH" | "ADMIN";
-      coach?: boolean;
-      /** @enum {string} */
-      plan?: "FREE" | "PREMIUM" | "SUPPORTER" | "WHITELABEL";
-      /** Format: date-time */
-      accepted_coaching_group?: string;
-    };
-    Message: {
-      /** Format: int64 */
-      id?: number;
-      athlete_id?: string;
-      name?: string;
-      /** Format: date-time */
-      created?: string;
-      /** @enum {string} */
-      type?:
-        | "TEXT"
-        | "FOLLOW_REQ"
-        | "COACH_REQ"
-        | "COACH_ME_REQ"
-        | "ACTIVITY"
-        | "NOTE"
-        | "JOIN_REQ"
-        | "ACCEPT_COACHING_GROUP";
-      content?: string;
-      activity_id?: string;
-      /** Format: int32 */
-      start_index?: number;
-      /** Format: int32 */
-      end_index?: number;
-      answer?: string;
-      activity?: components["schemas"]["Activity"];
-      attachment_url?: string;
-      attachment_mime_type?: string;
-      /** Format: date-time */
-      deleted?: string;
-      deleted_by_id?: string;
-      /** Format: int32 */
-      join_group_id?: number;
-      /** Format: int32 */
-      accept_coaching_group_id?: number;
-      seen?: boolean;
-    };
-    SendResponse: {
-      /** Format: int64 */
-      id?: number;
-      message?: components["schemas"]["Message"];
-      new_chat?: components["schemas"]["Chat"];
+      weather_updated?: string;
     };
     CreateFolderDTO: {
-      athlete_id?: string;
-      /** Format: int32 */
-      id?: number;
-      /** @enum {string} */
-      type?: "FOLDER" | "PLAN";
-      name?: string;
-      description?: string;
-      children?: components["schemas"]["Workout"][];
-      /** @enum {string} */
-      visibility?: "PRIVATE" | "PUBLIC";
-      start_date_local?: string;
-      /** Format: int32 */
-      rollout_weeks?: number;
-      /** Format: int32 */
-      auto_rollout_day?: number;
-      read_only_workouts?: boolean;
-      /** Format: int32 */
-      starting_ctl?: number;
-      /** Format: int32 */
-      starting_atl?: number;
       activity_types?: (
         | "Ride"
         | "Run"
@@ -5284,48 +4973,67 @@ export interface components {
         | "Yoga"
         | "Other"
       )[];
+      athlete_id?: string;
       /** Format: int32 */
-      num_workouts?: number;
+      auto_rollout_day?: number;
+      blurb?: string;
+      canEdit?: boolean;
+      children?: components["schemas"]["Workout"][];
+      /** Format: int32 */
+      copy_folder_id?: number;
+      description?: string;
       /** Format: int32 */
       duration_weeks?: number;
       /** Format: int32 */
+      hours_per_week_max?: number;
+      /** Format: int32 */
       hours_per_week_min?: number;
       /** Format: int32 */
-      hours_per_week_max?: number;
-      workout_targets?: ("AUTO" | "POWER" | "HR" | "PACE")[];
-      blurb?: string;
-      canEdit?: boolean;
+      id?: number;
+      name?: string;
+      /** Format: int32 */
+      num_workouts?: number;
+      owner?: components["schemas"]["AthleteSearchResult"];
+      read_only_workouts?: boolean;
+      /** Format: int32 */
+      rollout_weeks?: number;
+      shareToken?: string;
       /** Format: int32 */
       sharedWithCount?: number;
-      shareToken?: string;
-      owner?: components["schemas"]["AthleteSearchResult"];
-      /** Format: int32 */
-      copy_folder_id?: number;
-    };
-    ApplyPlanDTO: {
       start_date_local?: string;
       /** Format: int32 */
-      folder_id?: number;
-      extra_workouts?: components["schemas"]["Workout"][];
+      starting_atl?: number;
+      /** Format: int32 */
+      starting_ctl?: number;
+      /** @enum {string} */
+      type?: "FOLDER" | "PLAN";
+      /** @enum {string} */
+      visibility?: "PRIVATE" | "PUBLIC";
+      workout_targets?: ("AUTO" | "POWER" | "HR" | "PACE")[];
     };
-    DuplicateWorkoutsDTO: {
-      /** Format: int32 */
-      numCopies?: number;
-      /** Format: int32 */
-      weeksBetween?: number;
-      workoutIds?: number[];
+    Curve: {
+      coefficients?: number[];
+      id?: string;
+      /** Format: double */
+      r2?: number;
     };
-    DuplicateEventsDTO: {
+    CustomItem: {
+      athlete_id?: string;
+      content?: {
+        [key: string]: Record<string, never>;
+      };
+      description?: string;
+      from_athlete?: components["schemas"]["AthleteSearchResult"];
       /** Format: int32 */
-      numCopies?: number;
-      /** Format: int32 */
-      weeksBetween?: number;
-      eventIds?: number[];
-    };
-    NewCustomItem: {
+      from_id?: number;
+      hidden_by_id?: string;
+      hide_script?: boolean;
       /** Format: int32 */
       id?: number;
-      athlete_id?: string;
+      image?: string;
+      /** Format: int32 */
+      index?: number;
+      name?: string;
       /** @enum {string} */
       type?:
         | "FITNESS_CHART"
@@ -5341,474 +5049,1511 @@ export interface components {
         | "ACTIVITY_MAP"
         | "ACTIVITY_PANEL"
         | "ZONES";
-      /** @enum {string} */
-      visibility?: "PRIVATE" | "FOLLOWERS" | "PUBLIC";
-      name?: string;
-      description?: string;
-      image?: string;
-      content?: {
-        [key: string]: Record<string, never>;
-      };
-      /** Format: int32 */
-      usage_count?: number;
-      /** Format: int32 */
-      index?: number;
-      hide_script?: boolean;
-      hidden_by_id?: string;
       /** Format: date-time */
       updated?: string;
-      from_athlete?: components["schemas"]["AthleteSearchResult"];
       /** Format: int32 */
-      from_id?: number;
-      required_items_created?: components["schemas"]["NewCustomItem"][];
+      usage_count?: number;
+      /** @enum {string} */
+      visibility?: "PRIVATE" | "FOLLOWERS" | "PUBLIC";
     };
-    ActivityId: {
+    DataCurve: {
+      activity_id?: string[];
+      /** Format: int32 */
+      after_kj?: number;
+      /** Format: int32 */
+      days?: number;
+      distance?: number[];
+      end_date_local?: string;
+      end_index?: number[];
+      filter_label?: string;
+      filters?: components["schemas"]["ActivityFilter"][];
+      id?: string;
+      label?: string;
+      /** Format: int32 */
+      moving_time?: number;
+      /** Format: float */
+      percentile?: number;
+      secs?: number[];
+      start_date_local?: string;
+      start_index?: number[];
+      submax_activity_id?: string[][];
+      submax_values?: number[][];
+      /** Format: int32 */
+      training_load?: number;
+      values?: number[];
+      /** Format: float */
+      weight?: number;
+    };
+    DataCurvePt: {
+      /** Format: int32 */
+      end_index?: number;
+      /** Format: int32 */
+      secs?: number;
+      /** Format: int32 */
+      start_index?: number;
+      /** Format: int32 */
+      value?: number;
+    };
+    DataCurveSetHRCurve: {
+      activities?: {
+        [key: string]: components["schemas"]["Activity"];
+      };
+      list?: components["schemas"]["DataCurve"][];
+    };
+    DataCurveSetPaceCurve: {
+      activities?: {
+        [key: string]: components["schemas"]["Activity"];
+      };
+      list?: components["schemas"]["DataCurve"][];
+    };
+    DataCurveSetPowerCurve: {
+      activities?: {
+        [key: string]: components["schemas"]["Activity"];
+      };
+      list?: components["schemas"]["DataCurve"][];
+    };
+    DeleteEventsResponse: {
+      /** Format: int32 */
+      eventsDeleted?: number;
+    };
+    Display: {
+      color?: string;
+      color2?: string;
+      colorScheme?: string;
+      /** Format: int32 */
+      highIntensity?: number;
+      /** Format: int32 */
+      highLoad?: number;
+      ignoreWorkoutColors?: boolean;
+      /** Format: int32 */
+      lowIntensity?: number;
+      /** Format: int32 */
+      lowLoad?: number;
+      preciseDistance?: boolean;
+      showAverageHR?: boolean;
+      showAveragePower?: boolean;
+      showDescription?: boolean;
+      showFeel?: boolean;
+      showGAP?: boolean;
+      showIntensity?: boolean;
+      showIntervals?: boolean;
+      showLoad?: boolean;
+      showName?: boolean;
+      showNormalizedWatts?: boolean;
+      showPace?: boolean;
+      showPairedWorkoutChart?: boolean;
+      showRPE?: boolean;
+      showSkylineChart?: boolean;
+      showStartTime?: boolean;
+      showWeightLifted?: boolean;
+      showWork?: boolean;
+      showWorkAboveFTP?: boolean;
+      shrinkCommute?: boolean;
+      shrinkCooldown?: boolean;
+      shrinkWarmup?: boolean;
+      usePairedWorkoutColor?: boolean;
+    };
+    DoomedEvent: {
+      external_id?: string;
+      /** Format: int32 */
+      id?: number;
+    };
+    DuplicateEventsDTO: {
+      eventIds?: number[];
+      /** Format: int32 */
+      numCopies?: number;
+      /** Format: int32 */
+      weeksBetween?: number;
+    };
+    DuplicateWorkoutsDTO: {
+      /** Format: int32 */
+      numCopies?: number;
+      /** Format: int32 */
+      weeksBetween?: number;
+      workoutIds?: number[];
+    };
+    Effort: {
+      /** Format: float */
+      average?: number;
+      /** Format: float */
+      distance?: number;
+      /** Format: int32 */
+      duration?: number;
+      /** Format: int32 */
+      end_index?: number;
+      /** Format: int32 */
+      start_index?: number;
+    };
+    Event: {
+      athlete_cannot_edit?: boolean;
+      athlete_id?: string;
+      /** Format: int32 */
+      atl_days?: number;
+      attachments?: components["schemas"]["Attachment"][];
+      /** Format: int32 */
+      calendar_id?: number;
+      can_train_sports?: (
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other"
+      )[];
+      /** Format: int32 */
+      carbs_per_hour?: number;
+      /** Format: int32 */
+      carbs_used?: number;
+      /** @enum {string} */
+      category?:
+        | "WORKOUT"
+        | "RACE_A"
+        | "RACE_B"
+        | "RACE_C"
+        | "NOTE"
+        | "PLAN"
+        | "HOLIDAY"
+        | "SICK"
+        | "INJURED"
+        | "SET_EFTP"
+        | "FITNESS_DAYS"
+        | "SEASON_START"
+        | "TARGET"
+        | "SET_FITNESS";
+      color?: string;
+      created_by_id?: string;
+      /** Format: int32 */
+      ctl_days?: number;
+      description?: string;
+      /** Format: float */
+      distance?: number;
+      /** Format: float */
+      distance_target?: number;
+      end_date_local?: string;
+      entered?: boolean;
+      external_id?: string;
+      for_week?: boolean;
+      hide_from_athlete?: boolean;
+      /** Format: float */
+      icu_atl?: number;
+      /** Format: float */
+      icu_ctl?: number;
+      /** Format: int32 */
+      icu_ftp?: number;
+      /** Format: float */
+      icu_intensity?: number;
+      /** Format: int32 */
+      icu_training_load?: number;
+      /** Format: int32 */
+      id?: number;
+      indoor?: boolean;
+      /** Format: int32 */
+      joules?: number;
+      /** Format: int32 */
+      joules_above_ftp?: number;
+      /** Format: int32 */
+      load_target?: number;
+      /** Format: int32 */
+      max_training_time?: number;
+      /** Format: int32 */
+      moving_time?: number;
+      name?: string;
+      not_on_fitness_chart?: boolean;
+      /** Format: int32 */
+      oauth_client_id?: number;
+      /** Format: int32 */
+      p_max?: number;
+      /** Format: date-time */
+      plan_applied?: string;
+      plan_athlete_id?: string;
+      /** Format: int32 */
+      plan_folder_id?: number;
+      /** Format: int32 */
+      plan_workout_id?: number;
+      push_errors?: components["schemas"]["PushError"][];
+      /** Format: int32 */
+      shared_event_id?: number;
+      show_as_note?: boolean;
+      show_on_ctl_line?: boolean;
+      /** Format: float */
+      ss_cp?: number;
+      /** Format: float */
+      ss_p_max?: number;
+      /** Format: float */
+      ss_w_prime?: number;
+      start_date_local?: string;
+      /** Format: float */
+      strain_score?: number;
+      structure_read_only?: boolean;
+      /** @enum {string} */
+      sub_type?: "NONE" | "COMMUTE" | "WARMUP" | "COOLDOWN" | "RACE";
+      tags?: string[];
+      /** @enum {string} */
+      target?: "AUTO" | "POWER" | "HR" | "PACE";
+      /** Format: int32 */
+      time_target?: number;
+      /** @enum {string} */
+      training_availability?: "NORMAL" | "LIMITED" | "UNAVAILABLE";
+      type?: string;
+      uid?: string;
+      /** Format: date-time */
+      updated?: string;
+      /** Format: int32 */
+      w_prime?: number;
+      workout_doc?: {
+        [key: string]: Record<string, never>;
+      };
+    };
+    EventEx: {
+      athlete_cannot_edit?: boolean;
+      athlete_id?: string;
+      /** Format: int32 */
+      atl_days?: number;
+      attachments?: components["schemas"]["Attachment"][];
+      /** Format: int32 */
+      calendar_id?: number;
+      can_train_sports?: (
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other"
+      )[];
+      /** Format: int32 */
+      carbs_per_hour?: number;
+      /** Format: int32 */
+      carbs_used?: number;
+      /** @enum {string} */
+      category?:
+        | "WORKOUT"
+        | "RACE_A"
+        | "RACE_B"
+        | "RACE_C"
+        | "NOTE"
+        | "PLAN"
+        | "HOLIDAY"
+        | "SICK"
+        | "INJURED"
+        | "SET_EFTP"
+        | "FITNESS_DAYS"
+        | "SEASON_START"
+        | "TARGET"
+        | "SET_FITNESS";
+      color?: string;
+      created_by_id?: string;
+      /** Format: int32 */
+      ctl_days?: number;
+      description?: string;
+      /** Format: float */
+      distance?: number;
+      /** Format: float */
+      distance_target?: number;
+      end_date_local?: string;
+      entered?: boolean;
+      external_id?: string;
+      file_contents?: string;
+      file_contents_base64?: string;
+      filename?: string;
+      for_week?: boolean;
+      hide_from_athlete?: boolean;
+      /** Format: float */
+      icu_atl?: number;
+      /** Format: float */
+      icu_ctl?: number;
+      /** Format: int32 */
+      icu_ftp?: number;
+      /** Format: float */
+      icu_intensity?: number;
+      /** Format: int32 */
+      icu_training_load?: number;
+      /** Format: int32 */
+      id?: number;
+      indoor?: boolean;
+      /** Format: int32 */
+      joules?: number;
+      /** Format: int32 */
+      joules_above_ftp?: number;
+      /** Format: int32 */
+      load_target?: number;
+      /** Format: int32 */
+      max_training_time?: number;
+      /** Format: int32 */
+      moving_time?: number;
+      name?: string;
+      not_on_fitness_chart?: boolean;
+      /** Format: int32 */
+      oauth_client_id?: number;
+      /** Format: int32 */
+      p_max?: number;
+      /** Format: date-time */
+      plan_applied?: string;
+      plan_athlete_id?: string;
+      /** Format: int32 */
+      plan_folder_id?: number;
+      /** Format: int32 */
+      plan_workout_id?: number;
+      push_errors?: components["schemas"]["PushError"][];
+      /** Format: int32 */
+      shared_event_id?: number;
+      show_as_note?: boolean;
+      show_on_ctl_line?: boolean;
+      /** Format: float */
+      ss_cp?: number;
+      /** Format: float */
+      ss_p_max?: number;
+      /** Format: float */
+      ss_w_prime?: number;
+      start_date_local?: string;
+      /** Format: float */
+      strain_score?: number;
+      structure_read_only?: boolean;
+      /** @enum {string} */
+      sub_type?: "NONE" | "COMMUTE" | "WARMUP" | "COOLDOWN" | "RACE";
+      tags?: string[];
+      /** @enum {string} */
+      target?: "AUTO" | "POWER" | "HR" | "PACE";
+      /** Format: int32 */
+      time_target?: number;
+      /** @enum {string} */
+      training_availability?: "NORMAL" | "LIMITED" | "UNAVAILABLE";
+      type?: string;
+      uid?: string;
+      /** Format: date-time */
+      updated?: string;
+      /** Format: int32 */
+      w_prime?: number;
+      workout?: components["schemas"]["Workout"];
+      workout_doc?: {
+        [key: string]: Record<string, never>;
+      };
+    };
+    Folder: {
+      activity_types?: (
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other"
+      )[];
+      athlete_id?: string;
+      /** Format: int32 */
+      auto_rollout_day?: number;
+      blurb?: string;
+      canEdit?: boolean;
+      children?: components["schemas"]["Workout"][];
+      description?: string;
+      /** Format: int32 */
+      duration_weeks?: number;
+      /** Format: int32 */
+      hours_per_week_max?: number;
+      /** Format: int32 */
+      hours_per_week_min?: number;
+      /** Format: int32 */
+      id?: number;
+      name?: string;
+      /** Format: int32 */
+      num_workouts?: number;
+      owner?: components["schemas"]["AthleteSearchResult"];
+      read_only_workouts?: boolean;
+      /** Format: int32 */
+      rollout_weeks?: number;
+      shareToken?: string;
+      /** Format: int32 */
+      sharedWithCount?: number;
+      start_date_local?: string;
+      /** Format: int32 */
+      starting_atl?: number;
+      /** Format: int32 */
+      starting_ctl?: number;
+      /** @enum {string} */
+      type?: "FOLDER" | "PLAN";
+      /** @enum {string} */
+      visibility?: "PRIVATE" | "PUBLIC";
+      workout_targets?: ("AUTO" | "POWER" | "HR" | "PACE")[];
+    };
+    Forecast: {
+      enabled?: boolean;
+      /** Format: int32 */
+      id?: number;
+      label?: string;
+      /** Format: float */
+      lat?: number;
+      location?: string;
+      /** Format: float */
+      lon?: number;
+      /** @enum {string} */
+      provider?: "OPEN_WEATHER";
+    };
+    Gear: {
+      /** Format: int32 */
+      activities?: number;
+      activity_filters?: components["schemas"]["ActivityFilter"][];
+      athlete_id?: string;
+      component?: boolean;
+      component_ids?: string[];
+      /** Format: float */
+      distance?: number;
+      id?: string;
+      name?: string;
+      notes?: string;
+      purchased?: string;
+      reminders?: components["schemas"]["GearReminder"][];
+      retired?: string;
+      /** Format: float */
+      time?: number;
+      /** @enum {string} */
+      type?:
+        | "Bike"
+        | "Shoes"
+        | "Wetsuit"
+        | "RowingMachine"
+        | "Skis"
+        | "Snowboard"
+        | "Boat"
+        | "Board"
+        | "Equipment"
+        | "Accessories"
+        | "Apparel"
+        | "Computer"
+        | "Light"
+        | "Battery"
+        | "Brake"
+        | "BrakePads"
+        | "Rotor"
+        | "Drivetrain"
+        | "BottomBracket"
+        | "Cassette"
+        | "Chain"
+        | "Chainrings"
+        | "Crankset"
+        | "Derailleur"
+        | "Pedals"
+        | "Lever"
+        | "Cable"
+        | "Frame"
+        | "Fork"
+        | "Handlebar"
+        | "Headset"
+        | "Saddle"
+        | "Seatpost"
+        | "Shock"
+        | "Stem"
+        | "Axel"
+        | "Hub"
+        | "Trainer"
+        | "Tube"
+        | "Tyre"
+        | "Wheel"
+        | "Wheelset"
+        | "PowerMeter"
+        | "Cleats"
+        | "CyclingShoes"
+        | "Paddle";
+      use_elapsed_time?: boolean;
+    };
+    GearReminder: {
+      /** Format: int32 */
+      activities?: number;
+      /** Format: int32 */
+      activities_used?: number;
+      /** Format: int32 */
+      days?: number;
+      /** Format: int32 */
+      days_used?: number;
+      /** Format: float */
+      distance?: number;
+      /** Format: float */
+      distance_used?: number;
+      gear_id?: string;
+      /** Format: int32 */
+      id?: number;
+      /** Format: date-time */
+      last_reset?: string;
+      name?: string;
+      /** Format: float */
+      percent_used?: number;
+      /** Format: date-time */
+      snoozed_until?: string;
+      /** Format: int32 */
+      starting_activities?: number;
+      /** Format: float */
+      starting_distance?: number;
+      /** Format: float */
+      starting_time?: number;
+      /** Format: float */
+      time?: number;
+      /** Format: float */
+      time_used?: number;
+    };
+    GearStats: {
+      /** Format: int32 */
+      activities?: number;
+      /** Format: float */
+      distance?: number;
+      /** Format: float */
+      elapsed_time?: number;
+      /** Format: float */
+      moving_time?: number;
+    };
+    HRCurve: {
+      activity_id?: string[];
+      /** Format: int32 */
+      days?: number;
+      end_date_local?: string;
+      end_index?: number[];
+      filter_label?: string;
+      filters?: components["schemas"]["ActivityFilter"][];
+      id?: string;
+      label?: string;
+      /** Format: int32 */
+      moving_time?: number;
+      /** Format: float */
+      percentile?: number;
+      secs?: number[];
+      start_date_local?: string;
+      start_index?: number[];
+      submax_activity_id?: string[][];
+      submax_values?: number[][];
+      /** Format: int32 */
+      training_load?: number;
+      values?: number[];
+      /** Format: float */
+      weight?: number;
+    };
+    HRLoadModel: {
+      /** Format: int32 */
+      icu_training_load?: number;
+      /** Format: int32 */
+      trainingDataCount?: number;
+      /** @enum {string} */
+      type?: "AVG_HR" | "HR_ZONES" | "HRSS";
+    };
+    HRRecovery: {
+      /** Format: int32 */
+      average_watts?: number;
+      /** Format: int32 */
+      end_bpm?: number;
+      /** Format: int32 */
+      end_index?: number;
+      /** Format: int32 */
+      end_time?: number;
+      /** Format: int32 */
+      hrr?: number;
+      /** Format: int32 */
+      start_bpm?: number;
+      /** Format: int32 */
+      start_index?: number;
+      /** Format: int32 */
+      start_time?: number;
+    };
+    Hidden: {
+      _note?: string;
       icu_athlete_id?: string;
       id?: string;
+      /** @enum {string} */
+      source?:
+        | "STRAVA"
+        | "UPLOAD"
+        | "MANUAL"
+        | "GARMIN_CONNECT"
+        | "OAUTH_CLIENT"
+        | "DROPBOX"
+        | "POLAR"
+        | "SUUNTO"
+        | "COROS"
+        | "WAHOO"
+        | "ZWIFT"
+        | "ZEPP"
+        | "CONCEPT2"
+        | "HUAWEI";
+      start_date_local?: string;
     };
-    UploadResponse: {
-      icu_athlete_id?: string;
+    IcuAchievement: {
+      /** Format: float */
+      distance?: number;
       id?: string;
-      activities?: components["schemas"]["ActivityId"][];
+      message?: string;
+      /** Format: float */
+      pace?: number;
+      point?: components["schemas"]["DataCurvePt"];
+      /** Format: int32 */
+      secs?: number;
+      /** @enum {string} */
+      type?: "BEST_POWER" | "FTP_UP" | "LTHR_UP" | "BEST_PACE";
+      /** Format: int32 */
+      value?: number;
+      /** Format: int32 */
+      watts?: number;
+    };
+    IcuSegment: {
+      /** Format: int32 */
+      end_index?: number;
+      /** Format: int64 */
+      id?: number;
+      name?: string;
+      /** Format: int64 */
+      segment_id?: number;
+      starred?: boolean;
+      /** Format: int32 */
+      start_index?: number;
+    };
+    Ignore: {
+      /** Format: int32 */
+      end_index?: number;
+      hr?: boolean;
+      pace?: boolean;
+      power?: boolean;
+      /** Format: int32 */
+      start_index?: number;
+    };
+    Interval: {
+      /** Format: float */
+      average_cadence?: number;
+      /** Format: float */
+      average_dfa_a1?: number;
+      /** Format: float */
+      average_epoc?: number;
+      /** Format: float */
+      average_feels_like?: number;
+      /** Format: float */
+      average_gradient?: number;
+      /** Format: int32 */
+      average_heartrate?: number;
+      /** Format: float */
+      average_impact_loading_rate?: number;
+      /** Format: float */
+      average_lactate?: number;
+      /** Format: float */
+      average_leg_spring_stiffness?: number;
+      /** Format: float */
+      average_respiration?: number;
+      /** Format: float */
+      average_smo2?: number;
+      /** Format: float */
+      average_smo2_2?: number;
+      /** Format: float */
+      average_speed?: number;
+      /** Format: float */
+      average_stance_time?: number;
+      /** Format: float */
+      average_stance_time_balance?: number;
+      /** Format: float */
+      average_stance_time_percent?: number;
+      /** Format: float */
+      average_step_length?: number;
+      /** Format: float */
+      average_stride?: number;
+      /** Format: float */
+      average_temp?: number;
+      /** Format: float */
+      average_thb?: number;
+      /** Format: float */
+      average_thb_2?: number;
+      /** Format: float */
+      average_tidal_volume?: number;
+      /** Format: float */
+      average_tidal_volume_min?: number;
+      /** Format: float */
+      average_torque?: number;
+      /** Format: float */
+      average_vertical_oscillation?: number;
+      /** Format: float */
+      average_vertical_ratio?: number;
+      /** Format: float */
+      average_vertical_speed?: number;
+      /** Format: int32 */
+      average_watts?: number;
+      /** Format: int32 */
+      average_watts_alt?: number;
+      /** Format: int32 */
+      average_watts_alt_acc?: number;
+      /** Format: float */
+      average_watts_kg?: number;
+      /** Format: float */
+      average_weather_temp?: number;
+      /** Format: float */
+      average_wind_gust?: number;
+      /** Format: float */
+      average_wind_speed?: number;
+      /** Format: float */
+      average_yaw?: number;
+      /** Format: float */
+      avg_lr_balance?: number;
+      /** Format: float */
+      decoupling?: number;
+      /** Format: float */
+      distance?: number;
+      /** Format: int32 */
+      elapsed_time?: number;
+      /** Format: int32 */
+      end_index?: number;
+      /** Format: int32 */
+      end_time?: number;
+      /** Format: float */
+      gap?: number;
+      group_id?: string;
+      /** Format: float */
+      headwind_percent?: number;
+      /** Format: int32 */
+      id?: number;
+      /** Format: int32 */
+      intensity?: number;
+      /** Format: int32 */
+      joules?: number;
+      /** Format: int32 */
+      joules_above_ftp?: number;
+      label?: string;
+      /** Format: float */
+      max_altitude?: number;
+      /** Format: int32 */
+      max_cadence?: number;
+      /** Format: int32 */
+      max_heartrate?: number;
+      /** Format: float */
+      max_lactate?: number;
+      /** Format: float */
+      max_speed?: number;
+      /** Format: float */
+      max_torque?: number;
+      /** Format: int32 */
+      max_watts?: number;
+      /** Format: float */
+      max_watts_kg?: number;
+      /** Format: float */
+      min_altitude?: number;
+      /** Format: int32 */
+      min_cadence?: number;
+      /** Format: int32 */
+      min_heartrate?: number;
+      /** Format: float */
+      min_lactate?: number;
+      /** Format: float */
+      min_speed?: number;
+      /** Format: float */
+      min_torque?: number;
+      /** Format: int32 */
+      min_watts?: number;
+      /** Format: int32 */
+      moving_time?: number;
+      /** Format: int32 */
+      prevailing_wind_deg?: number;
+      segment_effort_ids?: number[];
+      /** Format: float */
+      ss_cp?: number;
+      /** Format: float */
+      ss_p_max?: number;
+      /** Format: float */
+      ss_w_prime?: number;
+      /** Format: int32 */
+      start_index?: number;
+      /** Format: int32 */
+      start_time?: number;
+      /** Format: float */
+      strain_score?: number;
+      /** Format: float */
+      tailwind_percent?: number;
+      /** Format: float */
+      total_elevation_gain?: number;
+      /** Format: float */
+      training_load?: number;
+      /** @enum {string} */
+      type?: "RECOVERY" | "WORK";
+      /** Format: float */
+      w5s_variability?: number;
+      /** Format: int32 */
+      wbal_end?: number;
+      /** Format: int32 */
+      wbal_start?: number;
+      /** Format: int32 */
+      weighted_average_watts?: number;
+      /** Format: int32 */
+      zone?: number;
+      /** Format: int32 */
+      zone_max_watts?: number;
+      /** Format: int32 */
+      zone_min_watts?: number;
+    };
+    IntervalGroup: {
+      /** Format: float */
+      average_cadence?: number;
+      /** Format: float */
+      average_dfa_a1?: number;
+      /** Format: float */
+      average_epoc?: number;
+      /** Format: float */
+      average_feels_like?: number;
+      /** Format: float */
+      average_gradient?: number;
+      /** Format: int32 */
+      average_heartrate?: number;
+      /** Format: float */
+      average_impact_loading_rate?: number;
+      /** Format: float */
+      average_lactate?: number;
+      /** Format: float */
+      average_leg_spring_stiffness?: number;
+      /** Format: float */
+      average_respiration?: number;
+      /** Format: float */
+      average_smo2?: number;
+      /** Format: float */
+      average_smo2_2?: number;
+      /** Format: float */
+      average_speed?: number;
+      /** Format: float */
+      average_stance_time?: number;
+      /** Format: float */
+      average_stance_time_balance?: number;
+      /** Format: float */
+      average_stance_time_percent?: number;
+      /** Format: float */
+      average_step_length?: number;
+      /** Format: float */
+      average_stride?: number;
+      /** Format: float */
+      average_temp?: number;
+      /** Format: float */
+      average_thb?: number;
+      /** Format: float */
+      average_thb_2?: number;
+      /** Format: float */
+      average_tidal_volume?: number;
+      /** Format: float */
+      average_tidal_volume_min?: number;
+      /** Format: float */
+      average_torque?: number;
+      /** Format: float */
+      average_vertical_oscillation?: number;
+      /** Format: float */
+      average_vertical_ratio?: number;
+      /** Format: float */
+      average_vertical_speed?: number;
+      /** Format: int32 */
+      average_watts?: number;
+      /** Format: int32 */
+      average_watts_alt?: number;
+      /** Format: int32 */
+      average_watts_alt_acc?: number;
+      /** Format: float */
+      average_watts_kg?: number;
+      /** Format: float */
+      average_weather_temp?: number;
+      /** Format: float */
+      average_wind_gust?: number;
+      /** Format: float */
+      average_wind_speed?: number;
+      /** Format: float */
+      average_yaw?: number;
+      /** Format: float */
+      avg_lr_balance?: number;
+      /** Format: int32 */
+      count?: number;
+      /** Format: float */
+      decoupling?: number;
+      /** Format: float */
+      distance?: number;
+      /** Format: int32 */
+      elapsed_time?: number;
+      /** Format: float */
+      gap?: number;
+      /** Format: float */
+      headwind_percent?: number;
+      id?: string;
+      /** Format: int32 */
+      intensity?: number;
+      /** Format: int32 */
+      joules?: number;
+      /** Format: int32 */
+      joules_above_ftp?: number;
+      /** Format: float */
+      max_altitude?: number;
+      /** Format: int32 */
+      max_cadence?: number;
+      /** Format: int32 */
+      max_heartrate?: number;
+      /** Format: float */
+      max_lactate?: number;
+      /** Format: float */
+      max_speed?: number;
+      /** Format: float */
+      max_torque?: number;
+      /** Format: int32 */
+      max_watts?: number;
+      /** Format: float */
+      max_watts_kg?: number;
+      /** Format: float */
+      min_altitude?: number;
+      /** Format: int32 */
+      min_cadence?: number;
+      /** Format: int32 */
+      min_heartrate?: number;
+      /** Format: float */
+      min_lactate?: number;
+      /** Format: float */
+      min_speed?: number;
+      /** Format: float */
+      min_torque?: number;
+      /** Format: int32 */
+      min_watts?: number;
+      /** Format: int32 */
+      moving_time?: number;
+      /** Format: int32 */
+      prevailing_wind_deg?: number;
+      /** Format: float */
+      ss_cp?: number;
+      /** Format: float */
+      ss_p_max?: number;
+      /** Format: float */
+      ss_w_prime?: number;
+      /** Format: int32 */
+      start_index?: number;
+      /** Format: float */
+      strain_score?: number;
+      /** Format: float */
+      tailwind_percent?: number;
+      /** Format: float */
+      total_elevation_gain?: number;
+      /** Format: float */
+      training_load?: number;
+      /** Format: float */
+      w5s_variability?: number;
+      /** Format: int32 */
+      wbal_end?: number;
+      /** Format: int32 */
+      wbal_start?: number;
+      /** Format: int32 */
+      weighted_average_watts?: number;
+      /** Format: int32 */
+      zone?: number;
+      /** Format: int32 */
+      zone_max_watts?: number;
+      /** Format: int32 */
+      zone_min_watts?: number;
+    };
+    IntervalsDTO: {
+      /** Format: date-time */
+      analyzed?: string;
+      icu_groups?: components["schemas"]["IntervalGroup"][];
+      icu_intervals?: components["schemas"]["Interval"][];
+      id?: string;
+    };
+    MapData: {
+      bounds?: number[][];
+      latlngs?: number[][];
+      route?: components["schemas"]["AthleteRoute"];
+      weather?: components["schemas"]["ActivityWeather"];
+    };
+    Marker: {
+      color?: string;
+      description?: string;
+      icon?: string;
+      /** Format: float */
+      lat?: number;
+      /** Format: float */
+      lng?: number;
+      name?: string;
+    };
+    Message: {
+      /** Format: int32 */
+      accept_coaching_group_id?: number;
+      activity?: components["schemas"]["Activity"];
+      activity_id?: string;
+      answer?: string;
+      athlete_id?: string;
+      attachment_mime_type?: string;
+      attachment_url?: string;
+      content?: string;
+      /** Format: date-time */
+      created?: string;
+      /** Format: date-time */
+      deleted?: string;
+      deleted_by_id?: string;
+      /** Format: int32 */
+      end_index?: number;
+      /** Format: int64 */
+      id?: number;
+      /** Format: int32 */
+      join_group_id?: number;
+      name?: string;
+      seen?: boolean;
+      /** Format: int32 */
+      start_index?: number;
+      /** @enum {string} */
+      type?:
+        | "TEXT"
+        | "FOLLOW_REQ"
+        | "COACH_REQ"
+        | "COACH_ME_REQ"
+        | "ACTIVITY"
+        | "NOTE"
+        | "JOIN_REQ"
+        | "ACCEPT_COACHING_GROUP";
     };
     NewActivityMsg: {
       content?: string;
+    };
+    NewCustomItem: {
+      athlete_id?: string;
+      content?: {
+        [key: string]: Record<string, never>;
+      };
+      description?: string;
+      from_athlete?: components["schemas"]["AthleteSearchResult"];
+      /** Format: int32 */
+      from_id?: number;
+      hidden_by_id?: string;
+      hide_script?: boolean;
+      /** Format: int32 */
+      id?: number;
+      image?: string;
+      /** Format: int32 */
+      index?: number;
+      name?: string;
+      required_items_created?: components["schemas"]["NewCustomItem"][];
+      /** @enum {string} */
+      type?:
+        | "FITNESS_CHART"
+        | "FITNESS_TABLE"
+        | "TRACE_CHART"
+        | "INPUT_FIELD"
+        | "ACTIVITY_FIELD"
+        | "INTERVAL_FIELD"
+        | "ACTIVITY_STREAM"
+        | "ACTIVITY_CHART"
+        | "ACTIVITY_HISTOGRAM"
+        | "ACTIVITY_HEATMAP"
+        | "ACTIVITY_MAP"
+        | "ACTIVITY_PANEL"
+        | "ZONES";
+      /** Format: date-time */
+      updated?: string;
+      /** Format: int32 */
+      usage_count?: number;
+      /** @enum {string} */
+      visibility?: "PRIVATE" | "FOLLOWERS" | "PUBLIC";
+    };
+    NewMessage: {
+      /** Format: int32 */
+      accept_coaching_group_id?: number;
+      activity?: components["schemas"]["Activity"];
+      activity_id?: string;
+      answer?: string;
+      askACoach?: boolean;
+      athlete_id?: string;
+      attachment_id?: string;
+      attachment_mime_type?: string;
+      attachment_url?: string;
+      /** Format: int32 */
+      chat_id?: number;
+      content?: string;
+      /** Format: date-time */
+      created?: string;
+      /** Format: date-time */
+      deleted?: string;
+      deleted_by_id?: string;
+      /** Format: int32 */
+      end_index?: number;
+      /** Format: int64 */
+      id?: number;
+      /** Format: int32 */
+      join_group_id?: number;
+      name?: string;
+      seen?: boolean;
+      /** Format: int32 */
+      start_index?: number;
+      to_activity_id?: string;
+      to_athlete_id?: string;
+      /** @enum {string} */
+      type?:
+        | "TEXT"
+        | "FOLLOW_REQ"
+        | "COACH_REQ"
+        | "COACH_ME_REQ"
+        | "ACTIVITY"
+        | "NOTE"
+        | "JOIN_REQ"
+        | "ACCEPT_COACHING_GROUP";
     };
     NewMsg: {
       /** Format: int64 */
       id?: number;
       new_chat?: components["schemas"]["Chat"];
     };
-    ActivityWeather: {
-      points?: components["schemas"]["WeatherPoint"][];
-      closest_points?: components["schemas"]["Closest"][];
-    };
-    Closest: {
+    PaceCurve: {
+      activity_id?: string[];
       /** Format: int32 */
-      start_secs?: number;
-      /** Format: int32 */
-      p1_index?: number;
-      /** Format: int32 */
-      p2_index?: number;
-      /** Format: int32 */
-      p3_index?: number;
-    };
-    Course: {
-      /** Format: int32 */
-      id?: number;
-      /** Format: int32 */
-      shared_event_id?: number;
-      /** Format: date-time */
-      created?: string;
-      /** Format: date-time */
-      updated?: string;
-      name?: string;
-      types?: (
-        | "Ride"
-        | "Run"
-        | "Swim"
-        | "WeightTraining"
-        | "Hike"
-        | "Walk"
-        | "AlpineSki"
-        | "BackcountrySki"
-        | "Badminton"
-        | "Canoeing"
-        | "Crossfit"
-        | "EBikeRide"
-        | "EMountainBikeRide"
-        | "Elliptical"
-        | "Golf"
-        | "GravelRide"
-        | "TrackRide"
-        | "Handcycle"
-        | "HighIntensityIntervalTraining"
-        | "Hockey"
-        | "IceSkate"
-        | "InlineSkate"
-        | "Kayaking"
-        | "Kitesurf"
-        | "MountainBikeRide"
-        | "Cyclocross"
-        | "NordicSki"
-        | "OpenWaterSwim"
-        | "Padel"
-        | "Pilates"
-        | "Pickleball"
-        | "Racquetball"
-        | "Rugby"
-        | "RockClimbing"
-        | "RollerSki"
-        | "Rowing"
-        | "Sail"
-        | "Skateboard"
-        | "Snowboard"
-        | "Snowshoe"
-        | "Soccer"
-        | "Squash"
-        | "StairStepper"
-        | "StandUpPaddling"
-        | "Surfing"
-        | "TableTennis"
-        | "Tennis"
-        | "TrailRun"
-        | "Transition"
-        | "Velomobile"
-        | "VirtualRide"
-        | "VirtualRow"
-        | "VirtualRun"
-        | "VirtualSki"
-        | "WaterSport"
-        | "Wheelchair"
-        | "Windsurf"
-        | "Workout"
-        | "Yoga"
-        | "Other"
-      )[];
-      file_type?: string;
-      /** Format: int32 */
-      file_sport_index?: number;
-      start_time?: string;
-      description?: string;
-      /** Format: float */
-      distance?: number;
-      /** Format: float */
-      min_altitude?: number;
-      /** Format: float */
-      max_altitude?: number;
-      /** Format: float */
-      average_altitude?: number;
-      /** Format: float */
-      total_elevation_gain?: number;
-      /** Format: float */
-      total_elevation_loss?: number;
-      /** Format: float */
-      start_lat?: number;
-      /** Format: float */
-      start_lng?: number;
-      /** Format: date-time */
-      weather_updated?: string;
-      full?: boolean;
-      markers?: components["schemas"]["Marker"][];
-      streams?: components["schemas"]["ActivityStream"][];
-      bounds?: number[][];
-      latlngs?: number[][];
-      weather?: components["schemas"]["ActivityWeather"];
-    };
-    Marker: {
-      /** Format: float */
-      lat?: number;
-      /** Format: float */
-      lng?: number;
-      name?: string;
-      description?: string;
-      icon?: string;
-      color?: string;
-    };
-    Time: {
-      /** Format: int32 */
-      start_secs?: number;
-      /** Format: int32 */
-      end_secs?: number;
-      /** Format: int32 */
-      index?: number;
-      /** Format: float */
-      temp?: number;
-      /** Format: float */
-      feels_like?: number;
-      /** Format: int32 */
-      humidity?: number;
-      /** Format: float */
-      wind_speed?: number;
-      /** Format: int32 */
-      wind_deg?: number;
-      /** Format: float */
-      wind_gust?: number;
-      /** Format: float */
-      rain?: number;
-      /** Format: float */
-      showers?: number;
-      /** Format: float */
-      snow?: number;
-      /** Format: int32 */
-      clouds?: number;
-      /** Format: float */
-      pressure?: number;
-      /** Format: int32 */
-      weather_code?: number;
-    };
-    WeatherPoint: {
-      /** Format: float */
-      latitude?: number;
-      /** Format: float */
-      longitude?: number;
-      times?: components["schemas"]["Time"][];
-    };
-    WithCourses: {
-      /** Format: int32 */
-      id?: number;
-      external_id?: string;
-      slug?: string;
-      athlete_id?: string;
-      /** @enum {string} */
-      category?: "RACE" | "WORKOUT";
-      types?: (
-        | "Ride"
-        | "Run"
-        | "Swim"
-        | "WeightTraining"
-        | "Hike"
-        | "Walk"
-        | "AlpineSki"
-        | "BackcountrySki"
-        | "Badminton"
-        | "Canoeing"
-        | "Crossfit"
-        | "EBikeRide"
-        | "EMountainBikeRide"
-        | "Elliptical"
-        | "Golf"
-        | "GravelRide"
-        | "TrackRide"
-        | "Handcycle"
-        | "HighIntensityIntervalTraining"
-        | "Hockey"
-        | "IceSkate"
-        | "InlineSkate"
-        | "Kayaking"
-        | "Kitesurf"
-        | "MountainBikeRide"
-        | "Cyclocross"
-        | "NordicSki"
-        | "OpenWaterSwim"
-        | "Padel"
-        | "Pilates"
-        | "Pickleball"
-        | "Racquetball"
-        | "Rugby"
-        | "RockClimbing"
-        | "RollerSki"
-        | "Rowing"
-        | "Sail"
-        | "Skateboard"
-        | "Snowboard"
-        | "Snowshoe"
-        | "Soccer"
-        | "Squash"
-        | "StairStepper"
-        | "StandUpPaddling"
-        | "Surfing"
-        | "TableTennis"
-        | "Tennis"
-        | "TrailRun"
-        | "Transition"
-        | "Velomobile"
-        | "VirtualRide"
-        | "VirtualRow"
-        | "VirtualRun"
-        | "VirtualSki"
-        | "WaterSport"
-        | "Wheelchair"
-        | "Windsurf"
-        | "Workout"
-        | "Yoga"
-        | "Other"
-      )[];
-      name?: string;
-      start_date_local?: string;
-      /** Format: date-time */
-      updated?: string;
-      /** @enum {string} */
-      visibility?: "PUBLIC" | "GROUP";
-      /** Format: int32 */
-      chat_id?: number;
-      description?: string;
-      website?: string;
-      closing_date_local?: string;
-      location?: string;
-      address?: string;
-      country?: string;
-      region?: string;
-      /** Format: float */
-      lat?: number;
-      /** Format: float */
-      lon?: number;
-      route_file?: string;
-      polyline?: string;
-      banner_image_url?: string;
-      /** Format: int32 */
-      banner_image_width?: number;
-      /** Format: int32 */
-      banner_image_height?: number;
-      /** Format: int32 */
-      usage_count?: number;
-      owner?: components["schemas"]["AthleteSearchResult"];
-      courses?: components["schemas"]["Course"][];
-    };
-    PaceDistancesDTO: {
-      distances?: number[];
-      defaults?: number[];
-    };
-    WeatherDTO: {
-      forecasts?: components["schemas"]["Forecast"][];
-    };
-    RouteSimilarity: {
-      route?: components["schemas"]["AthleteRoute"];
-      /** Format: float */
-      route_distance?: number;
-      /** Format: int32 */
-      route_activity_count?: number;
-      other?: components["schemas"]["AthleteRoute"];
-      /** Format: float */
-      other_distance?: number;
-      /** Format: int32 */
-      other_activity_count?: number;
-      /** Format: float */
-      similarity?: number;
-      bounds?: number[][];
-    };
-    WithCount: {
-      athlete_id?: string;
-      /** Format: int64 */
-      route_id?: number;
-      name?: string;
-      rename_activities?: boolean;
-      commute?: boolean;
-      tags?: string[];
-      description?: string;
-      /** Format: int64 */
-      replaced_by_route_id?: number;
-      latlngs?: number[][];
-      /** Format: float */
-      distance?: number;
-      /** Format: int32 */
-      activity_count?: number;
-      most_recent_id?: string;
-      most_recent_start_date_local?: string;
-      most_recent_type?: string;
-    };
-    AthleteForProfile: {
-      id?: string;
-      name?: string;
-      profile_medium?: string;
-      city?: string;
-      state?: string;
-      country?: string;
-      timezone?: string;
-      sex?: string;
-      bio?: string;
-      website?: string;
-      email?: string;
-      countries?: string[];
-      languages?: string[];
-      icu_coach?: boolean;
-    };
-    AthleteProfile: {
-      athlete?: components["schemas"]["AthleteForProfile"];
-      sharedFolders?: components["schemas"]["Folder"][];
-      customItems?: components["schemas"]["CustomItem"][];
-    };
-    PowerHRCurve: {
-      athleteId?: string;
-      start?: string;
-      end?: string;
-      /** Format: int32 */
-      minWatts?: number;
-      /** Format: int32 */
-      maxWatts?: number;
-      /** Format: int32 */
-      bucketSize?: number;
-      bpm?: number[];
-      cadence?: number[];
-      minutes?: number[];
-      /** Format: int32 */
-      lthr?: number;
-      /** Format: int32 */
-      max_hr?: number;
-      /** Format: int32 */
-      ftp?: number;
-    };
-    DataCurve: {
-      id?: string;
-      /** Format: int32 */
-      after_kj?: number;
-      filters?: components["schemas"]["ActivityFilter"][];
-      label?: string;
+      days?: number;
+      distance?: number[];
+      end_date_local?: string;
+      end_index?: number[];
       filter_label?: string;
+      filters?: components["schemas"]["ActivityFilter"][];
+      id?: string;
+      label?: string;
+      /** Format: int32 */
+      moving_time?: number;
+      paceModels?: components["schemas"]["PaceModel"][];
       /** Format: float */
       percentile?: number;
       start_date_local?: string;
-      end_date_local?: string;
-      /** Format: int32 */
-      days?: number;
-      /** Format: int32 */
-      moving_time?: number;
+      start_index?: number[];
+      submax_activity_id?: string[][];
+      submax_values?: number[][];
       /** Format: int32 */
       training_load?: number;
+      /** @enum {string} */
+      type?: "POWER" | "HR" | "PACE" | "GAP";
+      values?: number[];
       /** Format: float */
       weight?: number;
+    };
+    PaceDistancesDTO: {
+      defaults?: number[];
+      distances?: number[];
+    };
+    PaceModel: {
+      /** Format: float */
+      criticalSpeed?: number;
+      /** Format: float */
+      dPrime?: number;
+      inputPointIndexes?: number[];
+      /** Format: float */
+      r2?: number;
+      /** @enum {string} */
+      type?: "CS";
+    };
+    Plot: {
+      cumulative_secs?: number[];
+      /** Format: int32 */
+      max_bpm?: number;
+      /** Format: int32 */
+      min_bpm?: number;
       secs?: number[];
-      distance?: number[];
-      values?: number[];
-      submax_values?: number[][];
-      submax_activity_id?: string[][];
-      start_index?: number[];
-      end_index?: number[];
+    };
+    Pos: {
+      height?: string;
+      id?: string;
+      width?: string;
+    };
+    PowerCurve: {
       activity_id?: string[];
-    };
-    DataCurveSetPowerCurve: {
-      list?: components["schemas"]["DataCurve"][];
-      activities?: {
-        [key: string]: components["schemas"]["Activity"];
-      };
-    };
-    DataCurveSetPaceCurve: {
-      list?: components["schemas"]["DataCurve"][];
-      activities?: {
-        [key: string]: components["schemas"]["Activity"];
-      };
-    };
-    DataCurveSetHRCurve: {
-      list?: components["schemas"]["DataCurve"][];
-      activities?: {
-        [key: string]: components["schemas"]["Activity"];
-      };
-    };
-    GearStats: {
-      /** Format: float */
-      distance?: number;
-      /** Format: float */
-      elapsed_time?: number;
-      /** Format: float */
-      moving_time?: number;
       /** Format: int32 */
-      activities?: number;
-    };
-    CategorySummary: {
+      after_kj?: number;
+      /** Format: float */
+      compound_score_5m?: number;
       /** Format: int32 */
-      count?: number;
-      /** Format: int32 */
-      time?: number;
+      days?: number;
+      end_date_local?: string;
+      end_index?: number[];
+      filter_label?: string;
+      filters?: components["schemas"]["ActivityFilter"][];
+      id?: string;
+      label?: string;
+      mapPlot?: components["schemas"]["Plot"];
       /** Format: int32 */
       moving_time?: number;
-      /** Format: int32 */
-      elapsed_time?: number;
-      /** Format: int32 */
-      calories?: number;
       /** Format: float */
-      total_elevation_gain?: number;
+      percentile?: number;
+      powerModels?: components["schemas"]["PowerModel"][];
+      ranks?: {
+        [key: string]: components["schemas"]["Rank"];
+      };
+      secs?: number[];
+      start_date_local?: string;
+      start_index?: number[];
+      stream_name?: string;
+      stream_type?: string;
+      submax_activity_id?: string[][];
+      submax_values?: number[][];
+      submax_watts_per_kg?: number[][];
+      submax_wkg_activity_id?: string[][];
       /** Format: int32 */
       training_load?: number;
+      values?: number[];
+      /** Format: float */
+      vo2max_5m?: number;
+      watts?: number[];
+      watts_per_kg?: number[];
+      /** Format: float */
+      weight?: number;
+      wkg_activity_id?: string[];
+    };
+    PowerHRCurve: {
+      athleteId?: string;
+      bpm?: number[];
       /** Format: int32 */
-      srpe?: number;
-      /** Format: float */
-      distance?: number;
-      /** Format: float */
-      eftp?: number;
-      /** Format: float */
-      eftpPerKg?: number;
+      bucketSize?: number;
+      cadence?: number[];
+      end?: string;
+      /** Format: int32 */
+      ftp?: number;
+      /** Format: int32 */
+      lthr?: number;
+      /** Format: int32 */
+      maxWatts?: number;
+      /** Format: int32 */
+      max_hr?: number;
+      /** Format: int32 */
+      minWatts?: number;
+      minutes?: number[];
+      start?: string;
+    };
+    PowerModel: {
+      /** Format: int32 */
+      criticalPower?: number;
+      /** Format: int32 */
+      ftp?: number;
+      inputPointIndexes?: number[];
+      /** Format: int32 */
+      pMax?: number;
       /** @enum {string} */
-      category?:
+      type?: "MS_2P" | "MORTON_3P" | "FFT_CURVES" | "ECP";
+      /** Format: int32 */
+      wPrime?: number;
+    };
+    PowerVsHRPlot: {
+      /** Format: int32 */
+      avgCadenceZ2?: number;
+      /** Format: int32 */
+      bucketSize?: number;
+      /** Format: int32 */
+      cooldown?: number;
+      curves?: components["schemas"]["Curve"][];
+      /** Format: float */
+      decoupling?: number;
+      /** Format: int32 */
+      elapsedTime?: number;
+      /** Format: int32 */
+      end?: number;
+      /** Format: int32 */
+      hrLag?: number;
+      /** Format: int32 */
+      hrZ2BucketCount?: number;
+      /** Format: int32 */
+      medianCadenceZ2?: number;
+      /** Format: int32 */
+      mid?: number;
+      /** Format: float */
+      powerHr?: number;
+      /** Format: float */
+      powerHrFirst?: number;
+      /** Format: float */
+      powerHrSecond?: number;
+      /** Format: float */
+      powerHrZ2?: number;
+      ratioCoefficients?: number[];
+      series?: components["schemas"]["Bucket"][];
+      /** Format: int32 */
+      start?: number;
+      /** Format: int32 */
+      warmup?: number;
+    };
+    PushError: {
+      /** Format: date-time */
+      date?: string;
+      message?: string;
+      service?: string;
+    };
+    Rank: {
+      position?: {
+        [key: string]: number;
+      };
+      watts?: {
+        [key: string]: number;
+      };
+    };
+    RouteSimilarity: {
+      bounds?: number[][];
+      other?: components["schemas"]["AthleteRoute"];
+      /** Format: int32 */
+      other_activity_count?: number;
+      /** Format: float */
+      other_distance?: number;
+      route?: components["schemas"]["AthleteRoute"];
+      /** Format: int32 */
+      route_activity_count?: number;
+      /** Format: float */
+      route_distance?: number;
+      /** Format: float */
+      similarity?: number;
+    };
+    SendResponse: {
+      /** Format: int64 */
+      id?: number;
+      message?: components["schemas"]["Message"];
+      new_chat?: components["schemas"]["Chat"];
+    };
+    Settings: {
+      /** Format: double */
+      atlFactor?: number;
+      /** Format: double */
+      ctlFactor?: number;
+      /** @enum {string} */
+      type?:
         | "Ride"
         | "Run"
         | "Swim"
@@ -5870,159 +6615,649 @@ export interface components {
         | "Yoga"
         | "Other";
     };
+    SharedWith: {
+      bio?: string;
+      canEdit?: boolean;
+      city?: string;
+      country?: string;
+      email?: string;
+      id?: string;
+      name?: string;
+      profile_medium?: string;
+      sex?: string;
+      state?: string;
+      timezone?: string;
+      website?: string;
+    };
+    SportInfo: {
+      /** Format: float */
+      eftp?: number;
+      /** Format: float */
+      pMax?: number;
+      /** @enum {string} */
+      type?:
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other";
+      /** Format: float */
+      wPrime?: number;
+    };
+    SportSettings: {
+      activity_charts?: components["schemas"]["ActivityCharts"];
+      activity_field_ids?: number[];
+      /** Format: int32 */
+      after_kj0?: number;
+      /** Format: int32 */
+      after_kj1?: number;
+      athlete_id?: string;
+      best_effort_distances?: number[];
+      /** Format: int32 */
+      calendar_tile_activity_panel_id?: number;
+      /** Format: int32 */
+      cooldown_time?: number;
+      /** Format: date-time */
+      created?: string;
+      custom_field_ids?: number[];
+      custom_field_values?: {
+        [key: string]: Record<string, never>;
+      };
+      custom_zones_ids?: number[];
+      default_gear_id?: string;
+      default_indoor_gear_id?: string;
+      default_workout_time?: string;
+      display?: components["schemas"]["Display"];
+      /** @enum {string} */
+      elevation_correction?: "NO" | "AUTO" | "YES";
+      extract_workouts?: boolean;
+      /** Format: int32 */
+      ftp?: number;
+      /** Format: int32 */
+      ftp_est_min_secs?: number;
+      /** @enum {string} */
+      gap_model?: "NONE" | "STRAVA_RUN";
+      /** @enum {string} */
+      hr_load_type?: "AVG_HR" | "HR_ZONES" | "HRSS";
+      hr_zone_names?: string[];
+      hr_zones?: number[];
+      /** Format: float */
+      hrrc_min_percent?: number;
+      /** Format: int32 */
+      id?: number;
+      ignore_velocity?: boolean;
+      /** Format: int32 */
+      indoor_ftp?: number;
+      /** @enum {string} */
+      interval_display?:
+        | "POWER_HR_PACE"
+        | "POWER_PACE_HR"
+        | "HR_POWER_PACE"
+        | "HR_PACE_POWER"
+        | "PACE_POWER_HR"
+        | "PACE_HR_POWER";
+      iseFTPSupported?: boolean;
+      keep_all_laps_for_power_intervals?: boolean;
+      /** @enum {string} */
+      load_order?:
+        | "POWER_HR_PACE"
+        | "POWER_PACE_HR"
+        | "HR_POWER_PACE"
+        | "HR_PACE_POWER"
+        | "PACE_POWER_HR"
+        | "PACE_HR_POWER";
+      /** Format: int32 */
+      lthr?: number;
+      /** Format: int32 */
+      max_hr?: number;
+      mmp_model?: components["schemas"]["PowerModel"];
+      other?: boolean;
+      /** Format: int32 */
+      p_max?: number;
+      /** Format: float */
+      pace_curve_start?: number;
+      /** @enum {string} */
+      pace_load_type?: "SWIM" | "RUN";
+      /** @enum {string} */
+      pace_units?:
+        | "SECS_100M"
+        | "SECS_100Y"
+        | "MINS_KM"
+        | "MINS_MILE"
+        | "SECS_500M"
+        | "SECS_400M"
+        | "SECS_250M"
+        | "NONE";
+      pace_zone_names?: string[];
+      pace_zones?: number[];
+      power_field?: string;
+      power_intervals_start_locked?: boolean;
+      /** Format: int32 */
+      power_spike_threshold?: number;
+      power_zone_names?: string[];
+      power_zones?: number[];
+      /** Format: int32 */
+      show_pauses?: number;
+      /** Format: int32 */
+      sweet_spot_max?: number;
+      /** Format: int32 */
+      sweet_spot_min?: number;
+      /** Format: float */
+      threshold_pace?: number;
+      /** @enum {string} */
+      tiz_order?:
+        | "POWER_HR_PACE"
+        | "POWER_PACE_HR"
+        | "HR_POWER_PACE"
+        | "HR_PACE_POWER"
+        | "PACE_POWER_HR"
+        | "PACE_HR_POWER";
+      types?: (
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other"
+      )[];
+      update_activity_name_from_workout?: boolean;
+      /** Format: date-time */
+      updated?: string;
+      use_distance_for_intervals?: boolean;
+      use_gap_zone_times?: boolean;
+      use_laps_for_power_intervals?: boolean;
+      /** Format: int32 */
+      w_prime?: number;
+      /** Format: int32 */
+      warmup_time?: number;
+      /** @enum {string} */
+      workout_order?:
+        | "POWER_HR_PACE"
+        | "POWER_PACE_HR"
+        | "HR_POWER_PACE"
+        | "HR_PACE_POWER"
+        | "PACE_POWER_HR"
+        | "PACE_HR_POWER";
+    };
+    StravaGear: {
+      /** Format: float */
+      distance?: number;
+      id?: string;
+      name?: string;
+      primary?: boolean;
+    };
     SummaryWithCats: {
-      /** Format: int32 */
-      count?: number;
-      /** Format: int32 */
-      time?: number;
-      /** Format: int32 */
-      moving_time?: number;
-      /** Format: int32 */
-      elapsed_time?: number;
+      athlete_id?: string;
+      athlete_name?: string;
+      byCategory?: components["schemas"]["CategorySummary"][];
       /** Format: int32 */
       calories?: number;
-      /** Format: float */
-      total_elevation_gain?: number;
       /** Format: int32 */
-      training_load?: number;
-      /** Format: int32 */
-      srpe?: number;
+      count?: number;
+      date?: string;
       /** Format: float */
       distance?: number;
       /** Format: float */
       eftp?: number;
       /** Format: float */
       eftpPerKg?: number;
-      date?: string;
-      athlete_id?: string;
-      athlete_name?: string;
+      /** Format: int32 */
+      elapsed_time?: number;
       email?: string;
       external_id?: string;
       /** Format: float */
-      fitness?: number;
-      /** Format: float */
       fatigue?: number;
       /** Format: float */
+      fitness?: number;
+      /** Format: float */
       form?: number;
+      mostRecentWellnessId?: string;
+      /** Format: int32 */
+      moving_time?: number;
       /** Format: float */
       rampRate?: number;
-      /** Format: float */
-      weight?: number;
+      /** Format: int32 */
+      srpe?: number;
+      /** Format: int32 */
+      time?: number;
       timeInZones?: number[];
       /** Format: int32 */
       timeInZonesTot?: number;
-      byCategory?: components["schemas"]["CategorySummary"][];
-      mostRecentWellnessId?: string;
-    };
-    ActivityPowerCurve: {
-      id?: string;
-      start_date_local?: string;
       /** Format: float */
-      weight?: number;
-      watts?: number[];
-    };
-    ActivityPowerCurvePayload: {
+      total_elevation_gain?: number;
       /** Format: int32 */
-      after_kj?: number;
-      secs?: number[];
-      curves?: components["schemas"]["ActivityPowerCurve"][];
-    };
-    ActivityHRCurve: {
-      id?: string;
-      start_date_local?: string;
+      training_load?: number;
       /** Format: float */
       weight?: number;
-      bpm?: number[];
     };
-    ActivityHRCurvePayload: {
-      secs?: number[];
-      curves?: components["schemas"]["ActivityHRCurve"][];
+    Time: {
+      /** Format: int32 */
+      clouds?: number;
+      /** Format: int32 */
+      end_secs?: number;
+      /** Format: float */
+      feels_like?: number;
+      /** Format: int32 */
+      humidity?: number;
+      /** Format: int32 */
+      index?: number;
+      /** Format: float */
+      pressure?: number;
+      /** Format: float */
+      rain?: number;
+      /** Format: float */
+      showers?: number;
+      /** Format: float */
+      snow?: number;
+      /** Format: int32 */
+      start_secs?: number;
+      /** Format: float */
+      temp?: number;
+      /** Format: int32 */
+      weather_code?: number;
+      /** Format: int32 */
+      wind_deg?: number;
+      /** Format: float */
+      wind_gust?: number;
+      /** Format: float */
+      wind_speed?: number;
     };
-    ActivitySearchResult: {
+    UpdateStreamsResult: {
+      deleted?: string[];
+      updated?: string[];
+    };
+    UploadResponse: {
+      activities?: components["schemas"]["ActivityId"][];
+      icu_athlete_id?: string;
       id?: string;
-      name?: string;
-      start_date_local?: string;
-      type?: string;
-      race?: boolean;
+    };
+    WeatherConfig: {
+      forecasts?: components["schemas"]["Forecast"][];
+    };
+    WeatherDTO: {
+      forecasts?: components["schemas"]["Forecast"][];
+    };
+    WeatherPoint: {
+      /** Format: float */
+      latitude?: number;
+      /** Format: float */
+      longitude?: number;
+      times?: components["schemas"]["Time"][];
+    };
+    Wellness: {
+      /** Format: float */
+      abdomen?: number;
+      /** Format: float */
+      atl?: number;
+      /** Format: float */
+      atlLoad?: number;
+      /** Format: float */
+      avgSleepingHR?: number;
+      /** Format: float */
+      baevskySI?: number;
+      /** Format: float */
+      bloodGlucose?: number;
+      /** Format: float */
+      bodyFat?: number;
+      /** Format: float */
+      carbohydrates?: number;
+      comments?: string;
+      /** Format: float */
+      ctl?: number;
+      /** Format: float */
+      ctlLoad?: number;
+      /** Format: int32 */
+      diastolic?: number;
+      /** Format: float */
+      fatTotal?: number;
+      /** Format: int32 */
+      fatigue?: number;
+      /** Format: float */
+      hrv?: number;
+      /** Format: float */
+      hrvSDNN?: number;
+      /** Format: int32 */
+      hydration?: number;
+      /** Format: float */
+      hydrationVolume?: number;
+      id?: string;
+      /** Format: int32 */
+      injury?: number;
+      /** Format: int32 */
+      kcalConsumed?: number;
+      /** Format: float */
+      lactate?: number;
+      locked?: boolean;
+      /** @enum {string} */
+      menstrualPhase?: "PERIOD" | "FOLLICULAR" | "OVULATING" | "LUTEAL" | "NONE";
+      /** @enum {string} */
+      menstrualPhasePredicted?: "PERIOD" | "FOLLICULAR" | "OVULATING" | "LUTEAL" | "NONE";
+      /** Format: int32 */
+      mood?: number;
+      /** Format: int32 */
+      motivation?: number;
+      /** Format: float */
+      protein?: number;
+      /** Format: float */
+      rampRate?: number;
+      /** Format: float */
+      readiness?: number;
+      /** Format: float */
+      respiration?: number;
+      /** Format: int32 */
+      restingHR?: number;
+      /** Format: int32 */
+      sleepQuality?: number;
+      /** Format: float */
+      sleepScore?: number;
+      /** Format: int32 */
+      sleepSecs?: number;
+      /** Format: int32 */
+      soreness?: number;
+      /** Format: float */
+      spO2?: number;
+      sportInfo?: components["schemas"]["SportInfo"][];
+      /** Format: int32 */
+      steps?: number;
+      /** Format: int32 */
+      stress?: number;
+      /** Format: int32 */
+      systolic?: number;
+      tempRestingHR?: boolean;
+      tempWeight?: boolean;
+      /** Format: date-time */
+      updated?: string;
+      /** Format: float */
+      vo2max?: number;
+      /** Format: float */
+      weight?: number;
+    };
+    WindRose: {
+      avg_speed?: number[];
+      count?: number[];
+    };
+    WithCount: {
+      /** Format: int32 */
+      activity_count?: number;
+      athlete_id?: string;
+      commute?: boolean;
+      description?: string;
       /** Format: float */
       distance?: number;
-      /** Format: int32 */
-      moving_time?: number;
+      latlngs?: number[][];
+      most_recent_id?: string;
+      most_recent_start_date_local?: string;
+      most_recent_type?: string;
+      name?: string;
+      rename_activities?: boolean;
+      /** Format: int64 */
+      replaced_by_route_id?: number;
+      /** Format: int64 */
+      route_id?: number;
       tags?: string[];
+    };
+    WithCourses: {
+      address?: string;
+      athlete_id?: string;
+      /** Format: int32 */
+      banner_image_height?: number;
+      banner_image_url?: string;
+      /** Format: int32 */
+      banner_image_width?: number;
+      /** @enum {string} */
+      category?: "RACE" | "WORKOUT" | "HIDDEN";
+      /** Format: int32 */
+      chat_id?: number;
+      closing_date_local?: string;
+      country?: string;
+      courses?: components["schemas"]["Course"][];
       description?: string;
+      duplicate_ids?: number[];
+      external_id?: string;
+      /** Format: int32 */
+      id?: number;
+      /** Format: int32 */
+      is_duplicate_votes?: number;
+      /** Format: float */
+      lat?: number;
+      location?: string;
+      /** Format: float */
+      lon?: number;
+      name?: string;
+      owner?: components["schemas"]["AthleteSearchResult"];
+      polyline?: string;
+      region?: string;
+      route_file?: string;
+      slug?: string;
+      start_date_local?: string;
+      types?: (
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other"
+      )[];
+      /** Format: date-time */
+      updated?: string;
+      /** Format: int32 */
+      usage_count?: number;
+      /** @enum {string} */
+      visibility?: "PUBLIC" | "GROUP";
+      website?: string;
     };
     WithSportSettings: {
-      id?: string;
-      name?: string;
-      firstname?: string;
-      lastname?: string;
-      profile_medium?: string;
-      measurement_preference?: string;
-      weight_pref_lb?: boolean;
-      fahrenheit?: boolean;
-      /** @enum {string} */
-      wind_speed?: "MPS" | "KNOTS" | "KMH" | "MPH" | "BFT";
-      /** @enum {string} */
-      rain?: "MM" | "INCHES";
-      /** Format: float */
-      weight?: number;
-      email?: string;
-      sex?: string;
-      city?: string;
-      state?: string;
-      country?: string;
-      countries?: string[];
-      languages?: string[];
-      bikes?: components["schemas"]["StravaGear"][];
-      shoes?: components["schemas"]["StravaGear"][];
-      timezone?: string;
-      locale?: string;
-      date_format?: string;
-      time_format?: string;
-      /** @enum {string} */
-      visibility?: "PRIVATE" | "PUBLIC" | "HIDDEN";
-      /** Format: date-time */
-      icu_last_seen?: string;
-      /** @enum {string} */
-      status?: "ACTIVE" | "DORMANT" | "ARCHIVED";
-      /** Format: date-time */
-      status_updated?: string;
-      /** Format: int32 */
-      icu_resting_hr?: number;
-      /** Format: float */
-      icu_weight?: number;
-      /** @enum {string} */
-      icu_weight_sync?: "NONE" | "STRAVA";
-      /** Format: date-time */
-      icu_activated?: string;
-      /** Format: int32 */
-      icu_queue_pos?: number;
-      icu_admin?: boolean;
-      icu_friend_invite_token?: string;
-      /** @enum {string} */
-      icu_permission?: "NONE" | "READ" | "WRITE";
-      icu_effort_secs?: number[];
-      icu_coach?: boolean;
-      bio?: string;
-      website?: string;
-      icu_date_of_birth?: string;
-      icu_api_key?: string;
-      icu_type_settings?: components["schemas"]["Settings"][];
-      icu_form_as_percent?: boolean;
-      /** Format: int32 */
-      icu_mmp_days?: number;
-      icu_wellness_prompt?: boolean;
-      wellness_last_prompt_date?: string;
-      icu_wellness_keys?: string[];
-      private_wellness_keys?: string[];
-      icu_track_menstrual_cycle?: boolean;
-      /** @enum {string} */
-      icu_menstrual_cycle_perm?: "NONE" | "READ" | "WRITE";
       activity_rpe_prompt?: boolean;
+      add_weather_to_strava_descr?: boolean;
+      beta_user?: boolean;
+      bikes?: components["schemas"]["StravaGear"][];
+      bio?: string;
+      city?: string;
       coach_ticks?: components["schemas"]["CoachTick"][];
-      icu_garmin_health?: boolean;
-      icu_garmin_training?: boolean;
-      icu_garmin_sync_activities?: boolean;
+      concept2_sync_activities?: boolean;
+      concept2_user_id?: string;
+      coros_download_wellness?: boolean;
+      /** Format: date-time */
+      coros_last_upload?: string;
+      coros_sync_activities?: boolean;
+      coros_upload_workouts?: boolean;
+      coros_user_id?: string;
+      countries?: string[];
+      country?: string;
+      currency?: string;
+      custom_items?: components["schemas"]["CustomItem"][];
+      date_format?: string;
+      dropbox_scope?: string;
+      email?: string;
+      email_notifications?: (
+        | "NEWSLETTER"
+        | "ACHIEVEMENTS"
+        | "FOLLOW_REQUEST"
+        | "COACH_ME_REQUEST"
+        | "PRIVATE_CHAT"
+        | "PRIVATE_MSG"
+        | "GROUP_CHAT"
+        | "GROUP_MSG"
+        | "ACTIVITY_CHAT"
+        | "ACTIVITY_MSG"
+        | "COACH_TICK"
+        | "FOLLOWED_ACTIVITY_CHAT"
+        | "COACHED_ACTIVITY_CHAT"
+        | "FOLLOWED_NEW_ACTIVITY"
+        | "COACHED_NEW_ACTIVITY"
+        | "GEAR_ALERTS"
+        | "PLAN_FOR_WEEK"
+        | "NEW_ACTIVITY"
+      )[];
+      fahrenheit?: boolean;
+      firstname?: string;
+      /** Format: float */
+      garmin_pace_range?: number;
+      /** @enum {string} */
+      garmin_power_target?: "POWER_LAP" | "POWER" | "POWER_3S" | "POWER_10S" | "POWER_30S";
       garmin_sync_activity_types?: (
         | "Ride"
         | "Run"
@@ -6087,22 +7322,97 @@ export interface components {
       )[];
       /** Format: date-time */
       garmin_sync_after?: string;
-      icu_garmin_download_wellness?: boolean;
-      icu_garmin_upload_workouts?: boolean;
+      google_scope?: string;
+      google_wellness_keys?: string[];
+      has_password?: boolean;
+      has_push_subscriptions?: boolean;
       /** Format: float */
-      icu_garmin_outdoor_power_range?: number;
+      height?: number;
+      /** @enum {string} */
+      height_units?: "CM" | "FEET";
+      huawei_download_wellness?: boolean;
+      huawei_sync_activities?: boolean;
+      huawei_upload_workouts?: boolean;
+      huawei_user_id?: string;
+      /** Format: date-time */
+      icu_activated?: string;
+      icu_admin?: boolean;
+      icu_api_key?: string;
+      icu_coach?: boolean;
+      icu_date_of_birth?: string;
+      icu_effort_secs?: number[];
+      icu_email_disabled?: string;
+      icu_email_verified?: boolean;
+      icu_form_as_percent?: boolean;
+      icu_friend_invite_token?: string;
+      icu_garmin_download_wellness?: boolean;
+      icu_garmin_health?: boolean;
       /** Format: float */
       icu_garmin_hr_range?: number;
-      /** Format: float */
-      garmin_pace_range?: number;
-      /** @enum {string} */
-      garmin_power_target?: "POWER_LAP" | "POWER" | "POWER_3S" | "POWER_10S" | "POWER_30S";
       /** Format: date-time */
       icu_garmin_last_upload?: string;
+      /** Format: float */
+      icu_garmin_outdoor_power_range?: number;
+      icu_garmin_sync_activities?: boolean;
+      icu_garmin_training?: boolean;
       icu_garmin_upload_filters?: components["schemas"]["ActivityFilter"][];
+      icu_garmin_upload_workouts?: boolean;
       icu_garmin_wellness_keys?: string[];
+      /** Format: date-time */
+      icu_last_seen?: string;
+      /** @enum {string} */
+      icu_menstrual_cycle_perm?: "NONE" | "READ" | "WRITE";
+      /** Format: int32 */
+      icu_mmp_days?: number;
+      /** @enum {string} */
+      icu_permission?: "NONE" | "READ" | "WRITE";
+      /** Format: int32 */
+      icu_queue_pos?: number;
+      /** Format: int32 */
+      icu_resting_hr?: number;
+      icu_send_achievements?: boolean;
+      icu_send_activity_chat?: boolean;
+      icu_send_activity_msg?: boolean;
+      icu_send_coach_me_req?: boolean;
+      icu_send_coach_tick?: boolean;
+      icu_send_coached_activity_chat?: boolean;
+      icu_send_coached_new_activity?: boolean;
+      icu_send_follow_req?: boolean;
+      icu_send_followed_activity_chat?: boolean;
+      icu_send_followed_new_activity?: boolean;
+      icu_send_gear_alerts?: boolean;
+      icu_send_group_chat?: boolean;
+      icu_send_group_msg?: boolean;
+      icu_send_newsletter?: boolean;
+      icu_send_plan_for_week?: boolean;
+      icu_send_private_chat?: boolean;
+      icu_send_private_msg?: boolean;
+      icu_track_menstrual_cycle?: boolean;
+      icu_type_settings?: components["schemas"]["Settings"][];
+      /** Format: float */
+      icu_weight?: number;
+      /** @enum {string} */
+      icu_weight_sync?: "NONE" | "STRAVA";
+      icu_wellness_keys?: string[];
+      icu_wellness_prompt?: boolean;
+      id?: string;
+      ignore_strava_gear?: boolean;
+      include_descr_in_plan_for_week?: boolean;
+      languages?: string[];
+      lastname?: string;
+      locale?: string;
+      measurement_preference?: string;
+      name?: string;
+      notification_athlete_tags_enabled?: string[];
       /** Format: int32 */
       open_step_duration?: number;
+      oura_scope?: string;
+      oura_wellness_keys?: string[];
+      /** @enum {string} */
+      plan?: "FREE" | "PREMIUM" | "SUPPORTER" | "WHITELABEL";
+      /** Format: date-time */
+      plan_expires?: string;
+      polar_download_wellness?: boolean;
       polar_scope?: string;
       polar_sync_activities?: boolean;
       polar_sync_activity_types?: (
@@ -6167,137 +7477,46 @@ export interface components {
         | "Yoga"
         | "Other"
       )[];
-      polar_download_wellness?: boolean;
       polar_wellness_keys?: string[];
-      suunto_scope?: string;
-      suunto_user_id?: string;
-      suunto_sync_activities?: boolean;
-      suunto_sync_activity_types?: (
-        | "Ride"
-        | "Run"
-        | "Swim"
-        | "WeightTraining"
-        | "Hike"
-        | "Walk"
-        | "AlpineSki"
-        | "BackcountrySki"
-        | "Badminton"
-        | "Canoeing"
-        | "Crossfit"
-        | "EBikeRide"
-        | "EMountainBikeRide"
-        | "Elliptical"
-        | "Golf"
-        | "GravelRide"
-        | "TrackRide"
-        | "Handcycle"
-        | "HighIntensityIntervalTraining"
-        | "Hockey"
-        | "IceSkate"
-        | "InlineSkate"
-        | "Kayaking"
-        | "Kitesurf"
-        | "MountainBikeRide"
-        | "Cyclocross"
-        | "NordicSki"
-        | "OpenWaterSwim"
-        | "Padel"
-        | "Pilates"
-        | "Pickleball"
-        | "Racquetball"
-        | "Rugby"
-        | "RockClimbing"
-        | "RollerSki"
-        | "Rowing"
-        | "Sail"
-        | "Skateboard"
-        | "Snowboard"
-        | "Snowshoe"
-        | "Soccer"
-        | "Squash"
-        | "StairStepper"
-        | "StandUpPaddling"
-        | "Surfing"
-        | "TableTennis"
-        | "Tennis"
-        | "TrailRun"
-        | "Transition"
-        | "Velomobile"
-        | "VirtualRide"
-        | "VirtualRow"
-        | "VirtualRun"
-        | "VirtualSki"
-        | "WaterSport"
-        | "Wheelchair"
-        | "Windsurf"
-        | "Workout"
-        | "Yoga"
-        | "Other"
+      private_wellness_keys?: string[];
+      profile_medium?: string;
+      push_notifications?: (
+        | "NEWSLETTER"
+        | "ACHIEVEMENTS"
+        | "FOLLOW_REQUEST"
+        | "COACH_ME_REQUEST"
+        | "PRIVATE_CHAT"
+        | "PRIVATE_MSG"
+        | "GROUP_CHAT"
+        | "GROUP_MSG"
+        | "ACTIVITY_CHAT"
+        | "ACTIVITY_MSG"
+        | "COACH_TICK"
+        | "FOLLOWED_ACTIVITY_CHAT"
+        | "COACHED_ACTIVITY_CHAT"
+        | "FOLLOWED_NEW_ACTIVITY"
+        | "COACHED_NEW_ACTIVITY"
+        | "GEAR_ALERTS"
+        | "PLAN_FOR_WEEK"
+        | "NEW_ACTIVITY"
       )[];
-      suunto_upload_workouts?: boolean;
-      /** Format: float */
-      suunto_outdoor_power_range?: number;
-      /** Format: float */
-      suunto_hr_range?: number;
-      /** Format: float */
-      suunto_pace_range?: number;
+      /** @enum {string} */
+      rain?: "MM" | "INCHES";
+      scope?: string;
+      sex?: string;
+      shoes?: components["schemas"]["StravaGear"][];
+      /** Format: int32 */
+      sponsored_by_chat_id?: number;
+      sportSettings?: components["schemas"]["SportSettings"][];
+      state?: string;
+      /** @enum {string} */
+      status?: "ACTIVE" | "DORMANT" | "ARCHIVED";
       /** Format: date-time */
-      suunto_last_upload?: string;
-      suunto_upload_filters?: components["schemas"]["ActivityFilter"][];
-      suunto_download_wellness?: boolean;
-      coros_user_id?: string;
-      coros_sync_activities?: boolean;
-      coros_upload_workouts?: boolean;
-      coros_download_wellness?: boolean;
-      /** Format: date-time */
-      coros_last_upload?: string;
-      concept2_user_id?: string;
-      concept2_sync_activities?: boolean;
-      zepp_user_id?: string;
-      zepp_sync_activities?: boolean;
-      zepp_upload_workouts?: boolean;
-      zepp_download_wellness?: boolean;
-      huawei_user_id?: string;
-      huawei_sync_activities?: boolean;
-      huawei_upload_workouts?: boolean;
-      huawei_download_wellness?: boolean;
-      wahoo_user_id?: string;
-      wahoo_sync_activities?: boolean;
-      wahoo_upload_workouts?: boolean;
-      zwift_user_id?: string;
-      zwift_sync_activities?: boolean;
-      zwift_upload_workouts?: boolean;
-      dropbox_scope?: string;
-      oura_scope?: string;
-      oura_wellness_keys?: string[];
-      whoop_scope?: string;
-      whoop_wellness_keys?: string[];
-      google_scope?: string;
-      google_wellness_keys?: string[];
-      icu_email_verified?: boolean;
-      icu_email_disabled?: string;
-      icu_send_achievements?: boolean;
-      icu_send_newsletter?: boolean;
-      icu_send_private_chat?: boolean;
-      icu_send_private_msg?: boolean;
-      icu_send_follow_req?: boolean;
-      icu_send_group_chat?: boolean;
-      icu_send_group_msg?: boolean;
-      icu_send_activity_chat?: boolean;
-      icu_send_followed_activity_chat?: boolean;
-      icu_send_coached_activity_chat?: boolean;
-      icu_send_activity_msg?: boolean;
-      icu_send_coach_me_req?: boolean;
-      icu_send_gear_alerts?: boolean;
-      icu_send_plan_for_week?: boolean;
-      include_descr_in_plan_for_week?: boolean;
-      icu_send_followed_new_activity?: boolean;
-      icu_send_coached_new_activity?: boolean;
-      icu_send_coach_tick?: boolean;
+      status_updated?: string;
       strava_allowed?: boolean;
+      strava_authorized?: boolean;
       /** Format: int32 */
       strava_id?: number;
-      scope?: string;
       strava_sync_activities?: boolean;
       strava_sync_activity_types?: (
         | "Ride"
@@ -6362,663 +7581,231 @@ export interface components {
         | "Other"
       )[];
       strava_sync_other_activities?: boolean;
-      ignore_strava_gear?: boolean;
-      update_strava_name?: boolean;
-      add_weather_to_strava_descr?: boolean;
+      suunto_download_wellness?: boolean;
       /** Format: float */
-      height?: number;
-      /** @enum {string} */
-      height_units?: "CM" | "FEET";
-      /** @enum {string} */
-      plan?: "FREE" | "PREMIUM" | "SUPPORTER" | "WHITELABEL";
+      suunto_hr_range?: number;
       /** Format: date-time */
-      plan_expires?: string;
-      /** Format: date-time */
-      trial_end_date?: string;
-      /** Format: int32 */
-      sponsored_by_chat_id?: number;
-      has_password?: boolean;
-      beta_user?: boolean;
-      currency?: string;
+      suunto_last_upload?: string;
+      /** Format: float */
+      suunto_outdoor_power_range?: number;
+      /** Format: float */
+      suunto_pace_range?: number;
+      suunto_scope?: string;
+      suunto_sync_activities?: boolean;
+      suunto_sync_activity_types?: (
+        | "Ride"
+        | "Run"
+        | "Swim"
+        | "WeightTraining"
+        | "Hike"
+        | "Walk"
+        | "AlpineSki"
+        | "BackcountrySki"
+        | "Badminton"
+        | "Canoeing"
+        | "Crossfit"
+        | "EBikeRide"
+        | "EMountainBikeRide"
+        | "Elliptical"
+        | "Golf"
+        | "GravelRide"
+        | "TrackRide"
+        | "Handcycle"
+        | "HighIntensityIntervalTraining"
+        | "Hockey"
+        | "IceSkate"
+        | "InlineSkate"
+        | "Kayaking"
+        | "Kitesurf"
+        | "MountainBikeRide"
+        | "Cyclocross"
+        | "NordicSki"
+        | "OpenWaterSwim"
+        | "Padel"
+        | "Pilates"
+        | "Pickleball"
+        | "Racquetball"
+        | "Rugby"
+        | "RockClimbing"
+        | "RollerSki"
+        | "Rowing"
+        | "Sail"
+        | "Skateboard"
+        | "Snowboard"
+        | "Snowshoe"
+        | "Soccer"
+        | "Squash"
+        | "StairStepper"
+        | "StandUpPaddling"
+        | "Surfing"
+        | "TableTennis"
+        | "Tennis"
+        | "TrailRun"
+        | "Transition"
+        | "Velomobile"
+        | "VirtualRide"
+        | "VirtualRow"
+        | "VirtualRun"
+        | "VirtualSki"
+        | "WaterSport"
+        | "Wheelchair"
+        | "Windsurf"
+        | "Workout"
+        | "Yoga"
+        | "Other"
+      )[];
+      suunto_upload_filters?: components["schemas"]["ActivityFilter"][];
+      suunto_upload_workouts?: boolean;
+      suunto_user_id?: string;
+      time_format?: string;
+      timezone?: string;
+      training_availability?: components["schemas"]["AthleteTrainingAvailability"][];
       /** Format: int32 */
       training_plan_id?: number;
       training_plan_start_date?: string;
-      training_availability?: components["schemas"]["AthleteTrainingAvailability"][];
-      strava_authorized?: boolean;
-      sportSettings?: components["schemas"]["SportSettings"][];
-      custom_items?: components["schemas"]["CustomItem"][];
-    };
-    ActivityMini: {
-      id?: string;
-      start_date_local?: string;
-      type?: string;
-      name?: string;
-    };
-    ActivityWeatherSummary: {
-      /** Format: int32 */
-      start_index?: number;
-      /** Format: int32 */
-      end_index?: number;
-      /** Format: int32 */
-      start_secs?: number;
-      /** Format: int32 */
-      end_secs?: number;
-      /** Format: int32 */
-      moving_time?: number;
-      whole_activity?: boolean;
-      wind_speed?: components["schemas"]["WindRose"];
-      wind_gust?: components["schemas"]["WindRose"];
-      apparent_wind_speed?: components["schemas"]["WindRose"];
-      apparent_wind_gust?: components["schemas"]["WindRose"];
-      /** Format: float */
-      average_temp?: number;
-      /** Format: int32 */
-      min_temp?: number;
-      /** Format: int32 */
-      max_temp?: number;
-      /** Format: float */
-      average_weather_temp?: number;
-      /** Format: float */
-      min_weather_temp?: number;
-      /** Format: float */
-      max_weather_temp?: number;
-      /** Format: float */
-      average_feels_like?: number;
-      /** Format: float */
-      min_feels_like?: number;
-      /** Format: float */
-      max_feels_like?: number;
-      /** Format: float */
-      average_wind_speed?: number;
-      /** Format: float */
-      min_wind_speed?: number;
-      /** Format: float */
-      max_wind_speed?: number;
-      /** Format: float */
-      average_wind_gust?: number;
-      /** Format: float */
-      min_wind_gust?: number;
-      /** Format: float */
-      max_wind_gust?: number;
-      /** Format: int32 */
-      prevailing_wind_deg?: number;
-      /** Format: float */
-      average_yaw?: number;
-      /** Format: float */
-      headwind_percent?: number;
-      /** Format: float */
-      tailwind_percent?: number;
-      /** Format: float */
-      max_rain?: number;
-      /** Format: float */
-      max_showers?: number;
-      /** Format: float */
-      max_snow?: number;
-      /** Format: int32 */
-      average_clouds?: number;
-      description?: string;
-    };
-    WindRose: {
-      avg_speed?: number[];
-      count?: number[];
-    };
-    Plot: {
-      /** Format: int32 */
-      max_bpm?: number;
-      /** Format: int32 */
-      min_bpm?: number;
-      secs?: number[];
-      cumulative_secs?: number[];
-    };
-    IcuSegment: {
-      /** Format: int64 */
-      id?: number;
-      /** Format: int32 */
-      start_index?: number;
-      /** Format: int32 */
-      end_index?: number;
-      name?: string;
-      /** Format: int64 */
-      segment_id?: number;
-      starred?: boolean;
-    };
-    Bucket: {
-      /** Format: int32 */
-      start?: number;
-      /** Format: int32 */
-      secs?: number;
-      /** Format: int32 */
-      movingSecs?: number;
-      /** Format: double */
-      watts?: number;
-      /** Format: double */
-      hr?: number;
-      /** Format: int32 */
-      cadence?: number;
-    };
-    Curve: {
-      id?: string;
-      coefficients?: number[];
-      /** Format: double */
-      r2?: number;
-    };
-    PowerVsHRPlot: {
-      /** Format: int32 */
-      bucketSize?: number;
-      /** Format: int32 */
-      warmup?: number;
-      /** Format: int32 */
-      cooldown?: number;
-      /** Format: int32 */
-      elapsedTime?: number;
-      /** Format: int32 */
-      hrLag?: number;
-      /** Format: float */
-      powerHr?: number;
-      /** Format: float */
-      powerHrFirst?: number;
-      /** Format: float */
-      powerHrSecond?: number;
-      /** Format: float */
-      decoupling?: number;
-      /** Format: float */
-      powerHrZ2?: number;
-      /** Format: int32 */
-      medianCadenceZ2?: number;
-      /** Format: int32 */
-      avgCadenceZ2?: number;
-      /** Format: int32 */
-      hrZ2BucketCount?: number;
-      /** Format: int32 */
-      start?: number;
-      /** Format: int32 */
-      mid?: number;
-      /** Format: int32 */
-      end?: number;
-      series?: components["schemas"]["Bucket"][];
-      curves?: components["schemas"]["Curve"][];
-      ratioCoefficients?: number[];
-    };
-    PowerCurve: {
-      id?: string;
-      /** Format: int32 */
-      after_kj?: number;
-      filters?: components["schemas"]["ActivityFilter"][];
-      label?: string;
-      filter_label?: string;
-      /** Format: float */
-      percentile?: number;
-      start_date_local?: string;
-      end_date_local?: string;
-      /** Format: int32 */
-      days?: number;
-      /** Format: int32 */
-      moving_time?: number;
-      /** Format: int32 */
-      training_load?: number;
+      /** Format: date-time */
+      trial_end_date?: string;
+      update_strava_name?: boolean;
+      /** @enum {string} */
+      visibility?: "PRIVATE" | "PUBLIC" | "HIDDEN";
+      wahoo_sync_activities?: boolean;
+      wahoo_upload_workouts?: boolean;
+      wahoo_user_id?: string;
+      website?: string;
       /** Format: float */
       weight?: number;
-      secs?: number[];
-      values?: number[];
-      submax_values?: number[][];
-      submax_activity_id?: string[][];
-      start_index?: number[];
-      end_index?: number[];
-      activity_id?: string[];
-      watts_per_kg?: number[];
-      wkg_activity_id?: string[];
-      submax_watts_per_kg?: number[][];
-      submax_wkg_activity_id?: string[][];
-      powerModels?: components["schemas"]["PowerModel"][];
-      ranks?: {
-        [key: string]: components["schemas"]["Rank"];
-      };
-      mapPlot?: components["schemas"]["Plot"];
-      stream_type?: string;
-      stream_name?: string;
-      watts?: number[];
-      /** Format: float */
-      vo2max_5m?: number;
-      /** Format: float */
-      compound_score_5m?: number;
-    };
-    Rank: {
-      position?: {
-        [key: string]: number;
-      };
-      watts?: {
-        [key: string]: number;
-      };
-    };
-    PaceCurve: {
-      id?: string;
-      filters?: components["schemas"]["ActivityFilter"][];
-      label?: string;
-      filter_label?: string;
-      /** Format: float */
-      percentile?: number;
-      start_date_local?: string;
-      end_date_local?: string;
-      /** Format: int32 */
-      days?: number;
-      /** Format: int32 */
-      moving_time?: number;
-      /** Format: int32 */
-      training_load?: number;
-      /** Format: float */
-      weight?: number;
-      distance?: number[];
-      values?: number[];
-      submax_values?: number[][];
-      submax_activity_id?: string[][];
-      start_index?: number[];
-      end_index?: number[];
-      activity_id?: string[];
+      weight_pref_lb?: boolean;
+      wellness_last_prompt_date?: string;
+      whoop_scope?: string;
+      whoop_wellness_keys?: string[];
       /** @enum {string} */
-      type?: "POWER" | "HR" | "PACE" | "GAP";
-      paceModels?: components["schemas"]["PaceModel"][];
+      wind_speed?: "MPS" | "KNOTS" | "KMH" | "MPH" | "BFT";
+      zepp_download_wellness?: boolean;
+      zepp_sync_activities?: boolean;
+      zepp_upload_workouts?: boolean;
+      zepp_user_id?: string;
+      zwift_sync_activities?: boolean;
+      zwift_upload_workouts?: boolean;
+      zwift_user_id?: string;
     };
-    PaceModel: {
-      /** @enum {string} */
-      type?: "CS";
-      /** Format: float */
-      criticalSpeed?: number;
-      /** Format: float */
-      dPrime?: number;
-      /** Format: float */
-      r2?: number;
-      inputPointIndexes?: number[];
-    };
-    MapData: {
-      bounds?: number[][];
-      latlngs?: number[][];
-      route?: components["schemas"]["AthleteRoute"];
-      weather?: components["schemas"]["ActivityWeather"];
-    };
-    HRLoadModel: {
-      /** @enum {string} */
-      type?: "AVG_HR" | "HR_ZONES" | "HRSS";
-      /** Format: int32 */
-      icu_training_load?: number;
-      /** Format: int32 */
-      trainingDataCount?: number;
-    };
-    HRCurve: {
-      id?: string;
-      filters?: components["schemas"]["ActivityFilter"][];
-      label?: string;
-      filter_label?: string;
-      /** Format: float */
-      percentile?: number;
-      start_date_local?: string;
-      end_date_local?: string;
-      /** Format: int32 */
-      days?: number;
-      /** Format: int32 */
-      moving_time?: number;
-      /** Format: int32 */
-      training_load?: number;
-      /** Format: float */
-      weight?: number;
-      secs?: number[];
-      values?: number[];
-      submax_values?: number[][];
-      submax_activity_id?: string[][];
-      start_index?: number[];
-      end_index?: number[];
-      activity_id?: string[];
-    };
-    BestEfforts: {
-      efforts?: components["schemas"]["Effort"][];
-    };
-    Effort: {
-      /** Format: int32 */
-      start_index?: number;
-      /** Format: int32 */
-      end_index?: number;
-      /** Format: float */
-      average?: number;
-      /** Format: int32 */
-      duration?: number;
-      /** Format: float */
-      distance?: number;
-    };
-    ActivityWithIntervals: {
-      id?: string;
-      start_date_local?: string;
-      type?: string;
-      icu_ignore_time?: boolean;
-      /** Format: int32 */
-      icu_pm_cp?: number;
-      /** Format: int32 */
-      icu_pm_w_prime?: number;
-      /** Format: int32 */
-      icu_pm_p_max?: number;
-      /** Format: int32 */
-      icu_pm_ftp?: number;
-      /** Format: int32 */
-      icu_pm_ftp_secs?: number;
-      /** Format: int32 */
-      icu_pm_ftp_watts?: number;
-      icu_ignore_power?: boolean;
-      /** Format: float */
-      icu_rolling_cp?: number;
-      /** Format: float */
-      icu_rolling_w_prime?: number;
-      /** Format: float */
-      icu_rolling_p_max?: number;
-      /** Format: int32 */
-      icu_rolling_ftp?: number;
-      /** Format: int32 */
-      icu_rolling_ftp_delta?: number;
-      /** Format: int32 */
-      icu_training_load?: number;
-      /** Format: float */
-      icu_atl?: number;
-      /** Format: float */
-      icu_ctl?: number;
-      /** Format: float */
-      ss_p_max?: number;
-      /** Format: float */
-      ss_w_prime?: number;
-      /** Format: float */
-      ss_cp?: number;
-      /** Format: int32 */
-      paired_event_id?: number;
-      /** Format: int32 */
-      icu_ftp?: number;
-      /** Format: int32 */
-      icu_joules?: number;
-      /** Format: int32 */
-      icu_recording_time?: number;
-      /** Format: int32 */
-      elapsed_time?: number;
-      /** Format: int32 */
-      icu_weighted_avg_watts?: number;
-      /** Format: int32 */
-      carbs_used?: number;
-      name?: string;
-      description?: string;
-      start_date?: string;
-      /** Format: float */
-      distance?: number;
-      /** Format: float */
-      icu_distance?: number;
-      /** Format: int32 */
-      moving_time?: number;
-      /** Format: int32 */
-      coasting_time?: number;
-      /** Format: float */
-      total_elevation_gain?: number;
-      /** Format: float */
-      total_elevation_loss?: number;
-      timezone?: string;
-      trainer?: boolean;
-      /** @enum {string} */
-      sub_type?: "NONE" | "COMMUTE" | "WARMUP" | "COOLDOWN" | "RACE";
-      commute?: boolean;
-      race?: boolean;
-      /** Format: float */
-      max_speed?: number;
-      /** Format: float */
-      average_speed?: number;
-      device_watts?: boolean;
-      has_heartrate?: boolean;
-      /** Format: int32 */
-      max_heartrate?: number;
-      /** Format: int32 */
-      average_heartrate?: number;
-      /** Format: float */
-      average_cadence?: number;
-      /** Format: int32 */
-      calories?: number;
-      /** Format: float */
-      average_temp?: number;
-      /** Format: int32 */
-      min_temp?: number;
-      /** Format: int32 */
-      max_temp?: number;
-      /** Format: float */
-      avg_lr_balance?: number;
-      /** Format: float */
-      gap?: number;
-      /** @enum {string} */
-      gap_model?: "NONE" | "STRAVA_RUN";
-      use_elevation_correction?: boolean;
-      gear?: components["schemas"]["StravaGear"];
-      /** Format: float */
-      perceived_exertion?: number;
-      device_name?: string;
-      power_meter?: string;
-      power_meter_serial?: string;
-      power_meter_battery?: string;
-      /** Format: float */
-      crank_length?: number;
-      external_id?: string;
-      /** Format: int32 */
-      file_sport_index?: number;
-      file_type?: string;
-      icu_athlete_id?: string;
-      /** Format: date-time */
-      created?: string;
-      /** Format: date-time */
-      icu_sync_date?: string;
-      /** Format: date-time */
-      analyzed?: string;
-      /** Format: int32 */
-      icu_w_prime?: number;
-      /** Format: int32 */
-      p_max?: number;
-      /** Format: float */
-      threshold_pace?: number;
-      icu_hr_zones?: number[];
-      pace_zones?: number[];
-      /** Format: int32 */
-      lthr?: number;
-      /** Format: int32 */
-      icu_resting_hr?: number;
-      /** Format: float */
-      icu_weight?: number;
-      icu_power_zones?: number[];
-      /** Format: int32 */
-      icu_sweet_spot_min?: number;
-      /** Format: int32 */
-      icu_sweet_spot_max?: number;
-      /** Format: int32 */
-      icu_power_spike_threshold?: number;
-      /** Format: float */
-      trimp?: number;
-      /** Format: int32 */
-      icu_warmup_time?: number;
-      /** Format: int32 */
-      icu_cooldown_time?: number;
-      /** Format: int32 */
-      icu_chat_id?: number;
-      icu_ignore_hr?: boolean;
-      ignore_velocity?: boolean;
-      ignore_pace?: boolean;
-      ignore_parts?: components["schemas"]["Ignore"][];
-      /** Format: int32 */
-      icu_training_load_data?: number;
-      interval_summary?: string[];
-      skyline_chart_bytes?: string[];
-      stream_types?: string[];
-      has_weather?: boolean;
-      has_segments?: boolean;
-      power_field_names?: string[];
-      power_field?: string;
-      icu_zone_times?: components["schemas"]["ZoneTime"][];
-      icu_hr_zone_times?: number[];
-      pace_zone_times?: number[];
-      gap_zone_times?: number[];
-      use_gap_zone_times?: boolean;
-      custom_zones?: components["schemas"]["ZoneSet"][];
-      /** @enum {string} */
-      tiz_order?:
-        | "POWER_HR_PACE"
-        | "POWER_PACE_HR"
-        | "HR_POWER_PACE"
-        | "HR_PACE_POWER"
-        | "PACE_POWER_HR"
-        | "PACE_HR_POWER";
-      /** Format: float */
-      polarization_index?: number;
-      icu_achievements?: components["schemas"]["IcuAchievement"][];
-      icu_intervals_edited?: boolean;
-      lock_intervals?: boolean;
-      /** Format: int32 */
-      icu_lap_count?: number;
-      /** Format: int32 */
-      icu_joules_above_ftp?: number;
-      /** Format: int32 */
-      icu_max_wbal_depletion?: number;
-      icu_hrr?: components["schemas"]["HRRecovery"];
-      icu_sync_error?: string;
-      icu_color?: string;
-      /** Format: float */
-      icu_power_hr_z2?: number;
-      /** Format: int32 */
-      icu_power_hr_z2_mins?: number;
-      /** Format: int32 */
-      icu_cadence_z2?: number;
-      /** Format: int32 */
-      icu_rpe?: number;
-      /** Format: int32 */
-      feel?: number;
-      /** Format: float */
-      kg_lifted?: number;
-      /** Format: float */
-      decoupling?: number;
-      /** Format: int32 */
-      icu_median_time_delta?: number;
-      /** Format: float */
-      p30s_exponent?: number;
-      /** Format: int32 */
-      workout_shift_secs?: number;
-      strava_id?: string;
-      /** Format: int32 */
-      lengths?: number;
-      /** Format: float */
-      pool_length?: number;
-      /** Format: float */
-      compliance?: number;
-      /** Format: int32 */
-      coach_tick?: number;
-      /** @enum {string} */
-      source?:
-        | "STRAVA"
-        | "UPLOAD"
-        | "MANUAL"
-        | "GARMIN_CONNECT"
-        | "OAUTH_CLIENT"
-        | "DROPBOX"
-        | "POLAR"
-        | "SUUNTO"
-        | "COROS"
-        | "WAHOO"
-        | "ZWIFT"
-        | "ZEPP"
-        | "CONCEPT2"
-        | "HUAWEI";
-      /** Format: int32 */
-      oauth_client_id?: number;
-      oauth_client_name?: string;
-      /** Format: float */
-      average_altitude?: number;
-      /** Format: float */
-      min_altitude?: number;
-      /** Format: float */
-      max_altitude?: number;
-      /** Format: int32 */
-      power_load?: number;
-      /** Format: int32 */
-      hr_load?: number;
-      /** Format: int32 */
-      pace_load?: number;
-      /** @enum {string} */
-      hr_load_type?: "AVG_HR" | "HR_ZONES" | "HRSS";
-      /** @enum {string} */
-      pace_load_type?: "SWIM" | "RUN";
-      tags?: string[];
+    Workout: {
+      athlete_id?: string;
       attachments?: components["schemas"]["Attachment"][];
-      recording_stops?: number[];
-      /** Format: float */
-      average_weather_temp?: number;
-      /** Format: float */
-      min_weather_temp?: number;
-      /** Format: float */
-      max_weather_temp?: number;
-      /** Format: float */
-      average_feels_like?: number;
-      /** Format: float */
-      min_feels_like?: number;
-      /** Format: float */
-      max_feels_like?: number;
-      /** Format: float */
-      average_wind_speed?: number;
-      /** Format: float */
-      average_wind_gust?: number;
       /** Format: int32 */
-      prevailing_wind_deg?: number;
-      /** Format: float */
-      headwind_percent?: number;
-      /** Format: float */
-      tailwind_percent?: number;
+      carbs_per_hour?: number;
+      color?: string;
       /** Format: int32 */
-      average_clouds?: number;
-      /** Format: float */
-      max_rain?: number;
-      /** Format: float */
-      max_snow?: number;
+      day?: number;
       /** Format: int32 */
-      carbs_ingested?: number;
-      /** Format: int64 */
-      route_id?: number;
+      days?: number;
+      description?: string;
       /** Format: float */
-      pace?: number;
+      distance?: number;
       /** Format: int32 */
-      athlete_max_hr?: number;
-      group?: string;
+      folder_id?: number;
+      for_week?: boolean;
+      hide_from_athlete?: boolean;
       /** Format: float */
       icu_intensity?: number;
-      /** Format: float */
-      icu_efficiency_factor?: number;
-      /** Format: float */
-      icu_power_hr?: number;
       /** Format: int32 */
-      session_rpe?: number;
-      /** Format: float */
-      average_stride?: number;
+      icu_training_load?: number;
       /** Format: int32 */
-      icu_average_watts?: number;
-      /** Format: float */
-      icu_variability_index?: number;
-      /** Format: float */
-      strain_score?: number;
-      icu_intervals?: components["schemas"]["Interval"][];
-      icu_groups?: components["schemas"]["IntervalGroup"][];
-    };
-    Hidden: {
-      id?: string;
-      icu_athlete_id?: string;
-      start_date_local?: string;
+      id?: number;
+      indoor?: boolean;
+      /** Format: int32 */
+      joules?: number;
+      /** Format: int32 */
+      joules_above_ftp?: number;
+      /** Format: int32 */
+      moving_time?: number;
+      name?: string;
+      /** Format: date-time */
+      plan_applied?: string;
       /** @enum {string} */
-      source?:
-        | "STRAVA"
-        | "UPLOAD"
-        | "MANUAL"
-        | "GARMIN_CONNECT"
-        | "OAUTH_CLIENT"
-        | "DROPBOX"
-        | "POLAR"
-        | "SUUNTO"
-        | "COROS"
-        | "WAHOO"
-        | "ZWIFT"
-        | "ZEPP"
-        | "CONCEPT2"
-        | "HUAWEI";
-      _note?: string;
+      sub_type?: "NONE" | "COMMUTE" | "WARMUP" | "COOLDOWN" | "RACE";
+      tags?: string[];
+      /** @enum {string} */
+      target?: "AUTO" | "POWER" | "HR" | "PACE";
+      targets?: ("AUTO" | "POWER" | "HR" | "PACE")[];
+      time?: string;
+      type?: string;
+      /** Format: date-time */
+      updated?: string;
+      workout_doc?: {
+        [key: string]: Record<string, never>;
+      };
+    };
+    WorkoutEx: {
+      athlete_id?: string;
+      attachments?: components["schemas"]["Attachment"][];
+      /** Format: int32 */
+      carbs_per_hour?: number;
+      color?: string;
+      /** Format: int32 */
+      day?: number;
+      /** Format: int32 */
+      days?: number;
+      description?: string;
+      /** Format: float */
+      distance?: number;
+      file_contents?: string;
+      file_contents_base64?: string;
+      filename?: string;
+      /** Format: int32 */
+      folder_id?: number;
+      for_week?: boolean;
+      hide_from_athlete?: boolean;
+      /** Format: float */
+      icu_intensity?: number;
+      /** Format: int32 */
+      icu_training_load?: number;
+      /** Format: int32 */
+      id?: number;
+      indoor?: boolean;
+      /** Format: int32 */
+      joules?: number;
+      /** Format: int32 */
+      joules_above_ftp?: number;
+      /** Format: int32 */
+      moving_time?: number;
+      name?: string;
+      /** Format: date-time */
+      plan_applied?: string;
+      /** @enum {string} */
+      sub_type?: "NONE" | "COMMUTE" | "WARMUP" | "COOLDOWN" | "RACE";
+      tags?: string[];
+      /** @enum {string} */
+      target?: "AUTO" | "POWER" | "HR" | "PACE";
+      targets?: ("AUTO" | "POWER" | "HR" | "PACE")[];
+      time?: string;
+      type?: string;
+      /** Format: date-time */
+      updated?: string;
+      workout_doc?: {
+        [key: string]: Record<string, never>;
+      };
+    };
+    ZoneInfo: {
+      /** Format: float */
+      end?: number;
+      /** Format: float */
+      end_value?: number;
+      id?: string;
+      /** Format: int32 */
+      secs?: number;
+      /** Format: float */
+      start?: number;
+      /** Format: float */
+      start_value?: number;
+    };
+    ZoneSet: {
+      code?: string;
+      zones?: components["schemas"]["ZoneInfo"][];
+    };
+    ZoneTime: {
+      id?: string;
+      /** Format: int32 */
+      secs?: number;
     };
   };
   responses: never;
@@ -7029,13 +7816,1053 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  updateLastSeenMessageId: {
+  getActivity: {
+    parameters: {
+      query?: {
+        /** @description Include interval data */
+        intervals?: boolean;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description default response */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*":
+            | components["schemas"]["Activity"]
+            | components["schemas"]["ActivityWithIntervals"]
+            | components["schemas"]["Hidden"];
+        };
+      };
+    };
+  };
+  updateActivity: {
     parameters: {
       query?: never;
       header?: never;
       path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Activity"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Activity"];
+        };
+      };
+    };
+  };
+  deleteActivity: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ActivityId"];
+        };
+      };
+    };
+  };
+  findBestEfforts: {
+    parameters: {
+      query: {
+        /** @description Stream to search */
+        stream: string;
+        /** @description Duration of each effort in seconds */
+        duration?: number;
+        /** @description Distance of each effort in meters */
+        distance?: number;
+        /** @description Number of efforts to return */
+        count?: number;
+        /** @description Minimum average value for each interval, intervals will expand if specified */
+        minValue?: number;
+        /** @description If true portions of the stream that are included in work intervals are not considered */
+        excludeIntervals?: boolean;
+        /** @description First point in stream to consider */
+        startIndex?: number;
+        /** @description Last point in stream to consider (exclusive, default is whole stream) */
+        endIndex?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["BestEfforts"];
+        };
+      };
+    };
+  };
+  deleteIntervals: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Interval"][];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["IntervalsDTO"];
+        };
+      };
+    };
+  };
+  downloadActivityFile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  downloadActivityFitFile: {
+    parameters: {
+      query?: {
+        /** @description Include power data */
+        power?: boolean;
+        /** @description Include heart rate data */
+        hr?: boolean;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getGapHistogram: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Bucket"][];
+        };
+      };
+    };
+  };
+  downloadActivityGpxFile: {
+    parameters: {
+      query?: {
+        /** @description Include power data */
+        power?: boolean;
+        /** @description Include heart rate data */
+        hr?: boolean;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getActivityHRCurve: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        ext: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["HRCurve"];
+        };
+      };
+    };
+  };
+  getHRHistogram: {
+    parameters: {
+      query?: {
+        /** @description Beats per bucket (default 5) */
+        bucketSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Bucket"][];
+        };
+      };
+    };
+  };
+  getHRTrainingLoadModel: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["HRLoadModel"];
+        };
+      };
+    };
+  };
+  getIntervalStats: {
+    parameters: {
+      query: {
+        start_index: number;
+        end_index: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Interval"];
+        };
+      };
+    };
+  };
+  getIntervals: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["IntervalsDTO"];
+        };
+      };
+    };
+  };
+  updateIntervals: {
+    parameters: {
+      query?: {
+        /** @description Any existing intervals are replaced, otherwise a merge is done */
+        all?: boolean;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Interval"][];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["IntervalsDTO"];
+        };
+      };
+    };
+  };
+  updateInterval: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        intervalId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Interval"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["IntervalsDTO"];
+        };
+      };
+    };
+  };
+  getActivityMap: {
+    parameters: {
+      query?: {
+        /** @description Optional comma separated bounding box (left, top, right, bottom) to limit points returned */
+        bounds?: number[];
+        /** @description Only return the map bounds, not the latlngs */
+        boundsOnly?: boolean;
+        /** @description Include weather points if available */
+        weather?: boolean;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["MapData"];
+        };
+      };
+    };
+  };
+  listActivityMessages: {
+    parameters: {
+      query?: {
+        sinceId?: number;
+        limit?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Message"][];
+        };
+      };
+    };
+  };
+  sendActivityMessage: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["NewActivityMsg"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["NewMsg"];
+        };
+      };
+    };
+  };
+  getActivityPaceCurve: {
+    parameters: {
+      query?: {
+        gap?: boolean;
+      };
+      header?: never;
+      path: {
+        id: string;
+        ext: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["PaceCurve"];
+        };
+      };
+    };
+  };
+  getPaceHistogram: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Bucket"][];
+        };
+      };
+    };
+  };
+  listActivityPowerCurves_1: {
+    parameters: {
+      query?: {
+        /** @description Comma separated list of streams required (default is watts) */
+        types?: string[];
+        /** @description Comma separated list of normal, kj0 or kj1 to return normal and/or fatigued curves */
+        fatigue?: string[];
+      };
+      header?: never;
+      path: {
+        id: string;
+        ext: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["PowerCurve"][];
+        };
+      };
+    };
+  };
+  getActivityPowerCurve: {
+    parameters: {
+      query?: {
+        /** @description Use kj0 or kj1 to get one of the athlete's predefined fatigued power curves */
+        fatigue?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+        ext: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["PowerCurve"];
+        };
+      };
+    };
+  };
+  getPowerHistogram: {
+    parameters: {
+      query?: {
+        /** @description Watts per bucket (default 25) */
+        bucketSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Bucket"][];
+        };
+      };
+    };
+  };
+  getActivityPowerSpikeModel: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["PowerModel"];
+        };
+      };
+    };
+  };
+  getPowerVsHR: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        ext: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["PowerVsHRPlot"];
+        };
+      };
+    };
+  };
+  getActivitySegments: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["IcuSegment"][];
+        };
+      };
+    };
+  };
+  splitInterval: {
+    parameters: {
+      query: {
+        /** @description Index to split interval at */
+        splitAt: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["IntervalsDTO"];
+        };
+      };
+    };
+  };
+  updateActivityStreams: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ActivityStream"][];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["UpdateStreamsResult"];
+        };
+      };
+    };
+  };
+  uploadActivityStreamsCSV: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": {
+          /**
+           * Format: binary
+           * @description Activity streams CSV file
+           */
+          file: string;
+        };
+        "multipart/form-data": unknown;
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["UpdateStreamsResult"];
+        };
+      };
+    };
+  };
+  getActivityStreams: {
+    parameters: {
+      query?: {
+        /** @description Streams required */
+        types?: string[];
+        /** @description Include default streams in addition to any specified in types */
+        includeDefaults?: boolean;
+      };
+      header?: never;
+      path: {
+        id: string;
+        ext: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ActivityStream"][];
+        };
+      };
+    };
+  };
+  getTimeAtHR: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Plot"];
+        };
+      };
+    };
+  };
+  deleteTombstone: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  getActivityWeatherSummary: {
+    parameters: {
+      query?: {
+        /** @description Optional index of first point in activity to use */
+        start_index?: number;
+        /** @description Optional index of last point in activity to use (exclusive) */
+        end_index?: number;
+        /** @description Optional JSON-encoded configuration for description field */
+        descr_config?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ActivityWeatherSummary"];
+        };
+      };
+    };
+  };
+  updateAthletePlans: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AthleteTrainingPlanUpdate"][];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": Record<string, never>;
+        };
+      };
+    };
+  };
+  getActivities: {
+    parameters: {
+      query?: {
+        /** @description Include interval data (icu_intervals and icu_groups fields) */
+        intervals?: boolean;
+      };
+      header?: never;
+      path: {
+        athleteId: string;
+        ids: string[];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Activity"][];
+        };
+      };
+    };
+  };
+  listSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        athleteId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["SportSettings"][];
+        };
+      };
+    };
+  };
+  updateSettingsMulti: {
+    parameters: {
+      query: {
+        recalcHrZones: boolean;
+      };
+      header?: never;
+      path: {
+        athleteId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SportSettings"][];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["SportSettings"][];
+        };
+      };
+    };
+  };
+  createSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        athleteId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SportSettings"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["SportSettings"];
+        };
+      };
+    };
+  };
+  getSettings_1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        athleteId: string;
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["SportSettings"];
+        };
+      };
+    };
+  };
+  updateSettings: {
+    parameters: {
+      query: {
+        recalcHrZones: boolean;
+      };
+      header?: never;
+      path: {
+        athleteId: string;
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SportSettings"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["SportSettings"];
+        };
+      };
+    };
+  };
+  deleteSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        athleteId: string;
         id: number;
-        msgId: number;
       };
       cookie?: never;
     };
@@ -7052,13 +8879,13 @@ export interface operations {
       };
     };
   };
-  showWorkout: {
+  applyToActivities: {
     parameters: {
       query?: never;
       header?: never;
       path: {
+        athleteId: string;
         id: string;
-        workoutId: number;
       };
       cookie?: never;
     };
@@ -7070,24 +8897,91 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["Workout"];
+          "*/*": Record<string, never>;
         };
       };
     };
   };
-  updateWorkout: {
+  listMatchingActivities: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        athleteId: string;
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ActivityMini"][];
+        };
+      };
+    };
+  };
+  listPaceDistancesForSport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        athleteId: string;
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["PaceDistancesDTO"];
+        };
+      };
+    };
+  };
+  getAthlete: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
-        workoutId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["WithSportSettings"];
+        };
+      };
+    };
+  };
+  updateAthlete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
       };
       cookie?: never;
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["WorkoutEx"];
+        "application/json": components["schemas"]["AthleteUpdateDTO"];
       };
     };
     responses: {
@@ -7097,20 +8991,101 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["Workout"];
+          "*/*": components["schemas"]["Athlete"];
         };
       };
     };
   };
-  deleteWorkout: {
+  listActivities: {
+    parameters: {
+      query: {
+        /** @description Local ISO-8601 date or date and time e.g. 2019-07-22T16:18:49 or 2019-07-22 */
+        oldest: string;
+        /** @description Local ISO-8601 date or date and time, defaults to now */
+        newest?: string;
+        /** @description Only return activities on this route */
+        route_id?: number;
+        /** @description Return at most this many activities */
+        limit?: number;
+        /** @description Comma separated list of field names to include in the returned objects (default is all), also excludes null values */
+        fields?: string[];
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Activity"][];
+        };
+      };
+    };
+  };
+  uploadActivity: {
     parameters: {
       query?: {
-        others?: boolean;
+        /** @description Activity name */
+        name?: string;
+        /** @description Activity description */
+        description?: string;
+        /** @description Device the activity was created on e.g. Garmin Edge 540 */
+        device_name?: string;
+        /** @description ID of the activity on the system it came from */
+        external_id?: string;
+        /** @description Workout to pair with activity */
+        paired_event_id?: number;
       };
       header?: never;
       path: {
         id: string;
-        workoutId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": {
+          /**
+           * Format: binary
+           * @description Activity file
+           */
+          file: string;
+        };
+        "multipart/form-data": unknown;
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["UploadResponse"];
+        };
+      };
+    };
+  };
+  listActivitiesAround: {
+    parameters: {
+      query: {
+        /** @description The activity at the center (not returned in the data set) */
+        activity_id: string;
+        /** @description Only return activities on this route (activityId must have this route_id) */
+        route_id?: number;
+        /** @description Return at most this many activities (default 30) */
+        limit?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
       };
       cookie?: never;
     };
@@ -7122,18 +9097,54 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": number[];
+          "*/*": components["schemas"]["Activity"][];
         };
       };
     };
   };
-  getRecord: {
+  downloadActivitiesAsCSV: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
-        date: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  searchForIntervals: {
+    parameters: {
+      query: {
+        /** @description Min time in seconds */
+        minSecs: number;
+        /** @description Max time in seconds */
+        maxSecs: number;
+        /** @description Min intensity percentage */
+        minIntensity: number;
+        /** @description Max intensity percentage */
+        maxIntensity: number;
+        /** @description Interval type */
+        type?: "AUTO" | "POWER" | "HR" | "PACE";
+        /** @description Min number of intervals that need to match */
+        minReps?: number;
+        /** @description Max number of intervals that need to match */
+        maxReps?: number;
+        /** @description Max results to return */
+        limit?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
       };
       cookie?: never;
     };
@@ -7145,24 +9156,23 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["Wellness"];
+          "*/*": components["schemas"]["Activity"][];
         };
       };
     };
   };
-  updateWellness: {
+  createManualActivity: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
-        date: string;
       };
       cookie?: never;
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["Wellness"];
+        "application/json": components["schemas"]["Activity"];
       };
     };
     responses: {
@@ -7172,12 +9182,12 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["Wellness"];
+          "*/*": components["schemas"]["Activity"];
         };
       };
     };
   };
-  updateWellnessBulk: {
+  createMultipleManualActivities: {
     parameters: {
       query?: never;
       header?: never;
@@ -7188,7 +9198,537 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["Wellness"][];
+        "application/json": components["schemas"]["Activity"][];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Activity"][];
+        };
+      };
+    };
+  };
+  searchForActivities: {
+    parameters: {
+      query: {
+        /** @description Search query, case insensitive name search or exact tag search if it starts with # */
+        q: string;
+        limit?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ActivitySearchResult"][];
+        };
+      };
+    };
+  };
+  searchForActivitiesFull: {
+    parameters: {
+      query: {
+        /** @description Search query, case insensitive name search or exact tag search if it starts with # */
+        q: string;
+        limit?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Activity"][];
+        };
+      };
+    };
+  };
+  listActivityHRCurves: {
+    parameters: {
+      query: {
+        /** @description Local ISO-8601 date or date and time e.g. 2019-07-22T16:18:49 or 2019-07-22 */
+        oldest: string;
+        /** @description Local ISO-8601 date or date and time (inclusive) */
+        newest: string;
+        /** @description Only return activities matching all the filters in this list */
+        filters?: components["schemas"]["ActivityFilter"][];
+        /** @description Optional durations to return (default is all, in seconds comma separated) */
+        secs?: number[];
+        /** @description The sport (Ride, Run etc.). If filters is not provided or is blank or does not contain a type filter then activities for the types of the sport matching this parameter are included */
+        type?:
+          | "Ride"
+          | "Run"
+          | "Swim"
+          | "WeightTraining"
+          | "Hike"
+          | "Walk"
+          | "AlpineSki"
+          | "BackcountrySki"
+          | "Badminton"
+          | "Canoeing"
+          | "Crossfit"
+          | "EBikeRide"
+          | "EMountainBikeRide"
+          | "Elliptical"
+          | "Golf"
+          | "GravelRide"
+          | "TrackRide"
+          | "Handcycle"
+          | "HighIntensityIntervalTraining"
+          | "Hockey"
+          | "IceSkate"
+          | "InlineSkate"
+          | "Kayaking"
+          | "Kitesurf"
+          | "MountainBikeRide"
+          | "Cyclocross"
+          | "NordicSki"
+          | "OpenWaterSwim"
+          | "Padel"
+          | "Pilates"
+          | "Pickleball"
+          | "Racquetball"
+          | "Rugby"
+          | "RockClimbing"
+          | "RollerSki"
+          | "Rowing"
+          | "Sail"
+          | "Skateboard"
+          | "Snowboard"
+          | "Snowshoe"
+          | "Soccer"
+          | "Squash"
+          | "StairStepper"
+          | "StandUpPaddling"
+          | "Surfing"
+          | "TableTennis"
+          | "Tennis"
+          | "TrailRun"
+          | "Transition"
+          | "Velomobile"
+          | "VirtualRide"
+          | "VirtualRow"
+          | "VirtualRun"
+          | "VirtualSki"
+          | "WaterSport"
+          | "Wheelchair"
+          | "Windsurf"
+          | "Workout"
+          | "Yoga"
+          | "Other";
+      };
+      header?: never;
+      path: {
+        id: string;
+        ext: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ActivityHRCurvePayload"];
+        };
+      };
+    };
+  };
+  listActivityPaceCurves: {
+    parameters: {
+      query: {
+        /** @description Local ISO-8601 date or date and time e.g. 2019-07-22T16:18:49 or 2019-07-22 */
+        oldest: string;
+        /** @description Local ISO-8601 date or date and time (inclusive) */
+        newest: string;
+        /** @description The sport (Ride, Run etc.). If filters is not provided or is blank or does not contain a type filter then activities for the types of the sport matching this parameter are included */
+        type?:
+          | "Ride"
+          | "Run"
+          | "Swim"
+          | "WeightTraining"
+          | "Hike"
+          | "Walk"
+          | "AlpineSki"
+          | "BackcountrySki"
+          | "Badminton"
+          | "Canoeing"
+          | "Crossfit"
+          | "EBikeRide"
+          | "EMountainBikeRide"
+          | "Elliptical"
+          | "Golf"
+          | "GravelRide"
+          | "TrackRide"
+          | "Handcycle"
+          | "HighIntensityIntervalTraining"
+          | "Hockey"
+          | "IceSkate"
+          | "InlineSkate"
+          | "Kayaking"
+          | "Kitesurf"
+          | "MountainBikeRide"
+          | "Cyclocross"
+          | "NordicSki"
+          | "OpenWaterSwim"
+          | "Padel"
+          | "Pilates"
+          | "Pickleball"
+          | "Racquetball"
+          | "Rugby"
+          | "RockClimbing"
+          | "RollerSki"
+          | "Rowing"
+          | "Sail"
+          | "Skateboard"
+          | "Snowboard"
+          | "Snowshoe"
+          | "Soccer"
+          | "Squash"
+          | "StairStepper"
+          | "StandUpPaddling"
+          | "Surfing"
+          | "TableTennis"
+          | "Tennis"
+          | "TrailRun"
+          | "Transition"
+          | "Velomobile"
+          | "VirtualRide"
+          | "VirtualRow"
+          | "VirtualRun"
+          | "VirtualSki"
+          | "WaterSport"
+          | "Wheelchair"
+          | "Windsurf"
+          | "Workout"
+          | "Yoga"
+          | "Other";
+        /** @description Only return activities matching all the filters in this list */
+        filters?: components["schemas"]["ActivityFilter"][];
+        /** @description Distances required (in meters, comma separated) */
+        distances?: number[];
+        /** @description Return gradient adjusted pace curves */
+        gap?: boolean;
+      };
+      header?: never;
+      path: {
+        id: string;
+        ext: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  listActivityPowerCurves: {
+    parameters: {
+      query: {
+        /** @description Local ISO-8601 date or date and time e.g. 2019-07-22T16:18:49 or 2019-07-22 */
+        oldest: string;
+        /** @description Local ISO-8601 date or date and time (inclusive) */
+        newest: string;
+        /** @description Only return activities matching all the filters in this list */
+        filters?: components["schemas"]["ActivityFilter"][];
+        /** @description Optional durations to return (default is all, in seconds comma separated) */
+        secs?: number[];
+        /** @description The sport (Ride, Run etc.). If filters is not provided or is blank or does not contain a type filter then activities for the types of the sport matching this parameter are included. Required if fatigue is used */
+        type?:
+          | "Ride"
+          | "Run"
+          | "Swim"
+          | "WeightTraining"
+          | "Hike"
+          | "Walk"
+          | "AlpineSki"
+          | "BackcountrySki"
+          | "Badminton"
+          | "Canoeing"
+          | "Crossfit"
+          | "EBikeRide"
+          | "EMountainBikeRide"
+          | "Elliptical"
+          | "Golf"
+          | "GravelRide"
+          | "TrackRide"
+          | "Handcycle"
+          | "HighIntensityIntervalTraining"
+          | "Hockey"
+          | "IceSkate"
+          | "InlineSkate"
+          | "Kayaking"
+          | "Kitesurf"
+          | "MountainBikeRide"
+          | "Cyclocross"
+          | "NordicSki"
+          | "OpenWaterSwim"
+          | "Padel"
+          | "Pilates"
+          | "Pickleball"
+          | "Racquetball"
+          | "Rugby"
+          | "RockClimbing"
+          | "RollerSki"
+          | "Rowing"
+          | "Sail"
+          | "Skateboard"
+          | "Snowboard"
+          | "Snowshoe"
+          | "Soccer"
+          | "Squash"
+          | "StairStepper"
+          | "StandUpPaddling"
+          | "Surfing"
+          | "TableTennis"
+          | "Tennis"
+          | "TrailRun"
+          | "Transition"
+          | "Velomobile"
+          | "VirtualRide"
+          | "VirtualRow"
+          | "VirtualRun"
+          | "VirtualSki"
+          | "WaterSport"
+          | "Wheelchair"
+          | "Windsurf"
+          | "Workout"
+          | "Yoga"
+          | "Other";
+        /** @description Use kj0 or kj1 to get one of the athlete's predefined fatigued power curves */
+        fatigue?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+        ext: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["ActivityPowerCurvePayload"];
+        };
+      };
+    };
+  };
+  listTags_2: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": string[];
+        };
+      };
+    };
+  };
+  applyCurrentPlanChanges: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": {
+            [key: string]: Record<string, never>;
+          };
+        };
+      };
+    };
+  };
+  getAthleteSummary: {
+    parameters: {
+      query?: {
+        /** @description Local date and optional time (ISO-8601) for oldest data to return, default is 6 days ago */
+        start?: string;
+        /** @description Local date and optional time (ISO-8601) for newest data to return, default is today */
+        end?: string;
+        /** @description Optional list of athlete tags, only athletes with one of these tags are returned */
+        tags?: string[];
+      };
+      header?: never;
+      path: {
+        id: string;
+        ext: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["SummaryWithCats"][];
+        };
+      };
+    };
+  };
+  listChats: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Chat"][];
+        };
+      };
+    };
+  };
+  getAthleteConnections: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["AthleteConnections"];
+        };
+      };
+    };
+  };
+  listCustomItems: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["CustomItem"][];
+        };
+      };
+    };
+  };
+  createCustomItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CustomItem"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["NewCustomItem"];
+        };
+      };
+    };
+  };
+  updateCustomItemIndexes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CustomItem"][];
       };
     };
     responses: {
@@ -7201,18 +9741,42 @@ export interface operations {
       };
     };
   };
-  updateWellness_1: {
+  getCustomItem: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
+        itemId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["CustomItem"];
+        };
+      };
+    };
+  };
+  updateCustomItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: number;
       };
       cookie?: never;
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["Wellness"];
+        "application/json": components["schemas"]["CustomItem"];
       };
     };
     responses: {
@@ -7222,19 +9786,39 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["Wellness"];
+          "*/*": components["schemas"]["CustomItem"];
         };
       };
     };
   };
-  uploadWellness: {
+  deleteCustomItem: {
     parameters: {
-      query?: {
-        ignoreMissingFields?: boolean;
-      };
+      query?: never;
       header?: never;
       path: {
         id: string;
+        itemId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  updateCustomItemImage: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: number;
       };
       cookie?: never;
     };
@@ -7253,249 +9837,24 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": Record<string, never>;
+          "*/*": components["schemas"]["CustomItem"];
         };
       };
     };
   };
-  getWeatherConfig: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["WeatherConfig"];
-        };
-      };
-    };
-  };
-  updateWeatherConfig: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["WeatherConfig"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["WeatherConfig"];
-        };
-      };
-    };
-  };
-  getAthleteTrainingPlan: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["AthleteTrainingPlan"];
-        };
-      };
-    };
-  };
-  updateAthletePlan: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["AthleteTrainingPlanUpdate"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["AthleteTrainingPlan"];
-        };
-      };
-    };
-  };
-  getAthleteRoute: {
-    parameters: {
-      query?: {
-        /** @description Include latlngs for the route GPS path */
-        includePath?: boolean;
-      };
-      header?: never;
-      path: {
-        id: string;
-        route_id: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["AthleteRoute"];
-        };
-      };
-    };
-  };
-  updateAthleteRoute: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        route_id: number;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["AthleteRoute"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["AthleteRoute"];
-        };
-      };
-    };
-  };
-  updateReminder: {
+  downloadActivityFitFiles: {
     parameters: {
       query: {
-        reset: boolean;
-        snoozeDays: number;
+        /** @description Include power data */
+        power?: boolean;
+        /** @description Include heart rate data */
+        hr?: boolean;
+        /** @description Activity id's to download */
+        ids: string[];
       };
       header?: never;
       path: {
         id: string;
-        gearId: string;
-        reminderId: number;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["GearReminder"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Gear"];
-        };
-      };
-    };
-  };
-  deleteReminder: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        gearId: string;
-        reminderId: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Gear"];
-        };
-      };
-    };
-  };
-  updateGear: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        gearId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["Gear"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Gear"];
-        };
-      };
-    };
-  };
-  deleteGear: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        gearId: string;
       };
       cookie?: never;
     };
@@ -7510,16 +9869,13 @@ export interface operations {
       };
     };
   };
-  updatePlanWorkouts: {
+  downloadWorkoutForAthlete: {
     parameters: {
-      query: {
-        oldest: number;
-        newest: number;
-      };
+      query?: never;
       header?: never;
       path: {
         id: string;
-        folderId: number;
+        ext: string;
       };
       cookie?: never;
     };
@@ -7534,19 +9890,68 @@ export interface operations {
         headers: {
           [name: string]: unknown;
         };
+        content?: never;
+      };
+    };
+  };
+  duplicateEvents: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DuplicateEventsDTO"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Event"][];
+        };
+      };
+    };
+  };
+  duplicateWorkouts: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DuplicateWorkoutsDTO"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
         content: {
           "*/*": components["schemas"]["Workout"][];
         };
       };
     };
   };
-  listFolderSharedWith: {
+  listTags_1: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
-        folderId: number;
       };
       cookie?: never;
     };
@@ -7558,192 +9963,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["SharedWith"][];
-        };
-      };
-    };
-  };
-  updateFolderSharedWith: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        folderId: number;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["SharedWith"][];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["SharedWith"][];
-        };
-      };
-    };
-  };
-  updateFolder: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        folderId: number;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["Folder"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Folder"];
-        };
-      };
-    };
-  };
-  deleteFolder: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        folderId: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": {
-            [key: string]: Record<string, never>;
-          };
-        };
-      };
-    };
-  };
-  showEvent: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        eventId: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Event"];
-        };
-      };
-    };
-  };
-  updateEvent: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        eventId: number;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["EventEx"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Event"];
-        };
-      };
-    };
-  };
-  deleteEvent: {
-    parameters: {
-      query?: {
-        /** @description If true then other events added at the same time are also deleted */
-        others?: boolean;
-        /** @description Do not delete other events on the calendar before this local date (ISO-8601) */
-        notBefore?: string;
-      };
-      header?: never;
-      path: {
-        id: string;
-        eventId: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": {
-            [key: string]: Record<string, never>;
-          };
-        };
-      };
-    };
-  };
-  deleteEventsBulk: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["DoomedEvent"][];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["DeleteEventsResponse"];
+          "*/*": string[];
         };
       };
     };
@@ -7837,13 +10057,98 @@ export interface operations {
       };
     };
   };
-  getCustomItem: {
+  applyPlan: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
-        itemId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ApplyPlanDTO"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": Record<string, never>;
+        };
+      };
+    };
+  };
+  createMultipleEvents: {
+    parameters: {
+      query: {
+        /** @description Update events with matching external_id and created by the same OAuth application instead of creating new ones */
+        upsert?: boolean;
+        /** @description Update events with matching uid instead of creating new ones, ignored if upsert=true. For Events with category=TARGET existing matching targets for the date and type are updated */
+        upsertOnUid: boolean;
+        /** @description Give all events created or updated the same new plan_applied date (now) */
+        updatePlanApplied: boolean;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["EventEx"][];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Event"][];
+        };
+      };
+    };
+  };
+  deleteEventsBulk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DoomedEvent"][];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["DeleteEventsResponse"];
+        };
+      };
+    };
+  };
+  showEvent: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        eventId: number;
       };
       cookie?: never;
     };
@@ -7855,24 +10160,24 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["CustomItem"];
+          "*/*": components["schemas"]["Event"];
         };
       };
     };
   };
-  updateCustomItem: {
+  updateEvent: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
-        itemId: number;
+        eventId: number;
       };
       cookie?: never;
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["CustomItem"];
+        "application/json": components["schemas"]["EventEx"];
       };
     };
     responses: {
@@ -7882,62 +10187,23 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["CustomItem"];
+          "*/*": components["schemas"]["Event"];
         };
       };
     };
   };
-  deleteCustomItem: {
+  deleteEvent: {
     parameters: {
-      query?: never;
+      query?: {
+        /** @description If true then other events added at the same time are also deleted */
+        others?: boolean;
+        /** @description Do not delete other events on the calendar before this local date (ISO-8601) */
+        notBefore?: string;
+      };
       header?: never;
       path: {
         id: string;
-        itemId: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  updateCustomItemIndexes: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["CustomItem"][];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  applyCurrentPlanChanges: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
+        eventId: number;
       };
       cookie?: never;
     };
@@ -7956,12 +10222,14 @@ export interface operations {
       };
     };
   };
-  getAthlete: {
+  downloadWorkout_1: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
+        eventId: number;
+        ext: string;
       };
       cookie?: never;
     };
@@ -7972,466 +10240,21 @@ export interface operations {
         headers: {
           [name: string]: unknown;
         };
-        content: {
-          "*/*": components["schemas"]["WithSportSettings"];
-        };
+        content?: never;
       };
     };
   };
-  updateAthlete: {
+  markEventAsDone: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["AthleteUpdateDTO"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Athlete"];
-        };
-      };
-    };
-  };
-  applyToActivities: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        athleteId: string;
-        id: string;
+        eventId: number;
       };
       cookie?: never;
     };
     requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": Record<string, never>;
-        };
-      };
-    };
-  };
-  getSettings_1: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        athleteId: string;
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["SportSettings"];
-        };
-      };
-    };
-  };
-  updateSettings: {
-    parameters: {
-      query: {
-        recalcHrZones: boolean;
-      };
-      header?: never;
-      path: {
-        athleteId: string;
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["SportSettings"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["SportSettings"];
-        };
-      };
-    };
-  };
-  deleteSettings: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        athleteId: string;
-        id: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": Record<string, never>;
-        };
-      };
-    };
-  };
-  listSettings: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        athleteId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["SportSettings"][];
-        };
-      };
-    };
-  };
-  updateSettingsMulti: {
-    parameters: {
-      query: {
-        recalcHrZones: boolean;
-      };
-      header?: never;
-      path: {
-        athleteId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["SportSettings"][];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["SportSettings"][];
-        };
-      };
-    };
-  };
-  createSettings: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        athleteId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["SportSettings"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["SportSettings"];
-        };
-      };
-    };
-  };
-  updateAthletePlans: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["AthleteTrainingPlanUpdate"][];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": Record<string, never>;
-        };
-      };
-    };
-  };
-  uploadActivityStreamsCSV: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: {
-      content: {
-        "multipart/form-data": unknown;
-        "application/json": {
-          /**
-           * Format: binary
-           * @description Activity streams CSV file
-           */
-          file: string;
-        };
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["UpdateStreamsResult"];
-        };
-      };
-    };
-  };
-  updateActivityStreams: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["ActivityStream"][];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["UpdateStreamsResult"];
-        };
-      };
-    };
-  };
-  splitInterval: {
-    parameters: {
-      query: {
-        /** @description Index to split interval at */
-        splitAt: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["IntervalsDTO"];
-        };
-      };
-    };
-  };
-  updateInterval: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        intervalId: number;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["Interval"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["IntervalsDTO"];
-        };
-      };
-    };
-  };
-  getIntervals: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["IntervalsDTO"];
-        };
-      };
-    };
-  };
-  updateIntervals: {
-    parameters: {
-      query?: {
-        /** @description Any existing intervals are replaced, otherwise a merge is done */
-        all?: boolean;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["Interval"][];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["IntervalsDTO"];
-        };
-      };
-    };
-  };
-  deleteIntervals: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["Interval"][];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["IntervalsDTO"];
-        };
-      };
-    };
-  };
-  getActivity: {
-    parameters: {
-      query?: {
-        /** @description Include interval data */
-        intervals?: boolean;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description default response */
-      default: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*":
-            | components["schemas"]["Activity"]
-            | components["schemas"]["ActivityWithIntervals"]
-            | components["schemas"]["Hidden"];
-        };
-      };
-    };
-  };
-  updateActivity: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["Activity"];
-      };
-    };
     responses: {
       /** @description OK */
       200: {
@@ -8444,7 +10267,52 @@ export interface operations {
       };
     };
   };
-  deleteActivity: {
+  listEvents: {
+    parameters: {
+      query?: {
+        /** @description Local date (ISO-8601) for oldest event to return, default is today in the athletes timezone */
+        oldest?: string;
+        /** @description Local date (ISO-8601) for newest event to return (inclusive), default is oldest plus 6 days */
+        newest?: string;
+        /** @description Comma separated list of categories to filter for (e.g. WORKOUT,NOTES) */
+        category?: string[];
+        /** @description Max number of events to return (default is all events) */
+        limit?: number;
+        calendar_id?: number;
+        /** @description Convert workouts to this format (zwo, mrc, erg or fit) and add workout_filename and workout_file_base64 to workout object */
+        ext?: string;
+        /** @description Percentage used to convert fixed power targets into a range for outdoor workouts only (default is 2.5 or whatever is configured in the Garmin box in /settings) */
+        powerRange?: number;
+        /** @description Percentage used to convert fixed HR targets into a range (default is 1.5 or whatever is configured in the Garmin box in /settings) */
+        hrRange?: number;
+        /** @description Percentage used to convert fixed pace targets into a range (default is 2.5 or whatever is configured in the Garmin box in /settings) */
+        paceRange?: number;
+        /** @description Locale (en, es, de etc.) to use for workouts with steps in multiple languages */
+        locale?: string;
+        /** @description Resolve power, heart rate and pace targets to watts, bpm and m/s respectively */
+        resolve?: boolean;
+      };
+      header?: never;
+      path: {
+        id: string;
+        format: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Event"][];
+        };
+      };
+    };
+  };
+  listFitnessModelEvents: {
     parameters: {
       query?: never;
       header?: never;
@@ -8461,86 +10329,12 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["ActivityId"];
+          "*/*": components["schemas"]["Event"][];
         };
       };
     };
   };
-  downloadWorkout: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        ext: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["Workout"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  sendMessage: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["NewMessage"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["SendResponse"];
-        };
-      };
-    };
-  };
-  createMultipleWorkouts: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["WorkoutEx"][];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Workout"][];
-        };
-      };
-    };
-  };
-  listWorkouts: {
+  listFolders: {
     parameters: {
       query?: never;
       header?: never;
@@ -8557,12 +10351,12 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["Workout"][];
+          "*/*": components["schemas"]["Folder"][];
         };
       };
     };
   };
-  createWorkout: {
+  createFolder: {
     parameters: {
       query?: never;
       header?: never;
@@ -8573,7 +10367,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["WorkoutEx"];
+        "application/json": components["schemas"]["CreateFolderDTO"];
       };
     };
     responses: {
@@ -8583,24 +10377,24 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["Workout"];
+          "*/*": components["schemas"]["Folder"];
         };
       };
     };
   };
-  replaceGear: {
+  updateFolder: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
-        gearId: string;
+        folderId: number;
       };
       cookie?: never;
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["Gear"];
+        "application/json": components["schemas"]["Folder"];
       };
     };
     responses: {
@@ -8610,26 +10404,22 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["Gear"][];
+          "*/*": components["schemas"]["Folder"];
         };
       };
     };
   };
-  createReminder: {
+  deleteFolder: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
-        gearId: string;
+        folderId: number;
       };
       cookie?: never;
     };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["GearReminder"];
-      };
-    };
+    requestBody?: never;
     responses: {
       /** @description OK */
       200: {
@@ -8637,33 +10427,9 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["Gear"];
-        };
-      };
-    };
-  };
-  createGear: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["Gear"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Gear"];
+          "*/*": {
+            [key: string]: Record<string, never>;
+          };
         };
       };
     };
@@ -8761,12 +10527,13 @@ export interface operations {
       };
     };
   };
-  listFolders: {
+  listFolderSharedWith: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
+        folderId: number;
       };
       cookie?: never;
     };
@@ -8778,23 +10545,24 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["Folder"][];
+          "*/*": components["schemas"]["SharedWith"][];
         };
       };
     };
   };
-  createFolder: {
+  updateFolderSharedWith: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
+        folderId: number;
       };
       cookie?: never;
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["CreateFolderDTO"];
+        "application/json": components["schemas"]["SharedWith"][];
       };
     };
     responses: {
@@ -8804,152 +10572,21 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["Folder"];
+          "*/*": components["schemas"]["SharedWith"][];
         };
       };
     };
   };
-  markEventAsDone: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        eventId: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Activity"];
-        };
-      };
-    };
-  };
-  createMultipleEvents: {
+  updatePlanWorkouts: {
     parameters: {
       query: {
-        /** @description Update events with matching external_id and created by the same OAuth application instead of creating new ones */
-        upsert?: boolean;
-        /** @description Update events with matching uid instead of creating new ones, ignored if upsert=true. For Events with category=TARGET existing matching targets for the date and type are updated */
-        upsertOnUid: boolean;
-        /** @description Give all events created or updated the same new plan_applied date (now) */
-        updatePlanApplied: boolean;
+        oldest: number;
+        newest: number;
       };
       header?: never;
       path: {
         id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["EventEx"][];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Event"][];
-        };
-      };
-    };
-  };
-  applyPlan: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["ApplyPlanDTO"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": Record<string, never>;
-        };
-      };
-    };
-  };
-  duplicateWorkouts: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["DuplicateWorkoutsDTO"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Workout"][];
-        };
-      };
-    };
-  };
-  duplicateEvents: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["DuplicateEventsDTO"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Event"][];
-        };
-      };
-    };
-  };
-  downloadWorkoutForAthlete: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        ext: string;
+        folderId: number;
       };
       cookie?: never;
     };
@@ -8964,90 +10601,13 @@ export interface operations {
         headers: {
           [name: string]: unknown;
         };
-        content?: never;
-      };
-    };
-  };
-  downloadActivityFitFiles: {
-    parameters: {
-      query: {
-        /** @description Include power data */
-        power?: boolean;
-        /** @description Include heart rate data */
-        hr?: boolean;
-        /** @description Activity id's to download */
-        ids: string[];
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  updateCustomItemImage: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        itemId: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: {
-      content: {
-        "application/json": {
-          /** Format: binary */
-          file: string;
-        };
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
         content: {
-          "*/*": components["schemas"]["CustomItem"];
+          "*/*": components["schemas"]["Workout"][];
         };
       };
     };
   };
-  listCustomItems: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["CustomItem"][];
-        };
-      };
-    };
-  };
-  createCustomItem: {
+  createGear: {
     parameters: {
       query?: never;
       header?: never;
@@ -9058,7 +10618,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["CustomItem"];
+        "application/json": components["schemas"]["Gear"];
       };
     };
     responses: {
@@ -9068,23 +10628,24 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["NewCustomItem"];
+          "*/*": components["schemas"]["Gear"];
         };
       };
     };
   };
-  createMultipleManualActivities: {
+  updateGear: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
+        gearId: string;
       };
       cookie?: never;
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["Activity"][];
+        "application/json": components["schemas"]["Gear"];
       };
     };
     responses: {
@@ -9094,273 +10655,18 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["Activity"][];
+          "*/*": components["schemas"]["Gear"];
         };
       };
     };
   };
-  createManualActivity: {
+  deleteGear: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["Activity"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Activity"];
-        };
-      };
-    };
-  };
-  listActivities: {
-    parameters: {
-      query: {
-        /** @description Local ISO-8601 date or date and time e.g. 2019-07-22T16:18:49 or 2019-07-22 */
-        oldest: string;
-        /** @description Local ISO-8601 date or date and time, defaults to now */
-        newest?: string;
-        /** @description Only return activities on this route */
-        route_id?: number;
-        /** @description Return at most this many activities */
-        limit?: number;
-        /** @description Comma separated list of field names to include in the returned objects (default is all), also excludes null values */
-        fields?: string[];
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Activity"][];
-        };
-      };
-    };
-  };
-  uploadActivity: {
-    parameters: {
-      query?: {
-        /** @description Activity name */
-        name?: string;
-        /** @description Activity description */
-        description?: string;
-        /** @description Device the activity was created on e.g. Garmin Edge 540 */
-        device_name?: string;
-        /** @description ID of the activity on the system it came from */
-        external_id?: string;
-        /** @description Workout to pair with activity */
-        paired_event_id?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: {
-      content: {
-        "multipart/form-data": unknown;
-        "application/json": {
-          /**
-           * Format: binary
-           * @description Activity file
-           */
-          file: string;
-        };
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["UploadResponse"];
-        };
-      };
-    };
-  };
-  listActivityMessages: {
-    parameters: {
-      query?: {
-        sinceId?: number;
-        limit?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Message"][];
-        };
-      };
-    };
-  };
-  sendActivityMessage: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["NewActivityMsg"];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["NewMsg"];
-        };
-      };
-    };
-  };
-  getSharedEvent: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["WithCourses"];
-        };
-      };
-    };
-  };
-  listPaceDistances: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["PaceDistancesDTO"];
-        };
-      };
-    };
-  };
-  listMessages: {
-    parameters: {
-      query?: {
-        /** @description Only return messages older than this one */
-        beforeId?: number;
-        /** @description Return up to this many messages (default 30, max 100) */
-        limit?: number;
-      };
-      header?: never;
-      path: {
-        id: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Message"][];
-        };
-      };
-    };
-  };
-  showChat: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Chat"];
-        };
-      };
-    };
-  };
-  downloadWorkouts: {
-    parameters: {
-      query: {
-        /** @description Format: zwo, mrc, erg or fit */
-        ext: string;
-        /** @description Local date (ISO-8601) of oldest workout */
-        oldest: string;
-        /** @description Local date (ISO-8601) of newest workout (inclusive) */
-        newest: string;
-        powerRange?: number;
-        hrRange?: number;
-        paceRange?: number;
-        locale?: string;
-      };
-      header?: never;
-      path: {
-        id: string;
+        gearId: string;
       };
       cookie?: never;
     };
@@ -9375,12 +10681,13 @@ export interface operations {
       };
     };
   };
-  listTags: {
+  calcDistanceEtc: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
+        gearId: string;
       };
       cookie?: never;
     };
@@ -9392,23 +10699,123 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": string[];
+          "*/*": components["schemas"]["GearStats"];
         };
       };
     };
   };
-  listWellnessRecords: {
+  createReminder: {
     parameters: {
-      query?: {
-        /** @description Local date of oldest record (ISO-8601) */
-        oldest?: string;
-        /** @description Local date of newest record (ISO-8601), inclusive */
-        newest?: string;
-        /** @description Comma separated list of column names to include in CSV (default is all) */
-        cols?: string[];
-        /** @description Comma separated list of field names to include in the returned objects (default is all), also excludes null values */
-        fields?: string[];
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        gearId: string;
       };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["GearReminder"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Gear"];
+        };
+      };
+    };
+  };
+  updateReminder: {
+    parameters: {
+      query: {
+        reset: boolean;
+        snoozeDays: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+        gearId: string;
+        reminderId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["GearReminder"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Gear"];
+        };
+      };
+    };
+  };
+  deleteReminder: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        gearId: string;
+        reminderId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Gear"];
+        };
+      };
+    };
+  };
+  replaceGear: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        gearId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Gear"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Gear"][];
+        };
+      };
+    };
+  };
+  listGear: {
+    parameters: {
+      query?: never;
       header?: never;
       path: {
         id: string;
@@ -9424,12 +10831,12 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["Wellness"][];
+          "*/*": components["schemas"]["Gear"][];
         };
       };
     };
   };
-  getForecast: {
+  listGroups: {
     parameters: {
       query?: never;
       header?: never;
@@ -9446,138 +10853,114 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["WeatherDTO"];
+          "*/*": components["schemas"]["Chat"][];
         };
       };
     };
   };
-  getSettings: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        deviceClass: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": {
-            [key: string]: Record<string, never>;
-          };
-        };
-      };
-    };
-  };
-  checkMerge: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        route_id: number;
-        other_id: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["RouteSimilarity"];
-        };
-      };
-    };
-  };
-  listAthleteRoutes: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["WithCount"][];
-        };
-      };
-    };
-  };
-  getAthleteProfile: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["AthleteProfile"];
-        };
-      };
-    };
-  };
-  getPowerHRCurve: {
-    parameters: {
-      query: {
-        /** @description Starting local date (ISO-8601) */
-        start: string;
-        /** @description Ending local date (ISO-8601), inclusive */
-        end: string;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["PowerHRCurve"];
-        };
-      };
-    };
-  };
-  listAthletePowerCurves: {
+  listAthleteHRCurves: {
     parameters: {
       query: {
         newest?: string;
         /** @description Comma separated list of curves to return (default last year) */
         curves?: string[];
         /** @description The sport (Ride, Run etc.). If filters is not provided or is blank or does not contain a type filter then activities for the types of the sport matching this parameter are included */
+        type?:
+          | "Ride"
+          | "Run"
+          | "Swim"
+          | "WeightTraining"
+          | "Hike"
+          | "Walk"
+          | "AlpineSki"
+          | "BackcountrySki"
+          | "Badminton"
+          | "Canoeing"
+          | "Crossfit"
+          | "EBikeRide"
+          | "EMountainBikeRide"
+          | "Elliptical"
+          | "Golf"
+          | "GravelRide"
+          | "TrackRide"
+          | "Handcycle"
+          | "HighIntensityIntervalTraining"
+          | "Hockey"
+          | "IceSkate"
+          | "InlineSkate"
+          | "Kayaking"
+          | "Kitesurf"
+          | "MountainBikeRide"
+          | "Cyclocross"
+          | "NordicSki"
+          | "OpenWaterSwim"
+          | "Padel"
+          | "Pilates"
+          | "Pickleball"
+          | "Racquetball"
+          | "Rugby"
+          | "RockClimbing"
+          | "RollerSki"
+          | "Rowing"
+          | "Sail"
+          | "Skateboard"
+          | "Snowboard"
+          | "Snowshoe"
+          | "Soccer"
+          | "Squash"
+          | "StairStepper"
+          | "StandUpPaddling"
+          | "Surfing"
+          | "TableTennis"
+          | "Tennis"
+          | "TrailRun"
+          | "Transition"
+          | "Velomobile"
+          | "VirtualRide"
+          | "VirtualRow"
+          | "VirtualRun"
+          | "VirtualSki"
+          | "WaterSport"
+          | "Wheelchair"
+          | "Windsurf"
+          | "Workout"
+          | "Yoga"
+          | "Other";
+        subMaxEfforts?: number;
+        /** @description Current local date (ISO-8601) */
+        now?: string;
+        /** @description Only consider activities matching all the filters in this list */
+        filters?: components["schemas"]["ActivityFilter"][];
+        /** @description If set each curve is returned with these filters applied to compare curves */
+        f1: components["schemas"]["ActivityFilter"][];
+        /** @description If set each curve is returned with these filters applied to compare curves */
+        f2: components["schemas"]["ActivityFilter"][];
+        /** @description If set each curve is returned with these filters applied to compare curves */
+        f3: components["schemas"]["ActivityFilter"][];
+      };
+      header?: never;
+      path: {
+        id: string;
+        ext: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["DataCurveSetHRCurve"];
+        };
+      };
+    };
+  };
+  getAthleteMMPModel: {
+    parameters: {
+      query: {
         type:
           | "Ride"
           | "Run"
@@ -9639,24 +11022,10 @@ export interface operations {
           | "Workout"
           | "Yoga"
           | "Other";
-        includeRanks?: boolean;
-        subMaxEfforts?: number;
-        /** @description Current local date (ISO-8601) */
-        now?: string;
-        pmType?: "MS_2P" | "MORTON_3P" | "FFT_CURVES" | "ECP";
-        /** @description Only consider activities matching all the filters in this list */
-        filters?: components["schemas"]["ActivityFilter"][];
-        /** @description If set each curve is returned with these filters applied to compare curves */
-        f1: components["schemas"]["ActivityFilter"][];
-        /** @description If set each curve is returned with these filters applied to compare curves */
-        f2: components["schemas"]["ActivityFilter"][];
-        /** @description If set each curve is returned with these filters applied to compare curves */
-        f3: components["schemas"]["ActivityFilter"][];
       };
       header?: never;
       path: {
         id: string;
-        ext: string;
       };
       cookie?: never;
     };
@@ -9668,7 +11037,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["DataCurveSetPowerCurve"];
+          "*/*": components["schemas"]["PowerModel"];
         };
       };
     };
@@ -9777,9 +11146,13 @@ export interface operations {
       };
     };
   };
-  getAthleteMMPModel: {
+  listAthletePowerCurves: {
     parameters: {
       query: {
+        newest?: string;
+        /** @description Comma separated list of curves to return (default last year) */
+        curves?: string[];
+        /** @description The sport (Ride, Run etc.). If filters is not provided or is blank or does not contain a type filter then activities for the types of the sport matching this parameter are included */
         type:
           | "Ride"
           | "Run"
@@ -9841,97 +11214,11 @@ export interface operations {
           | "Workout"
           | "Yoga"
           | "Other";
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["PowerModel"];
-        };
-      };
-    };
-  };
-  listAthleteHRCurves: {
-    parameters: {
-      query: {
-        newest?: string;
-        /** @description Comma separated list of curves to return (default last year) */
-        curves?: string[];
-        /** @description The sport (Ride, Run etc.). If filters is not provided or is blank or does not contain a type filter then activities for the types of the sport matching this parameter are included */
-        type?:
-          | "Ride"
-          | "Run"
-          | "Swim"
-          | "WeightTraining"
-          | "Hike"
-          | "Walk"
-          | "AlpineSki"
-          | "BackcountrySki"
-          | "Badminton"
-          | "Canoeing"
-          | "Crossfit"
-          | "EBikeRide"
-          | "EMountainBikeRide"
-          | "Elliptical"
-          | "Golf"
-          | "GravelRide"
-          | "TrackRide"
-          | "Handcycle"
-          | "HighIntensityIntervalTraining"
-          | "Hockey"
-          | "IceSkate"
-          | "InlineSkate"
-          | "Kayaking"
-          | "Kitesurf"
-          | "MountainBikeRide"
-          | "Cyclocross"
-          | "NordicSki"
-          | "OpenWaterSwim"
-          | "Padel"
-          | "Pilates"
-          | "Pickleball"
-          | "Racquetball"
-          | "Rugby"
-          | "RockClimbing"
-          | "RollerSki"
-          | "Rowing"
-          | "Sail"
-          | "Skateboard"
-          | "Snowboard"
-          | "Snowshoe"
-          | "Soccer"
-          | "Squash"
-          | "StairStepper"
-          | "StandUpPaddling"
-          | "Surfing"
-          | "TableTennis"
-          | "Tennis"
-          | "TrailRun"
-          | "Transition"
-          | "Velomobile"
-          | "VirtualRide"
-          | "VirtualRow"
-          | "VirtualRun"
-          | "VirtualSki"
-          | "WaterSport"
-          | "Wheelchair"
-          | "Windsurf"
-          | "Workout"
-          | "Yoga"
-          | "Other";
+        includeRanks?: boolean;
         subMaxEfforts?: number;
         /** @description Current local date (ISO-8601) */
         now?: string;
+        pmType?: "MS_2P" | "MORTON_3P" | "FFT_CURVES" | "ECP";
         /** @description Only consider activities matching all the filters in this list */
         filters?: components["schemas"]["ActivityFilter"][];
         /** @description If set each curve is returned with these filters applied to compare curves */
@@ -9956,300 +11243,18 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["DataCurveSetHRCurve"];
+          "*/*": components["schemas"]["DataCurveSetPowerCurve"];
         };
       };
     };
   };
-  listGear: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        ext: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Gear"][];
-        };
-      };
-    };
-  };
-  calcDistanceEtc: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        gearId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["GearStats"];
-        };
-      };
-    };
-  };
-  listFitnessModelEvents: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Event"][];
-        };
-      };
-    };
-  };
-  downloadWorkout_1: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        eventId: number;
-        ext: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  listTags_1: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": string[];
-        };
-      };
-    };
-  };
-  listChats: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Chat"][];
-        };
-      };
-    };
-  };
-  getAthleteSummary: {
-    parameters: {
-      query?: {
-        /** @description Local date and optional time (ISO-8601) for oldest data to return, default is 6 days ago */
-        start?: string;
-        /** @description Local date and optional time (ISO-8601) for newest data to return, default is today */
-        end?: string;
-        /** @description Optional list of athlete tags, only athletes with one of these tags are returned */
-        tags?: string[];
-      };
-      header?: never;
-      path: {
-        id: string;
-        ext: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["SummaryWithCats"][];
-        };
-      };
-    };
-  };
-  listTags_2: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": string[];
-        };
-      };
-    };
-  };
-  listActivityPowerCurves: {
+  getPowerHRCurve: {
     parameters: {
       query: {
-        /** @description Local ISO-8601 date or date and time e.g. 2019-07-22T16:18:49 or 2019-07-22 */
-        oldest: string;
-        /** @description Local ISO-8601 date or date and time (inclusive) */
-        newest: string;
-        /** @description Only return activities matching all the filters in this list */
-        filters?: components["schemas"]["ActivityFilter"][];
-        /** @description Optional durations to return (default is all, in seconds comma separated) */
-        secs?: number[];
-        /** @description The sport (Ride, Run etc.). If filters is not provided or is blank or does not contain a type filter then activities for the types of the sport matching this parameter are included. Required if fatigue is used */
-        type?:
-          | "Ride"
-          | "Run"
-          | "Swim"
-          | "WeightTraining"
-          | "Hike"
-          | "Walk"
-          | "AlpineSki"
-          | "BackcountrySki"
-          | "Badminton"
-          | "Canoeing"
-          | "Crossfit"
-          | "EBikeRide"
-          | "EMountainBikeRide"
-          | "Elliptical"
-          | "Golf"
-          | "GravelRide"
-          | "TrackRide"
-          | "Handcycle"
-          | "HighIntensityIntervalTraining"
-          | "Hockey"
-          | "IceSkate"
-          | "InlineSkate"
-          | "Kayaking"
-          | "Kitesurf"
-          | "MountainBikeRide"
-          | "Cyclocross"
-          | "NordicSki"
-          | "OpenWaterSwim"
-          | "Padel"
-          | "Pilates"
-          | "Pickleball"
-          | "Racquetball"
-          | "Rugby"
-          | "RockClimbing"
-          | "RollerSki"
-          | "Rowing"
-          | "Sail"
-          | "Skateboard"
-          | "Snowboard"
-          | "Snowshoe"
-          | "Soccer"
-          | "Squash"
-          | "StairStepper"
-          | "StandUpPaddling"
-          | "Surfing"
-          | "TableTennis"
-          | "Tennis"
-          | "TrailRun"
-          | "Transition"
-          | "Velomobile"
-          | "VirtualRide"
-          | "VirtualRow"
-          | "VirtualRun"
-          | "VirtualSki"
-          | "WaterSport"
-          | "Wheelchair"
-          | "Windsurf"
-          | "Workout"
-          | "Yoga"
-          | "Other";
-        /** @description Use kj0 or kj1 to get one of the athlete's predefined fatigued power curves */
-        fatigue?: string;
-      };
-      header?: never;
-      path: {
-        id: string;
-        ext: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["ActivityPowerCurvePayload"];
-        };
-      };
-    };
-  };
-  listActivityPaceCurves: {
-    parameters: {
-      query: {
-        /** @description Local ISO-8601 date or date and time e.g. 2019-07-22T16:18:49 or 2019-07-22 */
-        oldest: string;
-        /** @description Local ISO-8601 date or date and time (inclusive) */
-        newest: string;
+        /** @description Starting local date (ISO-8601) */
+        start: string;
+        /** @description Ending local date (ISO-8601), inclusive */
+        end: string;
         /** @description The sport (Ride, Run etc.). If filters is not provided or is blank or does not contain a type filter then activities for the types of the sport matching this parameter are included */
         type?:
           | "Ride"
@@ -10312,21 +11317,363 @@ export interface operations {
           | "Workout"
           | "Yoga"
           | "Other";
-        /** @description Only return activities matching all the filters in this list */
+        /** @description Only consider activities matching all the filters in this list */
         filters?: components["schemas"]["ActivityFilter"][];
-        /** @description Distances required (in meters, comma separated) */
-        distances?: number[];
-        /** @description Return gradient adjusted pace curves */
-        gap?: boolean;
       };
       header?: never;
       path: {
         id: string;
-        ext: string;
       };
       cookie?: never;
     };
     requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["PowerHRCurve"];
+        };
+      };
+    };
+  };
+  getAthleteProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["AthleteProfile"];
+        };
+      };
+    };
+  };
+  listAthleteRoutes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["WithCount"][];
+        };
+      };
+    };
+  };
+  getAthleteRoute: {
+    parameters: {
+      query?: {
+        /** @description Include latlngs for the route GPS path */
+        includePath?: boolean;
+      };
+      header?: never;
+      path: {
+        id: string;
+        route_id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["AthleteRoute"];
+        };
+      };
+    };
+  };
+  updateAthleteRoute: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        route_id: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AthleteRoute"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["AthleteRoute"];
+        };
+      };
+    };
+  };
+  checkMerge: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        route_id: number;
+        other_id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["RouteSimilarity"];
+        };
+      };
+    };
+  };
+  getSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        deviceClass: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": {
+            [key: string]: Record<string, never>;
+          };
+        };
+      };
+    };
+  };
+  getAthleteTrainingPlan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["AthleteTrainingPlan"];
+        };
+      };
+    };
+  };
+  updateAthletePlan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AthleteTrainingPlanUpdate"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["AthleteTrainingPlan"];
+        };
+      };
+    };
+  };
+  getWeatherConfig: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["WeatherConfig"];
+        };
+      };
+    };
+  };
+  updateWeatherConfig: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["WeatherConfig"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["WeatherConfig"];
+        };
+      };
+    };
+  };
+  getForecast: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["WeatherDTO"];
+        };
+      };
+    };
+  };
+  updateWellness_1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Wellness"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Wellness"];
+        };
+      };
+    };
+  };
+  uploadWellness: {
+    parameters: {
+      query?: {
+        ignoreMissingFields?: boolean;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": {
+          /** Format: binary */
+          file: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": Record<string, never>;
+        };
+      };
+    };
+  };
+  updateWellnessBulk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Wellness"][];
+      };
+    };
     responses: {
       /** @description OK */
       200: {
@@ -10337,224 +11684,13 @@ export interface operations {
       };
     };
   };
-  listActivityHRCurves: {
-    parameters: {
-      query: {
-        /** @description Local ISO-8601 date or date and time e.g. 2019-07-22T16:18:49 or 2019-07-22 */
-        oldest: string;
-        /** @description Local ISO-8601 date or date and time (inclusive) */
-        newest: string;
-        /** @description Only return activities matching all the filters in this list */
-        filters?: components["schemas"]["ActivityFilter"][];
-        /** @description Optional durations to return (default is all, in seconds comma separated) */
-        secs?: number[];
-        /** @description The sport (Ride, Run etc.). If filters is not provided or is blank or does not contain a type filter then activities for the types of the sport matching this parameter are included */
-        type?:
-          | "Ride"
-          | "Run"
-          | "Swim"
-          | "WeightTraining"
-          | "Hike"
-          | "Walk"
-          | "AlpineSki"
-          | "BackcountrySki"
-          | "Badminton"
-          | "Canoeing"
-          | "Crossfit"
-          | "EBikeRide"
-          | "EMountainBikeRide"
-          | "Elliptical"
-          | "Golf"
-          | "GravelRide"
-          | "TrackRide"
-          | "Handcycle"
-          | "HighIntensityIntervalTraining"
-          | "Hockey"
-          | "IceSkate"
-          | "InlineSkate"
-          | "Kayaking"
-          | "Kitesurf"
-          | "MountainBikeRide"
-          | "Cyclocross"
-          | "NordicSki"
-          | "OpenWaterSwim"
-          | "Padel"
-          | "Pilates"
-          | "Pickleball"
-          | "Racquetball"
-          | "Rugby"
-          | "RockClimbing"
-          | "RollerSki"
-          | "Rowing"
-          | "Sail"
-          | "Skateboard"
-          | "Snowboard"
-          | "Snowshoe"
-          | "Soccer"
-          | "Squash"
-          | "StairStepper"
-          | "StandUpPaddling"
-          | "Surfing"
-          | "TableTennis"
-          | "Tennis"
-          | "TrailRun"
-          | "Transition"
-          | "Velomobile"
-          | "VirtualRide"
-          | "VirtualRow"
-          | "VirtualRun"
-          | "VirtualSki"
-          | "WaterSport"
-          | "Wheelchair"
-          | "Windsurf"
-          | "Workout"
-          | "Yoga"
-          | "Other";
-      };
-      header?: never;
-      path: {
-        id: string;
-        ext: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["ActivityHRCurvePayload"];
-        };
-      };
-    };
-  };
-  searchForActivitiesFull: {
-    parameters: {
-      query: {
-        /** @description Search query, case insensitive name search or exact tag search if it starts with # */
-        q: string;
-        limit?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Activity"][];
-        };
-      };
-    };
-  };
-  searchForActivities: {
-    parameters: {
-      query: {
-        /** @description Search query, case insensitive name search or exact tag search if it starts with # */
-        q: string;
-        limit?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["ActivitySearchResult"][];
-        };
-      };
-    };
-  };
-  searchForIntervals: {
-    parameters: {
-      query: {
-        /** @description Min time in seconds */
-        minSecs: number;
-        /** @description Max time in seconds */
-        maxSecs: number;
-        /** @description Min intensity percentage */
-        minIntensity: number;
-        /** @description Max intensity percentage */
-        maxIntensity: number;
-        /** @description Interval type */
-        type?: "AUTO" | "POWER" | "HR" | "PACE";
-        /** @description Min number of intervals that need to match */
-        minReps?: number;
-        /** @description Max number of intervals that need to match */
-        maxReps?: number;
-        /** @description Max results to return */
-        limit?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Activity"][];
-        };
-      };
-    };
-  };
-  downloadActivitiesAsCSV: {
+  getRecord: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  listActivitiesAround: {
-    parameters: {
-      query: {
-        /** @description The activity at the center (not returned in the data set) */
-        activity_id: string;
-        /** @description Only return activities on this route (activityId must have this route_id) */
-        route_id?: number;
-        /** @description Return at most this many activities (default 30) */
-        limit?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
+        date: string;
       };
       cookie?: never;
     };
@@ -10566,120 +11702,26 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["Activity"][];
+          "*/*": components["schemas"]["Wellness"];
         };
       };
     };
   };
-  listPaceDistancesForSport: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        athleteId: string;
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["PaceDistancesDTO"];
-        };
-      };
-    };
-  };
-  listMatchingActivities: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        athleteId: string;
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["ActivityMini"][];
-        };
-      };
-    };
-  };
-  getActivities: {
-    parameters: {
-      query?: {
-        /** @description Include interval data (icu_intervals and icu_groups fields) */
-        intervals?: boolean;
-      };
-      header?: never;
-      path: {
-        athleteId: string;
-        ids: string[];
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Activity"][];
-        };
-      };
-    };
-  };
-  getActivityWeatherSummary: {
-    parameters: {
-      query?: {
-        /** @description Optional index of first point in activity to use */
-        start_index?: number;
-        /** @description Optional index of last point in activity to use (exclusive) */
-        end_index?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["ActivityWeatherSummary"];
-        };
-      };
-    };
-  };
-  getTimeAtHR: {
+  updateWellness: {
     parameters: {
       query?: never;
       header?: never;
       path: {
         id: string;
+        date: string;
       };
       cookie?: never;
     };
-    requestBody?: never;
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Wellness"];
+      };
+    };
     responses: {
       /** @description OK */
       200: {
@@ -10687,516 +11729,27 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["Plot"];
+          "*/*": components["schemas"]["Wellness"];
         };
       };
     };
   };
-  getActivityStreams: {
+  listWellnessRecords: {
     parameters: {
       query?: {
-        /** @description Streams required */
-        types?: string[];
-        /** @description Include default streams in addition to any specified in types */
-        includeDefaults?: boolean;
-      };
-      header?: never;
-      path: {
-        id: string;
-        ext: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["ActivityStream"][];
-        };
-      };
-    };
-  };
-  getActivitySegments: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["IcuSegment"][];
-        };
-      };
-    };
-  };
-  getPowerVsHR: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        ext: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["PowerVsHRPlot"];
-        };
-      };
-    };
-  };
-  getActivityPowerSpikeModel: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["PowerModel"];
-        };
-      };
-    };
-  };
-  getPowerHistogram: {
-    parameters: {
-      query?: {
-        /** @description Watts per bucket (default 25) */
-        bucketSize?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Bucket"][];
-        };
-      };
-    };
-  };
-  getActivityPowerCurve: {
-    parameters: {
-      query?: {
-        /** @description Use kj0 or kj1 to get one of the athlete's predefined fatigued power curves */
-        fatigue?: string;
-      };
-      header?: never;
-      path: {
-        id: string;
-        ext: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["PowerCurve"];
-        };
-      };
-    };
-  };
-  listActivityPowerCurves_1: {
-    parameters: {
-      query?: {
-        /** @description Comma separated list of streams required (default is watts) */
-        types?: string[];
-        /** @description Comma separated list of normal, kj0 or kj1 to return normal and/or fatigued curves */
-        fatigue?: string[];
-      };
-      header?: never;
-      path: {
-        id: string;
-        ext: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["PowerCurve"][];
-        };
-      };
-    };
-  };
-  getPaceHistogram: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Bucket"][];
-        };
-      };
-    };
-  };
-  getActivityPaceCurve: {
-    parameters: {
-      query?: {
-        gap?: boolean;
-      };
-      header?: never;
-      path: {
-        id: string;
-        ext: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["PaceCurve"];
-        };
-      };
-    };
-  };
-  getActivityMap: {
-    parameters: {
-      query?: {
-        /** @description Optional comma separated bounding box (left, top, right, bottom) to limit points returned */
-        bounds?: number[];
-        /** @description Only return the map bounds, not the latlngs */
-        boundsOnly?: boolean;
-        /** @description Include weather points if available */
-        weather?: boolean;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["MapData"];
-        };
-      };
-    };
-  };
-  getIntervalStats: {
-    parameters: {
-      query: {
-        start_index: number;
-        end_index: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Interval"];
-        };
-      };
-    };
-  };
-  getHRTrainingLoadModel: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["HRLoadModel"];
-        };
-      };
-    };
-  };
-  getHRHistogram: {
-    parameters: {
-      query?: {
-        /** @description Beats per bucket (default 5) */
-        bucketSize?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Bucket"][];
-        };
-      };
-    };
-  };
-  getActivityHRCurve: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        ext: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["HRCurve"];
-        };
-      };
-    };
-  };
-  downloadActivityGpxFile: {
-    parameters: {
-      query?: {
-        /** @description Include power data */
-        power?: boolean;
-        /** @description Include heart rate data */
-        hr?: boolean;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  getGapHistogram: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["Bucket"][];
-        };
-      };
-    };
-  };
-  downloadActivityFitFile: {
-    parameters: {
-      query?: {
-        /** @description Include power data */
-        power?: boolean;
-        /** @description Include heart rate data */
-        hr?: boolean;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  downloadActivityFile: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  findBestEfforts: {
-    parameters: {
-      query: {
-        /** @description Stream to search */
-        stream: string;
-        /** @description Duration of each effort in seconds */
-        duration?: number;
-        /** @description Distance of each effort in meters */
-        distance?: number;
-        /** @description Number of efforts to return */
-        count?: number;
-        /** @description Minimum average value for each interval, intervals will expand if specified */
-        minValue?: number;
-        /** @description If true portions of the stream that are included in work intervals are not considered */
-        excludeIntervals?: boolean;
-        /** @description First point in stream to consider */
-        startIndex?: number;
-        /** @description Last point in stream to consider (exclusive, default is whole stream) */
-        endIndex?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "*/*": components["schemas"]["BestEfforts"];
-        };
-      };
-    };
-  };
-  listEvents: {
-    parameters: {
-      query?: {
-        /** @description Local date (ISO-8601) for oldest event to return, default is today in the athletes timezone */
+        /** @description Local date of oldest record (ISO-8601) */
         oldest?: string;
-        /** @description Local date (ISO-8601) for newest event to return (inclusive), default is oldest plus 6 days */
+        /** @description Local date of newest record (ISO-8601), inclusive */
         newest?: string;
-        /** @description Comma separated list of categories to filter for (e.g. WORKOUT,NOTES) */
-        category?: string[];
-        /** @description Max number of events to return (default is all events) */
-        limit?: number;
-        calendar_id?: number;
-        /** @description Convert workouts to this format (zwo, mrc, erg or fit) and add workout_filename and workout_file_base64 to workout object */
-        ext?: string;
-        /** @description Percentage used to convert fixed power targets into a range for outdoor workouts only (default is 2.5 or whatever is configured in the Garmin box in /settings) */
-        powerRange?: number;
-        /** @description Percentage used to convert fixed HR targets into a range (default is 1.5 or whatever is configured in the Garmin box in /settings) */
-        hrRange?: number;
-        /** @description Percentage used to convert fixed pace targets into a range (default is 2.5 or whatever is configured in the Garmin box in /settings) */
-        paceRange?: number;
-        /** @description Locale (en, es, de etc.) to use for workouts with steps in multiple languages */
-        locale?: string;
-        /** @description Resolve power, heart rate and pace targets to watts, bpm and m/s respectively */
-        resolve?: boolean;
+        /** @description Comma separated list of column names to include in CSV (default is all) */
+        cols?: string[];
+        /** @description Comma separated list of field names to include in the returned objects (default is all), also excludes null values */
+        fields?: string[];
       };
       header?: never;
       path: {
         id: string;
-        format: string;
+        ext: string;
       };
       cookie?: never;
     };
@@ -11208,7 +11761,377 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": components["schemas"]["Event"][];
+          "*/*": components["schemas"]["Wellness"][];
+        };
+      };
+    };
+  };
+  listTags: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": string[];
+        };
+      };
+    };
+  };
+  listWorkouts: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Workout"][];
+        };
+      };
+    };
+  };
+  createWorkout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["WorkoutEx"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Workout"];
+        };
+      };
+    };
+  };
+  downloadWorkouts: {
+    parameters: {
+      query: {
+        /** @description Format: zwo, mrc, erg or fit */
+        ext: string;
+        /** @description Local date (ISO-8601) of oldest workout */
+        oldest: string;
+        /** @description Local date (ISO-8601) of newest workout (inclusive) */
+        newest: string;
+        powerRange?: number;
+        hrRange?: number;
+        paceRange?: number;
+        locale?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  createMultipleWorkouts: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["WorkoutEx"][];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Workout"][];
+        };
+      };
+    };
+  };
+  showWorkout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        workoutId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Workout"];
+        };
+      };
+    };
+  };
+  updateWorkout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        workoutId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["WorkoutEx"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Workout"];
+        };
+      };
+    };
+  };
+  deleteWorkout: {
+    parameters: {
+      query?: {
+        others?: boolean;
+      };
+      header?: never;
+      path: {
+        id: string;
+        workoutId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": number[];
+        };
+      };
+    };
+  };
+  listAthletes: {
+    parameters: {
+      query?: {
+        ext_id_prefix?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["AthleteWithTags"][];
+        };
+      };
+    };
+  };
+  sendMessage: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["NewMessage"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["SendResponse"];
+        };
+      };
+    };
+  };
+  showChat: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Chat"];
+        };
+      };
+    };
+  };
+  listMessages: {
+    parameters: {
+      query?: {
+        /** @description Only return messages older than this one */
+        beforeId?: number;
+        /** @description Return up to this many messages (default 30, max 100) */
+        limit?: number;
+      };
+      header?: never;
+      path: {
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["Message"][];
+        };
+      };
+    };
+  };
+  updateMessage: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number;
+        msgId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Message"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": Record<string, never>;
+        };
+      };
+    };
+  };
+  deleteMessage: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number;
+        msgId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": Record<string, never>;
+        };
+      };
+    };
+  };
+  updateLastSeenMessageId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: number;
+        msgId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": Record<string, never>;
         };
       };
     };
@@ -11238,13 +12161,59 @@ export interface operations {
       };
     };
   };
-  deleteMessage: {
+  downloadWorkout: {
     parameters: {
       query?: never;
       header?: never;
       path: {
+        ext: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Workout"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  listPaceDistances: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "*/*": components["schemas"]["PaceDistancesDTO"];
+        };
+      };
+    };
+  };
+  getSharedEvent: {
+    parameters: {
+      query?: {
+        /** @description Include full course info (map, weather etc.) */
+        fullCourse?: boolean;
+      };
+      header?: never;
+      path: {
         id: number;
-        msgId: number;
       };
       cookie?: never;
     };
@@ -11256,7 +12225,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "*/*": Record<string, never>;
+          "*/*": components["schemas"]["WithCourses"];
         };
       };
     };
