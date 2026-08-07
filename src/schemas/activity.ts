@@ -1,5 +1,6 @@
 import * as v from "valibot";
 import { decode, decodeArray } from "../decode.js";
+import type { CamelCaseKeys } from "../transform.js";
 
 export const ActivitySchema = v.looseObject({
   id: v.union([v.string(), v.number()]),
@@ -22,15 +23,34 @@ export const ActivitySchema = v.looseObject({
   average_speed: v.nullish(v.number()),
   max_speed: v.nullish(v.number()),
   total_elevation_gain: v.nullish(v.number()),
+  average_stance_time: v.nullish(v.number()),
+  average_vertical_oscillation: v.nullish(v.number()),
+  average_vertical_ratio: v.nullish(v.number()),
+  average_step_length: v.nullish(v.number()),
+  average_stance_time_percent: v.nullish(v.number()),
+  average_stance_time_balance: v.nullish(v.number()),
+  average_vertical_speed: v.nullish(v.number()),
+  average_leg_spring_stiffness: v.nullish(v.number()),
+  average_impact_loading_rate: v.nullish(v.number()),
+  analysis_issues: v.nullish(v.array(v.unknown())),
   source: v.nullish(v.string()),
   trainer: v.nullish(v.boolean()),
   group: v.nullish(v.string()),
   icu_zone_times: v.nullish(
-    v.array(v.union([v.number(), v.looseObject({ id: v.nullish(v.string()), secs: v.nullish(v.number()) })]))
+    v.array(
+      v.union([
+        v.number(),
+        v.looseObject({ id: v.nullish(v.string()), secs: v.nullish(v.number()) }),
+      ]),
+    ),
   ),
 });
 
-export type Activity = v.InferOutput<typeof ActivitySchema>;
+/** Validated Intervals.icu response before convenience response key transformation. */
+export type ActivityWire = v.InferOutput<typeof ActivitySchema>;
+
+/** Activity returned by managed convenience resources. */
+export type Activity = CamelCaseKeys<ActivityWire>;
 
 export const decodeActivity = (data: unknown) => decode(ActivitySchema, data);
 export const decodeActivities = (data: unknown) => decodeArray(ActivitySchema, data);

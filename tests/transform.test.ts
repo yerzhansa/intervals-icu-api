@@ -46,6 +46,16 @@ describe("camelCaseKeys", () => {
   it("handles empty object", () => {
     expect(camelCaseKeys({})).toEqual({});
   });
+
+  it("keeps a normal prototype when transforming an own __proto__ key", () => {
+    const input = JSON.parse('{"__proto__":{"polluted_value":true}}') as Record<string, unknown>;
+    const result = camelCaseKeys(input) as Record<string, unknown>;
+
+    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
+    expect(Object.hasOwn(result, "_Proto__")).toBe(true);
+    expect(result._Proto__).toEqual({ pollutedValue: true });
+    expect(({} as Record<string, unknown>).pollutedValue).toBeUndefined();
+  });
 });
 
 describe("snakeCaseKeys", () => {
@@ -54,5 +64,15 @@ describe("snakeCaseKeys", () => {
       start_date_local: "2026-01-01",
       icu_ftp: 280,
     });
+  });
+
+  it("defines an own __proto__ data property without changing the result prototype", () => {
+    const input = JSON.parse('{"__proto__":{"pollutedValue":true}}') as Record<string, unknown>;
+    const result = snakeCaseKeys(input) as Record<string, unknown>;
+
+    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
+    expect(Object.hasOwn(result, "__proto__")).toBe(true);
+    expect(result.__proto__).toEqual({ polluted_value: true });
+    expect(({} as Record<string, unknown>).polluted_value).toBeUndefined();
   });
 });

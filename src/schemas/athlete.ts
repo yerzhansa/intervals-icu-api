@@ -1,5 +1,6 @@
 import * as v from "valibot";
 import { decode } from "../decode.js";
+import type { CamelCaseKeys } from "../transform.js";
 
 export const AthleteSchema = v.looseObject({
   id: v.union([v.string(), v.number()]),
@@ -18,6 +19,10 @@ export const AthleteSchema = v.looseObject({
   timezone: v.nullish(v.string()),
 });
 
-export type Athlete = v.InferOutput<typeof AthleteSchema>;
+/** Validated Intervals.icu response before convenience response key transformation. */
+export type AthleteWire = v.InferOutput<typeof AthleteSchema>;
+
+/** Athlete returned by managed convenience resources. */
+export type Athlete = CamelCaseKeys<AthleteWire>;
 
 export const decodeAthlete = (data: unknown) => decode(AthleteSchema, data);

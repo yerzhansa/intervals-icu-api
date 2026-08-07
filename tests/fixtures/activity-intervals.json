@@ -1,0 +1,31 @@
+{
+  "id": "synthetic-activity",
+  "analyzed": "2025-05-15T09:00:00Z",
+  "icu_intervals": [
+    {
+      "id": 1,
+      "type": "WORK",
+      "start_index": 10,
+      "end_index": 70,
+      "moving_time": 60,
+      "average_heartrate": 145,
+      "average_stance_time": 250.5
+    },
+    {
+      "id": 2,
+      "type": "RECOVERY",
+      "start_index": 70,
+      "end_index": 100,
+      "moving_time": 30
+    }
+  ],
+  "icu_groups": [
+    {
+      "id": "synthetic-group",
+      "count": 2,
+      "start_index": 10,
+      "end_index": 100,
+      "average_vertical_ratio": 8.1
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import * as v from "valibot";
 import { decode } from "../decode.js";
+import type { CamelCaseKeys } from "../transform.js";
 
 export const WellnessSchema = v.looseObject({
   id: v.string(),
@@ -29,6 +30,10 @@ export const WellnessSchema = v.looseObject({
   updated: v.nullish(v.string()),
 });
 
-export type WellnessRecord = v.InferOutput<typeof WellnessSchema>;
+/** Validated Intervals.icu response before convenience response key transformation. */
+export type WellnessRecordWire = v.InferOutput<typeof WellnessSchema>;
+
+/** Wellness record returned by managed convenience resources. */
+export type WellnessRecord = CamelCaseKeys<WellnessRecordWire>;
 
 export const decodeWellness = (data: unknown) => decode(WellnessSchema, data);

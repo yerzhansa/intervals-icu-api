@@ -4,23 +4,154 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+    outputs:
+      npm_tag: ${{ steps.release.outputs.npm_tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npm run verify
+      - name: Validate release version and select npm distribution tag
+        id: release
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_IS_PRERELEASE: ${{ github.event.release.prerelease }}
+        run: |
+          PACKAGE_VERSION="$(node --print "require('./package.json').version")"
+          if [[ "${RELEASE_TAG}" != "${PACKAGE_VERSION}" && "${RELEASE_TAG}" != "v${PACKAGE_VERSION}" ]]; then
+            echo "Release tag ${RELEASE_TAG} does not match package version ${PACKAGE_VERSION}" >&2
+            exit 1
+          fi
+
+          if [[ "${PACKAGE_VERSION}" == *-* ]]; then
+            if [[ "${RELEASE_IS_PRERELEASE}" != "true" ]]; then
+              echo "Prerelease package versions require a GitHub prerelease" >&2
+              exit 1
+            fi
+            PRERELEASE="${PACKAGE_VERSION#*-}"
+            NPM_TAG="${PRERELEASE%%.*}"
+            case "${NPM_TAG}" in
+              alpha | beta | rc | next) ;;
+              *)
+                echo "Unsupported npm prerelease tag: ${NPM_TAG}" >&2
+                exit 1
+                ;;
+            esac
+          else
+            if [[ "${RELEASE_IS_PRERELEASE}" != "false" ]]; then
+              echo "Stable package versions require a non-prerelease GitHub release" >&2
+              exit 1
+            fi
+            NPM_TAG="latest"
+          fi
+
+          echo "npm_tag=${NPM_TAG}" >> "${GITHUB_OUTPUT}"
+
+  package:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Pack without publishing
+        run: |
+          mkdir -p "${RUNNER_TEMP}/package"
+          npm pack --ignore-scripts --pack-destination "${RUNNER_TEMP}/package"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: npm-package-release
+          path: ${{ runner.temp }}/package/*.tgz
+          if-no-files-found: error
+          retention-days: 7
+
+  runtime-smoke:
+    name: Release artifact runtime (Node ${{ matrix.node }})
+    needs: package
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["18", "20", "22", "24"]
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: npm-package-release
+          path: ${{ runner.temp }}/package
+      - name: Install packed runtime dependencies only
+        run: |
+          mkdir -p "${RUNNER_TEMP}/runtime-smoke"
+          cd "${RUNNER_TEMP}/runtime-smoke"
+          npm init --yes
+          npm install --omit=dev --ignore-scripts "${RUNNER_TEMP}"/package/*.tgz
+          node --input-type=module --eval "const api = await import('intervals-icu-api'); if (typeof api.IntervalsClient !== 'function') throw new Error('IntervalsClient export is unavailable');"
+
+  declaration-compat:
+    name: Release declarations (TypeScript ${{ matrix.typescript }})
+    needs: package
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        typescript: ["5.4.5", "5.9.3"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.12.0"
+      - uses: actions/download-artifact@v4
+        with:
+          name: npm-package-release
+          path: ${{ runner.temp }}/package
+      - name: Compile packed consumer declarations
+        run: |
+          mkdir -p "${RUNNER_TEMP}/consumer"
+          cp tests/compat/v0.1.2-consumer.ts tests/compat/tsconfig.json "${RUNNER_TEMP}/consumer/"
+          cd "${RUNNER_TEMP}/consumer"
+          npm init --yes
+          npm install --ignore-scripts "${RUNNER_TEMP}"/package/*.tgz
+          npm install --save-dev --ignore-scripts "typescript@${{ matrix.typescript }}"
+          npx --no-install tsc -p tsconfig.json
+
   publish:
+    needs: [verify, package, runtime-smoke, declaration-compat]
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: "24"
           registry-url: https://registry.npmjs.org
-      - run: npm install
-      - run: npm test
-      - run: npm run build
-      - run: |
-          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
-          npm publish --provenance --access public
+      - uses: actions/download-artifact@v4
+        with:
+          name: npm-package-release
+          path: ${{ runner.temp }}/package
+      - name: Publish tested package artifact
+        run: |
+          mapfile -t PACKAGE_TARBALLS < <(find "${RUNNER_TEMP}/package" -maxdepth 1 -name '*.tgz' -print)
+          if [[ "${#PACKAGE_TARBALLS[@]}" -ne 1 ]]; then
+            echo "Expected exactly one package tarball, found ${#PACKAGE_TARBALLS[@]}" >&2
+            exit 1
+          fi
+          PACKAGE_TARBALL="${PACKAGE_TARBALLS[0]}"
+          npm publish "${PACKAGE_TARBALL}" --provenance --access public --tag "${{ needs.verify.outputs.npm_tag }}"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

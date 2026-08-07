@@ -44,7 +44,14 @@ export function mapResult<T, U, E>(result: Result<T, E>, fn: (v: T) => U): Resul
   return result;
 }
 
-export function toValidationIssues(issues: { path?: { key: unknown }[]; message: string; expected?: string | null; received?: unknown }[]): ValidationIssue[] {
+export function toValidationIssues(
+  issues: {
+    path?: { key: unknown }[];
+    message: string;
+    expected?: string | null;
+    received?: unknown;
+  }[],
+): ValidationIssue[] {
   return issues.map((i) => ({
     path: i.path?.map((p) => String(p.key)).join(".") ?? "",
     message: i.message,
@@ -52,4 +59,3 @@ export function toValidationIssues(issues: { path?: { key: unknown }[]; message:
     received: i.received,
   }));
 }
-

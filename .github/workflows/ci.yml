@@ -6,15 +6,114 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
-  test:
+  quality:
+    name: Quality (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["22.12.0", "24"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run scan:sensitive
+      - name: Check checked-in schema (offline)
+        run: npm run schema:check
+      - run: npm run test:schema-diff
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run test:compat
+      - run: npm run check
+
+  package:
+    name: Build package artifact
+    needs: quality
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: "24"
           cache: npm
-      - run: npm install
+      - run: npm ci
       - run: npm run build
-      - run: npm test
+      - name: Pack without publishing
+        run: |
+          mkdir -p "${RUNNER_TEMP}/package"
+          npm pack --ignore-scripts --pack-destination "${RUNNER_TEMP}/package"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: npm-package
+          path: ${{ runner.temp }}/package/*.tgz
+          if-no-files-found: error
+          retention-days: 7
+
+  runtime-smoke:
+    name: Packed runtime (Node ${{ matrix.node }})
+    needs: package
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["18", "20", "22", "24"]
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: npm-package
+          path: ${{ runner.temp }}/package
+      - name: Create isolated runtime project
+        run: mkdir -p "${RUNNER_TEMP}/runtime-smoke"
+      - name: Install packed runtime dependencies only
+        working-directory: ${{ runner.temp }}/runtime-smoke
+        run: |
+          npm init --yes
+          npm install --omit=dev --ignore-scripts "${RUNNER_TEMP}"/package/*.tgz
+      - name: Import packed package
+        working-directory: ${{ runner.temp }}/runtime-smoke
+        run: >-
+          node --input-type=module --eval
+          "const api = await import('intervals-icu-api');
+          if (typeof api.IntervalsClient !== 'function')
+          throw new Error('IntervalsClient export is unavailable');"
+
+  declaration-compat:
+    name: Declarations (TypeScript ${{ matrix.typescript }})
+    needs: package
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        typescript: ["5.4.5", "5.9.3"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.12.0"
+      - uses: actions/download-artifact@v4
+        with:
+          name: npm-package
+          path: ${{ runner.temp }}/package
+      - name: Create isolated TypeScript consumer
+        run: |
+          mkdir -p "${RUNNER_TEMP}/consumer"
+          cp tests/compat/v0.1.2-consumer.ts tests/compat/tsconfig.json "${RUNNER_TEMP}/consumer/"
+      - name: Install packed package and compiler
+        working-directory: ${{ runner.temp }}/consumer
+        run: |
+          npm init --yes
+          npm install --ignore-scripts "${RUNNER_TEMP}"/package/*.tgz
+          npm install --save-dev --ignore-scripts "typescript@${{ matrix.typescript }}"
+      - name: Compile consumer declarations
+        working-directory: ${{ runner.temp }}/consumer
+        run: npx --no-install tsc -p tsconfig.json
