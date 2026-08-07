@@ -1,6 +1,5 @@
 import * as v from "valibot";
 import { camelCaseKeys, type CamelCaseKeys } from "../transform.js";
-import { ActivitySchema, type Activity } from "./activity.js";
 
 const NullableNumberArraySchema = v.array(v.nullable(v.number()));
 const OptionalNumber = v.nullish(v.number());
@@ -362,8 +361,26 @@ export const DataCurveSchema = v.looseObject({
   values: v.nullish(NullableNumberArraySchema),
 });
 
+/**
+ * Compact activity metadata embedded in athlete curve-set responses.
+ *
+ * The live endpoint does not return the full Activity shape and, in particular,
+ * can omit `type` even when the request is filtered by activity type.
+ */
+export const AthleteCurveActivitySchema = v.looseObject({
+  id: v.union([v.string(), v.number()]),
+  start_date_local: v.string(),
+  type: OptionalString,
+  name: OptionalString,
+  distance: OptionalNumber,
+  moving_time: OptionalNumber,
+  training_load: OptionalNumber,
+  icu_weight: OptionalNumber,
+  race: v.nullish(v.boolean()),
+});
+
 const ActivityMapSchema = v.pipe(
-  v.record(v.string(), ActivitySchema),
+  v.record(v.string(), AthleteCurveActivitySchema),
   v.transform(
     (record) =>
       new Map(
@@ -396,6 +413,7 @@ export type AthleteHeartRateCurveSetWire = v.InferInput<typeof AthleteHeartRateC
 export type AthletePaceCurveSetWire = v.InferInput<typeof AthletePaceCurveSetSchema>;
 /** Validated JSON shape before response key transformation and map normalization. */
 export type AthletePowerCurveSetWire = v.InferInput<typeof AthletePowerCurveSetSchema>;
+export type AthleteCurveActivityWire = v.InferInput<typeof AthleteCurveActivitySchema>;
 
 export const AthletePowerHeartRateCurveSchema = v.pipe(
   v.looseObject({
@@ -489,21 +507,23 @@ export type DataCurve = CamelCaseKeys<DataCurveDecoded>;
 export type AthletePowerHeartRateCurveWire = v.InferInput<typeof AthletePowerHeartRateCurveSchema>;
 type AthletePowerHeartRateCurveDecoded = v.InferOutput<typeof AthletePowerHeartRateCurveSchema>;
 export type AthletePowerHeartRateCurve = CamelCaseKeys<AthletePowerHeartRateCurveDecoded>;
+type AthleteCurveActivityDecoded = v.InferOutput<typeof AthleteCurveActivitySchema>;
+export type AthleteCurveActivity = CamelCaseKeys<AthleteCurveActivityDecoded>;
 
 export interface AthleteHeartRateCurveSet {
-  activities: ReadonlyMap<string, Activity>;
+  activities: ReadonlyMap<string, AthleteCurveActivity>;
   list: HeartRateCurve[];
   [key: string]: unknown;
 }
 
 export interface AthletePaceCurveSet {
-  activities: ReadonlyMap<string, Activity>;
+  activities: ReadonlyMap<string, AthleteCurveActivity>;
   list: PaceCurve[];
   [key: string]: unknown;
 }
 
 export interface AthletePowerCurveSet {
-  activities: ReadonlyMap<string, Activity>;
+  activities: ReadonlyMap<string, AthleteCurveActivity>;
   list: AthletePowerCurve[];
   [key: string]: unknown;
 }

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1
+
+### Fixed
+
+- Accept the compact activity summaries returned by live athlete curve-set endpoints. These summaries can omit `type`; they are now exposed accurately as `AthleteCurveActivity` instead of being rejected against the full `Activity` schema.
+
 ## 0.3.0
 
 ### Added

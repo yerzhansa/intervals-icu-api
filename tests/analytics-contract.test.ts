@@ -22,12 +22,12 @@ import type {
   AthletePaceCurveSet,
   AthletePowerCurve,
   AthletePowerCurveSet,
+  AthleteCurveActivity,
   HeartRateCurve,
   PaceCurve,
   PowerCurve,
   PowerVsHeartRatePlot,
 } from "../src/schemas/analytics.js";
-import type { Activity } from "../src/schemas/activity.js";
 import fixture from "./fixtures/analytics-responses.json";
 
 const BASE = "https://intervals.icu";
@@ -374,7 +374,7 @@ describe("athlete analytics endpoints", () => {
     expectTypeOf<AthletePaceCurveSet["list"][number]>().toEqualTypeOf<PaceCurve>();
     expectTypeOf<AthletePowerCurveSet["list"][number]>().toEqualTypeOf<AthletePowerCurve>();
     expectTypeOf<AthletePowerCurveSet["activities"]>().toEqualTypeOf<
-      ReadonlyMap<string, Activity>
+      ReadonlyMap<string, AthleteCurveActivity>
     >();
     expectTypeOf(power).toMatchTypeOf<{ ok: true; value: AthletePowerCurveSet } | { ok: false }>();
 
@@ -388,6 +388,46 @@ describe("athlete analytics endpoints", () => {
     ]);
     expect(heartRateUrl?.searchParams.has("f2")).toBe(false);
     expect(heartRateUrl?.searchParams.has("f3")).toBe(false);
+  });
+
+  it("accepts the compact live curve activity summary when type is omitted", async () => {
+    server.use(
+      jsonHandler("/api/v1/athlete/:id/power-curves", {
+        ...fixture.athletePowerCurveSet,
+        activities: {
+          synthetic_key: {
+            id: "synthetic-activity",
+            start_date_local: "2000-01-01T00:00:00",
+            name: "Synthetic activity",
+            distance: 40_000,
+            moving_time: 3_600,
+            training_load: 42,
+            icu_weight: 75,
+            race: false,
+          },
+        },
+      }),
+    );
+
+    const result = await createClient().activities.listAthletePowerCurves({
+      type: "Ride",
+      curves: ["42d"],
+    });
+    server.resetHandlers();
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.activities.get("synthetic_key")).toEqual({
+      id: "synthetic-activity",
+      startDateLocal: "2000-01-01T00:00:00",
+      name: "Synthetic activity",
+      distance: 40_000,
+      movingTime: 3_600,
+      trainingLoad: 42,
+      icuWeight: 75,
+      race: false,
+    });
+    expect(result.value.activities.get("synthetic_key")?.type).toBeUndefined();
   });
 
   it("returns the mixed-wire-case athlete power/heart-rate payload in camelCase", async () => {
