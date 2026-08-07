@@ -1,3 +1,5 @@
+import type { RetryCause } from "./retry.js";
+
 export interface RequestInfo {
   method: string;
   path: string;
@@ -18,6 +20,8 @@ export interface RetryInfo extends RequestInfo {
   maxAttempts: number;
   delayMs: number;
   reason: string;
+  /** Machine-readable reason for the retry; `reason` remains for display/logging. */
+  cause: RetryCause;
 }
 
 export interface Hooks {

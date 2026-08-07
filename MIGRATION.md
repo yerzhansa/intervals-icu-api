@@ -1,3 +1,85 @@
+# Migrating from 0.2.0 to 0.3.0
+
+`0.3.0` completes the request-casing, transport, retry, analytics, and stream-analysis work deferred from `0.2.0`. It remains compatible with `0.2` wire-shaped mutation inputs for the `0.3.x` line, but makes camelCase the canonical managed API.
+
+## Managed request DTOs are camelCase
+
+Use camelCase with managed mutations:
+
+```ts
+await client.events.create({
+  startDateLocal: "2026-04-14T00:00:00",
+  category: "WORKOUT",
+  name: "Endurance",
+  movingTime: 5_400,
+  icuTrainingLoad: 72,
+});
+```
+
+`AthleteUpdateWire`, `EventInputWire`, `WellnessUpdateWire`, and `WorkoutInputWire` preserve the `0.2` request surface and are deprecated through `0.3.x`. Do not mix a canonical property with its wire alias in the same object: managed methods resolve a local `Validation` error before sending a request. Generated request codecs preserve opaque dictionary keys exactly, including `workoutDoc` content and custom fields.
+
+The standalone `camelCaseKeys()` and `snakeCaseKeys()` helpers now reject collisions and cycles instead of silently losing data. They recurse through plain records (including named interfaces) and arrays while preserving statically recognizable opaque values such as `Date`, `Map`, `Set`, typed arrays, and functions. Arbitrary class instances now throw `KeyTransformUnsupportedObjectError`: TypeScript cannot distinguish a public-field-only class instance from an equivalent named interface, so rejecting it is the only precise type/runtime contract. Convert custom class values to plain JSON first.
+
+## Typed analytics move under activities
+
+`client.activities` now covers all investigated analytics groups:
+
+- best efforts and GAP, heart-rate, pace, and power histograms;
+- per-activity heart-rate, pace, power, multi-power, and power-versus-heart-rate curves;
+- activity-range and athlete heart-rate, pace, and power curve sets;
+- athlete power-versus-heart-rate curves.
+
+For example:
+
+```ts
+await client.activities.findBestEfforts(activityId, {
+  stream: "watts",
+  duration: 300,
+});
+await client.activities.listAthletePowerCurves({
+  type: "Ride",
+  curves: ["42d", "s0"],
+});
+```
+
+`client.powerCurves.get()` remains as a deprecated delegate. Its old declaration described a single curve even though the endpoint returns an athlete curve set; `0.3.0` corrects that return type. Move new code to `client.activities.listAthletePowerCurves()`.
+
+Analytics responses use loose, sanitized schemas: required semantic axes are validated, while additive upstream fields remain available. Filter arrays use the server's JSON query representation and ordinary arrays use comma-delimited query values.
+
+## Normalized streams and local analysis
+
+`activities.getStreamMap()` converts the stream array into a duplicate-safe `ReadonlyMap`, preserves custom descriptors, and reports malformed or duplicate streams instead of overwriting them. `normalizeActivityStreams()` provides the same pure operation for already-fetched values.
+
+`calculateEfficiencyFactorDecoupling()` computes a transparent, time-weighted first-half versus second-half efficiency-factor drift. It is intentionally a local calculation, not a reimplementation of Intervals.icu's cleaned and lag-adjusted power-versus-heart-rate metric. A valid, strictly increasing `time` stream is required (or select one with `timeStream`); non-boolean moving samples now return `InvalidMovingStream` diagnostics.
+
+## Retries are method-aware
+
+Automatic retries now require both a retryable failure and a replayable request. In `auto` mode, GET, HEAD, OPTIONS, PUT, and DELETE are treated as idempotent; POST and PATCH are not. Network and per-attempt timeout failures are retryable by default, while caller aborts are never retried.
+
+For an application-owned idempotent POST or PATCH, opt in explicitly through the Result-returning request API:
+
+```ts
+await client.request("/api/v1/custom-operation", {
+  method: "POST",
+  json: { exact_wire_key: true },
+  retry: "idempotent",
+});
+```
+
+Use `retry: "never"` to disable retries for one request. A `bodyFactory` can create a fresh body for each retry when a one-shot body cannot be replayed safely.
+
+## Result-returning arbitrary requests
+
+`client.request()` is the managed escape hatch for endpoints that do not yet have a resource method. It applies authentication boundaries, rate limiting, hooks, timeout, method-aware retries, response metadata, and normalized `Result` errors. It supports `json`, `text`, `arrayBuffer`, `blob`, `formData`, and `none` parsing plus optional Valibot validation for JSON.
+
+Arbitrary JSON bodies and responses retain their exact wire keys; `client.request()` does not apply managed-resource casing. `client.raw` remains available for typed OpenAPI calls and streaming, with its existing openapi-fetch tuple and rejection behavior.
+
+## Runtime support
+
+Node.js `>=18` and TypeScript `>=5.4` remain the consumer floor. The package continues to compile representative `0.1.2`, `0.2.0`, and canonical `0.3.0` consumers.
+
+---
+
 # Migrating from 0.1.2 to 0.2.0
 
 `0.2.0` corrects declarations to match existing runtime behavior and normalizes managed operational failures. Existing method names and common calls are preserved.

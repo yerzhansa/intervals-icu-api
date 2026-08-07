@@ -1,10 +1,16 @@
 import type { components } from "../generated/schema.js";
 import type { BinaryDownload, WorkoutZipMetadataOptions, WorkoutZipOptions } from "../download.js";
 import { encodePathSegment } from "../path.js";
+import { encodeRequestBody } from "../request-casing.js";
 import type { Result } from "../result.js";
+import type { CamelCaseKeys } from "../transform.js";
 import { BaseResource } from "./base.js";
 
-type WorkoutEx = components["schemas"]["WorkoutEx"];
+/** @deprecated Prefer the canonical camelCase {@link WorkoutInput}. */
+export type WorkoutInputWire = components["schemas"]["WorkoutEx"];
+
+/** Canonical managed request body. */
+export type WorkoutInput = CamelCaseKeys<WorkoutInputWire>;
 
 export class WorkoutsResource extends BaseResource {
   async list() {
@@ -25,11 +31,16 @@ export class WorkoutsResource extends BaseResource {
     );
   }
 
-  async create(body: WorkoutEx) {
+  async create(body: WorkoutInput | WorkoutInputWire) {
+    const encoded = encodeRequestBody<WorkoutInputWire>(body, "WorkoutEx");
+    if (!encoded.ok) {
+      return this.http.rejectValidation("POST", "/athlete/{id}/workouts", [...encoded.issues]);
+    }
+
     return this.http.requestJson("POST", "/athlete/{id}/workouts", (signal) =>
       this.api.POST("/api/v1/athlete/{id}/workouts", {
         params: { path: { id: this.athleteId } },
-        body,
+        body: encoded.value,
         signal,
       }),
     );

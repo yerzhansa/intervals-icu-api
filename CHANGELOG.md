@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.3.0
+
+### Added
+
+- Typed methods for the complete investigated activity analytics surface: best efforts, histograms, activity and athlete curves, and power-versus-heart-rate data.
+- Duplicate-safe stream normalization, `activities.getStreamMap()`, and a transparent time-weighted efficiency-factor decoupling helper.
+- Canonical camelCase request DTOs backed by deterministic, schema-aware request codecs.
+- A Result-returning `client.request()` escape hatch with exact wire JSON, six parse modes, optional validation, metadata, hooks, rate limiting, timeouts, and retries.
+- Sanitized analytics, stream, casing, retry, and transport fixtures plus compatibility compilation for representative consumers.
+
+### Changed
+
+- Retries are method-aware and require replayable bodies; safe idempotent methods can retry HTTP, network, and timeout failures, while POST/PATCH require an explicit idempotency assertion.
+- Retry waits and rate-limit queue acquisition honor aborts, Retry-After delays are bounded, and every attempt gets a fresh timeout and eligible body.
+- Managed athlete, event, wellness, and workout mutations accept canonical camelCase inputs and map them to the API's exact mixed-case wire schemas.
+- Generic key transforms detect collisions and cycles and preserve opaque object types instead of silently changing or losing values.
+- Analytics filter arrays serialize as server-compatible JSON while ordinary arrays remain comma-delimited.
+- The deprecated `powerCurves.get()` delegate now exposes the endpoint's actual athlete curve-set return shape.
+
+### Compatibility
+
+- Deprecated `*Wire` mutation aliases and their runtime inputs remain supported through `0.3.x`; mixed canonical/wire aliases resolve local validation errors.
+- The legacy `getStreams(activityId, string[])` overload, managed response casing, raw OpenAPI tuple, and standalone wire decoders remain available.
+- Arbitrary `client.request()` JSON is never implicitly recased, and opaque managed dictionaries preserve application-owned keys.
+- Node.js `>=18` and TypeScript `>=5.4` remain the consumer support floor.
+
 ## 0.2.0-beta.1
 
 ### Added

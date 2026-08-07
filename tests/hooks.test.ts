@@ -66,6 +66,7 @@ describe("callHook", () => {
       maxAttempts: 3,
       delayMs: 1000,
       reason: "HTTP 429",
+      cause: { kind: "Http", status: 429 },
     });
     expect(onRetry).toHaveBeenCalledWith(expect.objectContaining({ attempt: 1, delayMs: 1000 }));
   });

@@ -75,7 +75,7 @@ describe("raw abort integration", () => {
     const client = new IntervalsClient({
       apiKey: "test",
       fetch,
-      retry: { maxAttempts: 2, initialDelayMs: 0, maxDelayMs: 0, jitterFactor: 0 },
+      retry: { maxAttempts: 2, initialDelayMs: 0, maxDelayMs: 30_000, jitterFactor: 0 },
       hooks: { onRetry, onError, onResponse },
     });
     const controller = new AbortController();

@@ -39,12 +39,16 @@ function response(status = 200, body: BodyInit | null = null, statusText?: strin
 }
 
 describe("managed HTTP error contract", () => {
-  it("maps a Fetch network rejection without retrying and calls onError once", async () => {
+  it("retries a Fetch network rejection and calls onError only when exhausted", async () => {
     const onError = vi.fn();
-    const request = vi.fn(async () => {
+    const fetch = vi.fn(async () => {
       throw new TypeError("fetch failed");
+    }) as typeof globalThis.fetch;
+    const http = executor({ fetch, hooks: { onError }, maxAttempts: 3 });
+    const request = vi.fn(async () => {
+      const networkResponse = await http.fetch("https://example.test/network");
+      return { data: {}, response: networkResponse };
     });
-    const http = executor({ hooks: { onError }, maxAttempts: 3 });
 
     const result = await http.requestJson("GET", "/test", request);
 
@@ -52,7 +56,8 @@ describe("managed HTTP error contract", () => {
       ok: false,
       error: { kind: "Network", message: "Network request failed" },
     });
-    expect(request).toHaveBeenCalledTimes(1);
+    expect(request).toHaveBeenCalledTimes(3);
+    expect(fetch).toHaveBeenCalledTimes(3);
     expect(onError).toHaveBeenCalledTimes(1);
   });
 
@@ -82,7 +87,7 @@ describe("managed HTTP error contract", () => {
         message: "Request exceeded configured timeout of 5 ms",
       });
     }
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(3);
     expect(onError).toHaveBeenCalledTimes(1);
   });
 
@@ -110,7 +115,7 @@ describe("managed HTTP error contract", () => {
         message: "Request exceeded configured timeout of 5 ms",
       },
     });
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(3);
     expect(onResponse).not.toHaveBeenCalled();
     expect(onError).toHaveBeenCalledTimes(1);
   });
@@ -178,9 +183,34 @@ describe("managed HTTP error contract", () => {
       ok: false,
       error: { kind: "Network", message: "Network request failed" },
     });
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(3);
     expect(onResponse).not.toHaveBeenCalled();
     expect(onError).toHaveBeenCalledTimes(1);
+  });
+
+  it("maps and retries a managed OpenAPI response body failure as Network", async () => {
+    const fetch = vi.fn(async () => {
+      const body = new ReadableStream<Uint8Array>({
+        start(controller) {
+          controller.error(new TypeError("connection dropped while reading JSON"));
+        },
+      });
+      return new Response(body, { headers: { "content-type": "application/json" } });
+    }) as typeof globalThis.fetch;
+    const client = new IntervalsClient({
+      apiKey: "test",
+      athleteId: "i1",
+      fetch,
+      retry: { maxAttempts: 3, initialDelayMs: 0, maxDelayMs: 0, jitterFactor: 0 },
+    });
+
+    const result = await client.athlete.get();
+
+    expect(result).toEqual({
+      ok: false,
+      error: { kind: "Network", message: "Network request failed" },
+    });
+    expect(fetch).toHaveBeenCalledTimes(3);
   });
 
   it("maps an HTTP error-body stream failure to Network", async () => {
@@ -767,17 +797,30 @@ describe("raw HTTP pipeline", () => {
 
   it("preserves raw transport rejection while invoking onError once", async () => {
     const onError = vi.fn();
+    const middlewareOnError = vi.fn();
+    const transportError = new TypeError("fetch failed");
     const fetch = vi.fn(async () => {
-      throw new TypeError("fetch failed");
+      throw transportError;
     }) as typeof globalThis.fetch;
-    const client = new IntervalsClient({ apiKey: "test", fetch, hooks: { onError } });
+    const client = new IntervalsClient({
+      apiKey: "test",
+      fetch,
+      retry: { maxAttempts: 1 },
+      hooks: { onError },
+    });
+    client.raw.use({
+      onError({ error }) {
+        middlewareOnError(error);
+      },
+    });
 
     await expect(
       client.raw.GET("/api/v1/athlete/{id}", {
         params: { path: { id: "i1" } },
       }),
-    ).rejects.toThrow("fetch failed");
+    ).rejects.toBe(transportError);
     expect(fetch).toHaveBeenCalledTimes(1);
+    expect(middlewareOnError).toHaveBeenCalledWith(transportError);
     expect(onError).toHaveBeenCalledTimes(1);
     expect(onError.mock.calls[0][0].error).toEqual({
       kind: "Network",

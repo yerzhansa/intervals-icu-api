@@ -5,10 +5,8 @@ TypeScript client for the [Intervals.icu](https://intervals.icu) API. It combine
 ## Install
 
 ```bash
-npm install intervals-icu-api@beta
+npm install intervals-icu-api
 ```
-
-The prerelease uses the `beta` npm tag. After stable `0.2.0` is published, the untagged install will select it through `latest`.
 
 ## Quick Start
 
@@ -38,12 +36,12 @@ console.log(`CTL: ${ctl}, ATL: ${atl}, TSB: ${ctl - atl}`);
 
 // Push a workout to calendar (syncs to Garmin/Wahoo automatically)
 await client.events.create({
-  start_date_local: "2026-04-14T00:00:00",
+  startDateLocal: "2026-04-14T00:00:00",
   category: "WORKOUT",
   name: "Sweet Spot 2x20",
   type: "Ride",
-  moving_time: 5400,
-  icu_training_load: 85,
+  movingTime: 5400,
+  icuTrainingLoad: 85,
 });
 ```
 
@@ -54,12 +52,14 @@ await client.events.create({
 - **Result type** — managed resource operations resolve `Result<T, ApiError>` for HTTP, validation, timeout, and network failures
 - **Runtime validation** — responses validated with [Valibot](https://valibot.dev) schemas using `looseObject` (forward-compatible with API changes)
 - **camelCase keys** — API returns `icu_training_load`, you get `icuTrainingLoad`
+- **camelCase managed inputs** — typed mutations map canonical DTOs to the API's exact mixed-case wire schema
 - **Rate limiting** — token bucket (10 req/s default, burst 30) with queue-based concurrency safety
-- **Retry** — exponential backoff with jitter on 429/5xx, respects `Retry-After` header
+- **Method-aware retry** — safe replayable calls retry HTTP, network, and timeout failures with bounded backoff
 - **Hooks** — `onRequest`, `onResponse`, `onError`, `onRetry` for logging/monitoring
 - **Typed activity streams** — known-name autocomplete without rejecting custom or future streams
+- **Typed analytics** — best efforts, histograms, curves, power-vs-HR, stream normalization, and transparent decoupling
 - **File downloads** — backward-compatible bytes/strings plus opt-in response metadata
-- **Raw escape hatch** — `client.raw` preserves OpenAPI wire types while sharing rate limiting, HTTP retries, and hooks
+- **Two escape hatches** — `client.request()` returns `Result`; `client.raw` preserves openapi-fetch behavior
 
 ## Authentication
 
@@ -132,7 +132,14 @@ client.activities.getStreams(activityId, {
   types: ["watts", "heartrate", "athlete_custom_stream"],
   includeDefaults: false,
 });
+client.activities.getStreamMap(activityId); // duplicate-safe ReadonlyMap + diagnostics
 client.activities.getIntervals(activityId); // typed camelCase intervals/groups
+client.activities.findBestEfforts(activityId, { stream: "watts", duration: 300 });
+client.activities.getHeartRateCurve(activityId);
+client.activities.getPaceCurve(activityId, { gap: true });
+client.activities.getPowerCurve(activityId);
+client.activities.getPowerVsHeartRate(activityId); // Intervals' server-owned metric
+client.activities.listAthletePowerCurves({ type: "Ride", curves: ["42d", "s0"] });
 client.activities.downloadFitFile(activityId); // → ArrayBuffer
 client.activities.downloadGpxFile(activityId); // → ArrayBuffer
 client.activities.downloadFile(activityId); // → ArrayBuffer (original file)
@@ -140,6 +147,17 @@ client.activities.exportCsv({ oldest: "2026-01-01" }); // → string
 ```
 
 The legacy `getStreams(activityId, string[])` overload still works. Omitting `types` asks Intervals.icu for its default streams; it is not converted into an empty list.
+
+Normalized streams retain duplicate and custom descriptors rather than silently overwriting them. The pure helper below calculates a transparent, time-weighted efficiency-factor drift; it is intentionally distinct from Intervals' lag-adjusted and cleaned power-vs-HR metric. It requires a valid, strictly increasing `time` stream (or the configured `timeStream`) and reports non-boolean moving samples instead of inventing timing or movement data.
+
+```typescript
+import { calculateEfficiencyFactorDecoupling } from "intervals-icu-api";
+
+const streams = unwrap(await client.activities.getStreamMap(activityId));
+const drift = calculateEfficiencyFactorDecoupling(streams, {
+  outputStream: "watts",
+});
+```
 
 Download metadata is additive:
 
@@ -199,8 +217,10 @@ Intervals.icu requires the ZIP format and date range. A no-argument call remains
 ### Power Curves
 
 ```typescript
-client.powerCurves.get({ type: "Ride", f1: [], f2: [], f3: [] });
+client.activities.listAthletePowerCurves({ type: "Ride", curves: ["42d"] });
 ```
+
+`client.powerCurves.get()` remains as a deprecated delegate. Its pre-0.3 declaration described the wrong single-curve shape; it now returns the actual athlete curve set.
 
 ### Folders & Gear
 
@@ -208,6 +228,20 @@ client.powerCurves.get({ type: "Ride", f1: [], f2: [], f3: [] });
 client.folders.list();
 client.gear.list();
 ```
+
+## Managed Request Casing
+
+Managed mutation DTOs are canonical camelCase. The client uses generated, schema-aware codecs because Intervals request schemas mix snake_case with names such as `avgSleepingHR`, `spO2`, and `pMax`.
+
+```typescript
+await client.wellness.update({
+  id: "2026-04-13",
+  restingHR: 48,
+  hrvSDNN: 62,
+});
+```
+
+Named `*Wire` aliases remain available for 0.2 callers and are deprecated through the 0.3 line. Do not mix canonical and wire aliases in one body: the call resolves a local `Validation` error before any request. Opaque maps such as `workoutDoc` content keep their keys exactly.
 
 ## Configuration
 
@@ -226,6 +260,8 @@ const client = new IntervalsClient({
     maxDelayMs: 30000,
     jitterFactor: 0.2,
     retryableStatuses: [429, 500, 502, 503, 504],
+    retryOnNetworkError: true,
+    retryOnTimeout: true,
   },
   timeoutMs: 30_000, // optional per-attempt deadline; omitted = no client deadline
   hooks: {
@@ -240,6 +276,24 @@ const client = new IntervalsClient({
 
 Invalid timeout, retry, and rate-limit values throw during construction. Explicitly `undefined` fields in partial retry/rate-limit options are treated as omitted and retain their defaults.
 
+Automatic retries apply to replayable GET, HEAD, OPTIONS, PUT, and DELETE calls. POST and PATCH require an explicit idempotency assertion through `client.request(..., { retry: "idempotent" })`; `retry: "never"` disables retries for one call.
+
+## Result-returning Arbitrary Requests
+
+Use `client.request()` when an endpoint is not modeled yet but you still want normalized errors, rate limiting, retries, timeouts, hooks, parsing, and response metadata.
+
+```typescript
+const result = await client.request("/api/v1/athlete/0/chats", {
+  query: { limit: 20 },
+});
+
+if (result.ok) {
+  console.log(result.value.data, result.value.response.status);
+}
+```
+
+Supported parsers are `json`, `text`, `arrayBuffer`, `blob`, `formData`, and `none`. A Valibot `schema` can validate and transform JSON. Arbitrary JSON keys are sent and returned exactly as supplied; only typed managed resources apply API-specific casing. Streaming remains on `client.raw`.
+
 ## Raw Client
 
 For endpoints not covered by convenience methods, use the typed `openapi-fetch` client:
@@ -250,7 +304,7 @@ const { data, error, response } = await client.raw.GET("/api/v1/athlete/{id}/cha
 });
 ```
 
-Autocomplete works on paths, params, and response types. Raw responses retain upstream wire casing and the `{ data, error, response }` shape. Raw verb calls share the package limiter, configured HTTP-status retry policy, middleware registrations, and hooks, but they are not converted to `Result` and may reject. Hook paths use OpenAPI templates, so resolved athlete and activity identifiers are not exposed to loggers.
+Autocomplete works on paths, params, and response types. Raw responses retain upstream wire casing and the `{ data, error, response }` shape. Raw verb calls share the package limiter, method-aware retry policy, middleware registrations, and hooks, but they are not converted to `Result` and may reject. Hook paths use OpenAPI templates, so resolved athlete and activity identifiers are not exposed to loggers.
 
 When `timeoutMs` is enabled, the per-attempt raw deadline surrounds the complete `openapi-fetch` operation, including middleware and response parsing, and aborts the underlying request. The final `result.response` preserves the transport or middleware `Response` identity. For `parseAs: "stream"`, the returned data stream retains the same deadline until it is consumed or cancelled.
 
@@ -291,7 +345,7 @@ npm run schema:fetch          # explicitly update the normalized snapshot
 npm run schema:upstream-diff  # report live drift without changing the snapshot
 ```
 
-See [RFC-0001](docs/RFC-0001-v0.2-correctness-contract.md), the [investigation matrix](docs/v0.2-investigation-matrix.md), and [the 0.2 migration guide](MIGRATION.md). All three documents ship with the package.
+See the [migration guide](MIGRATION.md) for the 0.3 request, retry, transport, and analytics changes.
 
 ## License
 

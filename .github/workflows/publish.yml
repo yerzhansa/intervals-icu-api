@@ -122,7 +122,7 @@ jobs:
       - name: Compile packed consumer declarations
         run: |
           mkdir -p "${RUNNER_TEMP}/consumer"
-          cp tests/compat/v0.1.2-consumer.ts tests/compat/tsconfig.json "${RUNNER_TEMP}/consumer/"
+          cp tests/compat/*.ts tests/compat/tsconfig.json "${RUNNER_TEMP}/consumer/"
           cd "${RUNNER_TEMP}/consumer"
           npm init --yes
           npm install --ignore-scripts "${RUNNER_TEMP}"/package/*.tgz

@@ -107,7 +107,7 @@ jobs:
       - name: Create isolated TypeScript consumer
         run: |
           mkdir -p "${RUNNER_TEMP}/consumer"
-          cp tests/compat/v0.1.2-consumer.ts tests/compat/tsconfig.json "${RUNNER_TEMP}/consumer/"
+          cp tests/compat/*.ts tests/compat/tsconfig.json "${RUNNER_TEMP}/consumer/"
       - name: Install packed package and compiler
         working-directory: ${{ runner.temp }}/consumer
         run: |

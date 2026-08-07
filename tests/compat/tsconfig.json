@@ -8,5 +8,5 @@
     "skipLibCheck": false,
     "types": []
   },
-  "include": ["v0.1.2-consumer.ts"]
+  "include": ["*.ts"]
 }

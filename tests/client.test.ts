@@ -106,7 +106,7 @@ describe("IntervalsClient", () => {
         message: "Request exceeded configured timeout of 5 ms",
       },
     });
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(3);
     expect(onResponse).not.toHaveBeenCalled();
     expect(onError).toHaveBeenCalledTimes(1);
   });
@@ -170,7 +170,7 @@ describe("IntervalsClient", () => {
         message: "Request exceeded configured timeout of 5 ms",
       },
     });
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(3);
   });
 
   it("applies the managed deadline to middleware recovery responses", async () => {
@@ -199,6 +199,6 @@ describe("IntervalsClient", () => {
         message: "Request exceeded configured timeout of 5 ms",
       },
     });
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(3);
   });
 });
