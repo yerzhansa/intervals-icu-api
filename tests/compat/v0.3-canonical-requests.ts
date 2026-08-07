@@ -81,7 +81,6 @@ const workout: WorkoutInput = {
 const wireActivity = {
   id: "synthetic-activity",
   start_date_local: "2000-01-01T00:00:00",
-  type: "Ride",
 };
 const heartRateCurveSetWire: AthleteHeartRateCurveSetWire = {
   activities: { "synthetic-activity": wireActivity },
