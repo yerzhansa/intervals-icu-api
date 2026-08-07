@@ -97,6 +97,29 @@ describe("typed activity streams", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.kind).toBe("Validation");
   });
+
+  it("fetches a normalized stream multimap with explicit diagnostics", async () => {
+    server.use(
+      http.get(`${BASE}/api/v1/activity/:id/streams.json`, () => HttpResponse.json(streamsFixture)),
+    );
+
+    const result = await createClient().activities.getStreamMap("synthetic-activity", {
+      types: ["time", "latlng", "moving"],
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.byType.get("latlng")?.[0].data2).toEqual([76.8, 76.81, null]);
+    expect(result.value.getUnique("time").ok).toBe(true);
+    expect(result.value.issues).toContainEqual({
+      kind: "SampleCountMismatch",
+      type: "latlng",
+      descriptorIndex: 1,
+      expected: 4,
+      actual: 3,
+      referenceType: "time",
+    });
+  });
 });
 
 describe("activity intervals proof endpoint", () => {

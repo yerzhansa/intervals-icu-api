@@ -33,9 +33,11 @@ describe("Schema validation", () => {
     expect(result.success).toBe(true);
   });
 
-  it("validates power curve fixture", () => {
+  it("validates the backward-compatible watts-only power curve fixture", () => {
     const result = v.safeParse(PowerCurveSchema, powerCurveFixture);
     expect(result.success).toBe(true);
+    expect(powerCurveFixture).not.toHaveProperty("values");
+    if (result.success) expect(result.output.watts[0]).toBe(980);
   });
 
   it("accepts unknown extra fields (forward compat)", () => {

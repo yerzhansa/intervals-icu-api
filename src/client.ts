@@ -2,9 +2,17 @@ import createClient, { defaultPathSerializer, type PathSerializer } from "openap
 import type { paths } from "./generated/schema.js";
 import { createAuthHeaders, type AuthConfig } from "./auth.js";
 import { RateLimiter, type RateLimiterOptions } from "./rate-limiter.js";
-import { HttpExecutor } from "./http.js";
+import {
+  HttpExecutor,
+  hasAuthorizationHeader,
+  type ResultParseAs,
+  type ResultRequestArguments,
+  type ResultRequestData,
+  type RequestSuccess,
+} from "./http.js";
 import { type RetryOptions, validateRetryOptions } from "./retry.js";
 import type { Hooks } from "./hooks.js";
+import type { Result } from "./result.js";
 import { AthleteResource } from "./resources/athlete.js";
 import { ActivitiesResource } from "./resources/activities.js";
 import { WellnessResource } from "./resources/wellness.js";
@@ -44,6 +52,7 @@ export class IntervalsClient {
 
   private readonly api: ReturnType<typeof createClient<paths>>;
   private readonly rawApi: ReturnType<typeof createClient<paths>>;
+  private readonly http: HttpExecutor;
 
   constructor(options: IntervalsClientOptions) {
     const auth = resolveAuth(options);
@@ -59,6 +68,7 @@ export class IntervalsClient {
       fetchImpl: options.fetch,
       timeoutMs: options.timeoutMs,
     });
+    this.http = http;
 
     const headers = createAuthHeaders(auth);
     this.api = createClient<paths>({
@@ -90,6 +100,14 @@ export class IntervalsClient {
 
   get raw() {
     return this.rawApi;
+  }
+
+  /** Result-returning escape hatch for endpoints not yet modeled by a typed resource. */
+  request<T = unknown, P extends ResultParseAs = "json">(
+    input: string | URL,
+    ...args: ResultRequestArguments<T, P>
+  ): Promise<Result<RequestSuccess<ResultRequestData<P, T>>>> {
+    return this.http.request<T, P>(input, ...args);
   }
 }
 
@@ -181,11 +199,17 @@ function wrapRawClient(
         const baseInit = typeof init === "object" && init !== null ? init : {};
         const externalSignal = (baseInit as { signal?: AbortSignal | null }).signal;
         const rawFetch = http.createRawFetch(customFetch, hasExplicitAuthorization(init));
-        return http.requestRaw(method, schemaPath ?? "", externalSignal, (signal) => {
-          const attemptArgs = [...args];
-          attemptArgs[initIndex] = { ...baseInit, fetch: rawFetch, signal };
-          return value.apply(target, attemptArgs);
-        });
+        return http.requestRaw(
+          method,
+          schemaPath ?? "",
+          externalSignal,
+          rawBodyIsReplayable(init),
+          (signal) => {
+            const attemptArgs = [...args];
+            attemptArgs[initIndex] = { ...baseInit, fetch: rawFetch, signal };
+            return value.apply(target, attemptArgs);
+          },
+        );
       };
     },
   });
@@ -201,21 +225,12 @@ function hasExplicitAuthorization(init: unknown): boolean {
   return hasAuthorizationHeader(options.headers) || hasAuthorizationHeader(options.params?.header);
 }
 
-function hasAuthorizationHeader(value: unknown): boolean {
-  if (value instanceof Headers) return value.has("authorization");
-  if (Array.isArray(value)) {
-    return value.some(
-      (entry) =>
-        Array.isArray(entry) &&
-        typeof entry[0] === "string" &&
-        entry[0].toLowerCase() === "authorization" &&
-        entry[1] !== undefined,
-    );
-  }
-  if (typeof value !== "object" || value === null) return false;
-  return Object.entries(value).some(
-    ([name, headerValue]) => name.toLowerCase() === "authorization" && headerValue !== undefined,
-  );
+function rawBodyIsReplayable(init: unknown): boolean {
+  if (typeof init !== "object" || init === null) return true;
+  const options = init as { body?: unknown; bodySerializer?: unknown };
+  if (options.body === undefined) return true;
+  if (typeof options.bodySerializer === "function") return false;
+  return !(options.body instanceof ReadableStream);
 }
 
 function resolveAuth(options: IntervalsClientOptions): AuthConfig {

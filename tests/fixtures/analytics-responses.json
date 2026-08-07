@@ -1,0 +1,237 @@
+{
+  "bestEfforts": {
+    "efforts": [
+      {
+        "average": 250,
+        "distance": 1500,
+        "duration": 300,
+        "start_index": 10,
+        "end_index": 310
+      }
+    ],
+    "new_server_field": "preserved"
+  },
+  "histogram": [
+    {
+      "min": 100,
+      "max": 150,
+      "start": 100,
+      "secs": 60,
+      "movingSecs": 55,
+      "watts": 125,
+      "hr": 130,
+      "cadence": 88
+    }
+  ],
+  "heartRateCurve": {
+    "secs": [1, 60, 300],
+    "values": [180, 165, 150],
+    "activity_id": ["synthetic-activity"],
+    "start_index": [1, 10, 50],
+    "end_index": [2, 70, 350]
+  },
+  "paceCurve": {
+    "distance": [400, 1000, 5000],
+    "values": [80, 220, 1200],
+    "type": "PACE",
+    "paceModels": [
+      {
+        "type": "CS",
+        "criticalSpeed": 4.2,
+        "dPrime": 180,
+        "inputPointIndexes": [1, 2],
+        "r2": 0.99
+      }
+    ]
+  },
+  "powerCurve": {
+    "secs": [1, 60, 300],
+    "watts": [900, 400, 300],
+    "watts_per_kg": [10.5, 4.7, 3.5],
+    "after_kj": 0,
+    "ranks": {
+      "synthetic_rank_key": {
+        "position": {
+          "opaque_group_key": 1
+        },
+        "watts": {
+          "opaque_group_key": 300
+        }
+      }
+    }
+  },
+  "powerVsHeartRate": {
+    "bucketSize": 5,
+    "decoupling": 3.2,
+    "curves": [],
+    "series": [
+      {
+        "start": 200,
+        "watts": 202,
+        "hr": 140,
+        "secs": 600
+      }
+    ]
+  },
+  "activityHeartRateCurves": {
+    "secs": [60, 300],
+    "curves": [
+      {
+        "id": "synthetic-activity",
+        "start_date_local": "2000-01-01T00:00:00",
+        "weight": 75,
+        "bpm": [160, 150]
+      }
+    ]
+  },
+  "activityPaceCurves": {
+    "distances": [1000, 5000],
+    "gap": false,
+    "curves": [
+      {
+        "id": "synthetic-activity",
+        "start_date_local": "2000-01-01T00:00:00",
+        "weight": 75,
+        "secs": [220, 1200]
+      }
+    ]
+  },
+  "activityPowerCurves": {
+    "after_kj": 0,
+    "secs": [60, 300],
+    "curves": [
+      {
+        "id": "synthetic-activity",
+        "start_date_local": "2000-01-01T00:00:00",
+        "weight": 75,
+        "watts": [400, 300]
+      }
+    ]
+  },
+  "athleteHeartRateCurveSet": {
+    "activities": {
+      "opaque_activity_key": {
+        "id": "synthetic-activity",
+        "start_date_local": "2000-01-01T00:00:00",
+        "type": "Ride",
+        "name": "Synthetic activity"
+      }
+    },
+    "list": [
+      {
+        "id": "42d",
+        "secs": [60, 300],
+        "values": [400, 300],
+        "activity_id": ["synthetic-activity", "synthetic-activity"],
+        "filters": [
+          {
+            "field_id": "custom",
+            "operator": "eq",
+            "value": {
+              "opaque_filter_key": "synthetic-value"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "athletePaceCurveSet": {
+    "activities": {
+      "opaque_activity_key": {
+        "id": "synthetic-activity",
+        "start_date_local": "2000-01-01T00:00:00",
+        "type": "Ride",
+        "name": "Synthetic activity"
+      }
+    },
+    "list": [
+      {
+        "id": "42d",
+        "distance": [400, 1000],
+        "values": [80, 220],
+        "activity_id": ["synthetic-activity", "synthetic-activity"],
+        "filters": [
+          {
+            "field_id": "custom",
+            "operator": "eq",
+            "value": {
+              "opaque_filter_key": "synthetic-value"
+            }
+          }
+        ],
+        "paceModels": [
+          {
+            "type": "CS",
+            "criticalSpeed": 4.2,
+            "dPrime": 180,
+            "inputPointIndexes": [0, 1],
+            "r2": 0.99
+          }
+        ]
+      }
+    ]
+  },
+  "athletePowerCurveSet": {
+    "activities": {
+      "opaque_activity_key": {
+        "id": "synthetic-activity",
+        "start_date_local": "2000-01-01T00:00:00",
+        "type": "Ride",
+        "name": "Synthetic activity"
+      }
+    },
+    "list": [
+      {
+        "id": "42d-kj0",
+        "secs": [60, 300],
+        "values": [400, 300],
+        "watts_per_kg": [5.3, 4],
+        "activity_id": ["synthetic-activity", "synthetic-activity"],
+        "filters": [
+          {
+            "field_id": "custom",
+            "operator": "eq",
+            "value": {
+              "opaque_filter_key": "synthetic-value"
+            }
+          }
+        ],
+        "powerModels": [
+          {
+            "type": "MS_2P",
+            "criticalPower": 285,
+            "wPrime": 18000,
+            "pMax": 1000
+          }
+        ],
+        "ranks": {
+          "synthetic_rank_key": {
+            "position": {
+              "opaque_group_key": 1
+            },
+            "watts": {
+              "opaque_group_key": 300
+            }
+          }
+        },
+        "mapPlot": {
+          "min_bpm": 120,
+          "max_bpm": 180,
+          "secs": [60, 300]
+        }
+      }
+    ]
+  },
+  "athletePowerHeartRateCurve": {
+    "athleteId": "synthetic-athlete",
+    "bpm": [120, 130, 140],
+    "cadence": [85, 87, 89],
+    "minutes": [10, 20, 30],
+    "bucketSize": 5,
+    "max_hr": 190,
+    "minWatts": 100,
+    "maxWatts": 300,
+    "start": "2000-01-01",
+    "end": "2000-01-31"
+  }
+}

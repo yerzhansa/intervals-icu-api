@@ -1,21 +1,33 @@
+import type { HttpExecutor } from "../http.js";
 import type { operations } from "../generated/schema.js";
-import { PowerCurveSchema, type PowerCurve } from "../schemas/power-curve.js";
 import type { Result } from "../result.js";
-import { BaseResource } from "./base.js";
+import type { AthletePowerCurveSet } from "../schemas/analytics.js";
+import {
+  ActivityAnalyticsResource,
+  type ListAthletePowerCurvesOptions,
+} from "./activity-analytics.js";
+import { BaseResource, type ApiClient } from "./base.js";
 
-type PowerCurvesQuery = operations["listAthletePowerCurves"]["parameters"]["query"];
+/** @deprecated Prefer canonical {@link ListAthletePowerCurvesOptions}. */
+export type PowerCurvesQueryWire = operations["listAthletePowerCurves"]["parameters"]["query"];
 
 export class PowerCurvesResource extends BaseResource {
-  async get(query: PowerCurvesQuery): Promise<Result<PowerCurve>> {
-    return this.http.requestJson(
-      "GET",
-      "/athlete/{id}/power-curves",
-      (signal) =>
-        this.api.GET("/api/v1/athlete/{id}/power-curves{ext}", {
-          params: { path: { id: this.athleteId, ext: "" }, query },
-          signal,
-        }),
-      PowerCurveSchema,
-    );
+  private readonly analytics: ActivityAnalyticsResource;
+
+  constructor(http: HttpExecutor, api: ApiClient, athleteId: string) {
+    super(http, api, athleteId);
+    this.analytics = new ActivityAnalyticsResource(http, api, athleteId);
+  }
+
+  /**
+   * @deprecated Use `client.activities.listAthletePowerCurves(options)`.
+   * The pre-0.3 return declaration described the wrong endpoint payload.
+   */
+  async get(query: PowerCurvesQueryWire): Promise<Result<AthletePowerCurveSet>>;
+  async get(options: ListAthletePowerCurvesOptions): Promise<Result<AthletePowerCurveSet>>;
+  async get(
+    options: ListAthletePowerCurvesOptions | PowerCurvesQueryWire,
+  ): Promise<Result<AthletePowerCurveSet>> {
+    return this.analytics.listAthletePowerCurves(options);
   }
 }

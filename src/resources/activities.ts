@@ -1,4 +1,8 @@
 import * as v from "valibot";
+import {
+  normalizeActivityStreams,
+  type NormalizedActivityStreams,
+} from "../analysis/activity-streams.js";
 import type {
   BinaryDownload,
   BinaryMetadataOptions,
@@ -8,7 +12,7 @@ import type {
 } from "../download.js";
 import type { components } from "../generated/schema.js";
 import { encodePathSegment } from "../path.js";
-import type { Result } from "../result.js";
+import { ok, type Result } from "../result.js";
 import { ActivitySchema, type Activity } from "../schemas/activity.js";
 import {
   ActivityStreamSchema,
@@ -16,12 +20,12 @@ import {
   type GetStreamsOptions,
 } from "../schemas/activity-stream.js";
 import type { CamelCaseKeys } from "../transform.js";
-import { BaseResource } from "./base.js";
+import { ActivityAnalyticsResource } from "./activity-analytics.js";
 
 export type ActivityIntervalsWire = components["schemas"]["IntervalsDTO"];
 export type ActivityIntervals = CamelCaseKeys<ActivityIntervalsWire>;
 
-export class ActivitiesResource extends BaseResource {
+export class ActivitiesResource extends ActivityAnalyticsResource {
   async list(query: {
     oldest: string;
     newest?: string;
@@ -86,6 +90,14 @@ export class ActivitiesResource extends BaseResource {
         }),
       v.array(ActivityStreamSchema),
     );
+  }
+
+  async getStreamMap(
+    activityId: string,
+    options: GetStreamsOptions = {},
+  ): Promise<Result<NormalizedActivityStreams>> {
+    const result = await this.getStreams(activityId, options);
+    return result.ok ? ok(normalizeActivityStreams(result.value)) : result;
   }
 
   async getIntervals(activityId: string): Promise<Result<ActivityIntervals>> {

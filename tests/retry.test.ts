@@ -5,6 +5,7 @@ import {
   isRetryable,
   parseRetryAfterMs,
   DEFAULT_RETRY,
+  decideRetry,
   validateRetryOptions,
 } from "../src/retry.js";
 
@@ -40,6 +41,8 @@ describe("validateRetryOptions", () => {
       maxDelayMs: 0,
       jitterFactor: 1,
       retryableStatuses: [],
+      retryOnNetworkError: true,
+      retryOnTimeout: true,
     });
   });
 
@@ -81,6 +84,15 @@ describe("validateRetryOptions", () => {
   it("rejects null options", () => {
     expect(() => validateRetryOptions(null as never)).toThrow("retry options must be an object");
   });
+
+  it.each(["retryOnNetworkError", "retryOnTimeout"] as const)(
+    "rejects non-boolean %s values",
+    (field) => {
+      expect(() => validateRetryOptions({ [field]: "yes" } as never)).toThrow(
+        `${field} must be a boolean`,
+      );
+    },
+  );
 });
 
 describe("isRetryable", () => {
@@ -101,10 +113,73 @@ describe("isRetryable", () => {
   });
 });
 
+describe("decideRetry", () => {
+  const base = {
+    bodyReplayable: true,
+    attempt: 1,
+    cause: { kind: "Network" as const },
+  };
+
+  it.each(["GET", "HEAD", "OPTIONS", "PUT", "DELETE"])(
+    "retries an automatic %s transport failure",
+    (method) => {
+      expect(decideRetry({ ...base, method, mode: "auto" }, DEFAULT_RETRY)?.cause).toEqual({
+        kind: "Network",
+      });
+    },
+  );
+
+  it.each(["POST", "PATCH", "TRACE"])("does not automatically retry %s", (method) => {
+    expect(decideRetry({ ...base, method, mode: "auto" }, DEFAULT_RETRY)).toBeUndefined();
+  });
+
+  it("honors explicit idempotent and never modes", () => {
+    expect(
+      decideRetry({ ...base, method: "POST", mode: "idempotent" }, DEFAULT_RETRY),
+    ).toBeDefined();
+    expect(decideRetry({ ...base, method: "GET", mode: "never" }, DEFAULT_RETRY)).toBeUndefined();
+  });
+
+  it("requires a replayable body and an available attempt", () => {
+    expect(
+      decideRetry({ ...base, method: "GET", mode: "auto", bodyReplayable: false }, DEFAULT_RETRY),
+    ).toBeUndefined();
+    expect(
+      decideRetry({ ...base, method: "GET", mode: "auto", attempt: 3 }, DEFAULT_RETRY),
+    ).toBeUndefined();
+  });
+
+  it("respects operational retry switches and configured statuses", () => {
+    expect(
+      decideRetry(
+        { ...base, method: "GET", mode: "auto" },
+        { ...DEFAULT_RETRY, retryOnNetworkError: false },
+      ),
+    ).toBeUndefined();
+    expect(
+      decideRetry(
+        { ...base, method: "GET", mode: "auto", cause: { kind: "Timeout" } },
+        { ...DEFAULT_RETRY, retryOnTimeout: false },
+      ),
+    ).toBeUndefined();
+    expect(
+      decideRetry(
+        { ...base, method: "GET", mode: "auto", cause: { kind: "Http", status: 400 } },
+        DEFAULT_RETRY,
+      ),
+    ).toBeUndefined();
+  });
+});
+
 describe("calculateDelay", () => {
   it("uses Retry-After header when present", () => {
     const delay = calculateDelay(1, DEFAULT_RETRY, "5");
     expect(delay).toBe(5000);
+  });
+
+  it("caps Retry-After at maxDelayMs without jitter", () => {
+    const delay = calculateDelay(1, { ...DEFAULT_RETRY, maxDelayMs: 2_000 }, "5");
+    expect(delay).toBe(2_000);
   });
 
   it("uses an HTTP-date Retry-After header", () => {

@@ -16,10 +16,15 @@ export { decode, decodeArray } from "./decode.js";
 export {
   camelCaseKeys,
   snakeCaseKeys,
+  KeyTransformCollisionError,
+  KeyTransformCycleError,
+  KeyTransformUnsupportedObjectError,
   toCamelCase,
   toSnakeCase,
   type CamelCase,
   type CamelCaseKeys,
+  type SnakeCase,
+  type SnakeCaseKeys,
 } from "./transform.js";
 export type {
   BinaryDownload,
@@ -30,18 +35,71 @@ export type {
   WorkoutZipOptions,
   WorkoutZipMetadataOptions,
 } from "./download.js";
-export { type RetryOptions } from "./retry.js";
-export { type Hooks } from "./hooks.js";
-export { AthleteResource } from "./resources/athlete.js";
+export { type RetryOptions, type RequestRetryMode, type RetryCause } from "./retry.js";
+export {
+  type ResultRequestMethod,
+  type ResultParseAs,
+  type QueryPrimitive,
+  type RequestQuery,
+  type RequestSuccess,
+  type ResultRequestCommonOptions,
+  type ResultRequestBody,
+  type ResultRequestOptions,
+  type ResultRequestArguments,
+  type ResultRequestData,
+} from "./http.js";
+export {
+  type Hooks,
+  type RequestInfo,
+  type ResponseInfo,
+  type ErrorInfo,
+  type RetryInfo,
+} from "./hooks.js";
+export {
+  AthleteResource,
+  type AthleteUpdate,
+  type AthleteUpdateWire,
+} from "./resources/athlete.js";
 export {
   ActivitiesResource,
   type ActivityIntervals,
   type ActivityIntervalsWire,
 } from "./resources/activities.js";
-export { WellnessResource } from "./resources/wellness.js";
-export { EventsResource } from "./resources/events.js";
-export { WorkoutsResource } from "./resources/workouts.js";
-export { PowerCurvesResource } from "./resources/power-curves.js";
+export {
+  ActivityAnalyticsResource,
+  type AnalyticsSportType,
+  type ActivityFilterFieldId,
+  type ActivityFilterInput,
+  type ActivityFilterInputWire,
+  type PowerCurveFatigue,
+  type PowerCurveSeries,
+  type PaceModelType,
+  type PowerModelType,
+  type FindBestEffortsOptions,
+  type HistogramOptions,
+  type GetPaceCurveOptions,
+  type GetPowerCurveOptions,
+  type GetPowerCurvesOptions,
+  type ListActivityHeartRateCurvesOptions,
+  type ListActivityPaceCurvesOptions,
+  type ListActivityPowerCurvesOptions,
+  type ListAthleteHeartRateCurvesOptions,
+  type ListAthletePaceCurvesOptions,
+  type ListAthletePowerCurvesOptions,
+  type GetAthletePowerHeartRateCurveOptions,
+} from "./resources/activity-analytics.js";
+export {
+  WellnessResource,
+  type WellnessUpdate,
+  type WellnessUpdateWire,
+} from "./resources/wellness.js";
+export { EventsResource, type EventInput, type EventInputWire } from "./resources/events.js";
+export {
+  WorkoutsResource,
+  type WorkoutInput,
+  type WorkoutInputWire,
+} from "./resources/workouts.js";
+export { PowerCurvesResource, type PowerCurvesQueryWire } from "./resources/power-curves.js";
 export { FoldersResource } from "./resources/folders.js";
 export { GearResource } from "./resources/gear.js";
 export { AthleteSchema, type Athlete, type AthleteWire, decodeAthlete } from "./schemas/athlete.js";
@@ -66,7 +124,83 @@ export {
   decodeEvents,
 } from "./schemas/event.js";
 export { WorkoutSchema, type Workout, type WorkoutWire } from "./schemas/workout.js";
-export { PowerCurveSchema, type PowerCurve, type PowerCurveWire } from "./schemas/power-curve.js";
+export {
+  ActivityFilterSchema,
+  EffortSchema,
+  BestEffortsSchema,
+  HistogramBucketSchema,
+  CurveFitSchema,
+  PlotSchema,
+  PaceModelSchema,
+  PowerModelSchema,
+  RankSchema,
+  HeartRateCurveSchema,
+  PaceCurveSchema,
+  PowerCurveSchema,
+  AthletePowerCurveSchema,
+  PowerVsHeartRatePlotSchema,
+  ActivityHeartRateCurveSchema,
+  ActivityHeartRateCurvePayloadSchema,
+  ActivityPaceCurveSchema,
+  ActivityPaceCurvePayloadSchema,
+  ActivityPowerCurveSchema,
+  ActivityPowerCurvePayloadSchema,
+  DataCurveSchema,
+  AthleteHeartRateCurveSetSchema,
+  AthletePaceCurveSetSchema,
+  AthletePowerCurveSetSchema,
+  AthletePowerHeartRateCurveSchema,
+  type ActivityFilter,
+  type ActivityFilterWire,
+  type Effort,
+  type EffortWire,
+  type BestEfforts,
+  type BestEffortsWire,
+  type HistogramBucket,
+  type HistogramBucketWire,
+  type CurveFit,
+  type CurveFitWire,
+  type Plot,
+  type PlotWire,
+  type PaceModel,
+  type PaceModelWire,
+  type PowerModel,
+  type PowerModelWire,
+  type Rank,
+  type RankWire,
+  type HeartRateCurve,
+  type HeartRateCurveWire,
+  type PaceCurve,
+  type PaceCurveWire,
+  type PowerCurve,
+  type PowerCurveWire,
+  type AthletePowerCurve,
+  type AthletePowerCurveWire,
+  type PowerVsHeartRatePlot,
+  type PowerVsHeartRatePlotWire,
+  type ActivityHeartRateCurve,
+  type ActivityHeartRateCurveWire,
+  type ActivityHeartRateCurvePayload,
+  type ActivityHeartRateCurvePayloadWire,
+  type ActivityPaceCurve,
+  type ActivityPaceCurveWire,
+  type ActivityPaceCurvePayload,
+  type ActivityPaceCurvePayloadWire,
+  type ActivityPowerCurve,
+  type ActivityPowerCurveWire,
+  type ActivityPowerCurvePayload,
+  type ActivityPowerCurvePayloadWire,
+  type DataCurve,
+  type DataCurveWire,
+  type AthleteHeartRateCurveSet,
+  type AthleteHeartRateCurveSetWire,
+  type AthletePaceCurveSet,
+  type AthletePaceCurveSetWire,
+  type AthletePowerCurveSet,
+  type AthletePowerCurveSetWire,
+  type AthletePowerHeartRateCurve,
+  type AthletePowerHeartRateCurveWire,
+} from "./schemas/analytics.js";
 export {
   KNOWN_ACTIVITY_STREAM_TYPES,
   ActivityStreamSchema,
@@ -79,6 +213,18 @@ export {
   type ActivityStreamAnomalyWire,
   type GetStreamsOptions,
 } from "./schemas/activity-stream.js";
+export {
+  normalizeActivityStreams,
+  calculateEfficiencyFactorDecoupling,
+  type StreamNormalizationIssue,
+  type StreamLookupError,
+  type NormalizedActivityStreams,
+  type EfficiencyFactorDecouplingOptions,
+  type StreamAnalysisIssue,
+  type EfficiencyFactorHalf,
+  type EfficiencyFactorCoverage,
+  type EfficiencyFactorDecoupling,
+} from "./analysis/activity-streams.js";
 export type {
   paths,
   paths as WirePaths,

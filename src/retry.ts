@@ -4,20 +4,54 @@ export interface RetryOptions {
   maxDelayMs: number;
   jitterFactor: number;
   retryableStatuses: number[];
+  /** Retry transport failures when the request is idempotent and replayable. */
+  retryOnNetworkError?: boolean;
+  /** Retry configured per-attempt deadlines when the request is idempotent and replayable. */
+  retryOnTimeout?: boolean;
 }
 
-export const DEFAULT_RETRY: RetryOptions = {
+export interface ResolvedRetryOptions extends RetryOptions {
+  retryOnNetworkError: boolean;
+  retryOnTimeout: boolean;
+}
+
+export type RequestRetryMode = "auto" | "idempotent" | "never";
+
+export type RetryCause =
+  | { kind: "Http"; status: number }
+  | { kind: "Network" }
+  | { kind: "Timeout" };
+
+export interface RetryDecisionInput {
+  method: string;
+  mode: RequestRetryMode;
+  bodyReplayable: boolean;
+  attempt: number;
+  cause: RetryCause;
+  retryAfterHeader?: string | null;
+}
+
+export interface RetryDecision {
+  cause: RetryCause;
+  delayMs: number;
+  reason: string;
+}
+
+export const DEFAULT_RETRY: ResolvedRetryOptions = {
   maxAttempts: 3,
   initialDelayMs: 1000,
   maxDelayMs: 30000,
   jitterFactor: 0.2,
   retryableStatuses: [429, 500, 502, 503, 504],
+  retryOnNetworkError: true,
+  retryOnTimeout: true,
 };
 
 const MAX_SAFE_DELAY_MS = Number.MAX_SAFE_INTEGER;
+const AUTO_IDEMPOTENT_METHODS = new Set(["GET", "HEAD", "OPTIONS", "PUT", "DELETE"]);
 
 /** Resolve omitted fields to defaults and reject retry settings that cannot execute safely. */
-export function validateRetryOptions(options?: Partial<RetryOptions>): RetryOptions {
+export function validateRetryOptions(options?: Partial<RetryOptions>): ResolvedRetryOptions {
   if (
     options !== undefined &&
     (options === null || typeof options !== "object" || Array.isArray(options))
@@ -37,6 +71,12 @@ export function validateRetryOptions(options?: Partial<RetryOptions>): RetryOpti
       options?.retryableStatuses === undefined
         ? DEFAULT_RETRY.retryableStatuses
         : options.retryableStatuses,
+    retryOnNetworkError:
+      options?.retryOnNetworkError === undefined
+        ? DEFAULT_RETRY.retryOnNetworkError
+        : options.retryOnNetworkError,
+    retryOnTimeout:
+      options?.retryOnTimeout === undefined ? DEFAULT_RETRY.retryOnTimeout : options.retryOnTimeout,
   };
 
   if (
@@ -79,6 +119,12 @@ export function validateRetryOptions(options?: Partial<RetryOptions>): RetryOpti
       throw new Error("retryableStatuses must contain only integer HTTP statuses from 100 to 599");
     }
   }
+  if (typeof resolved.retryOnNetworkError !== "boolean") {
+    throw new Error("retryOnNetworkError must be a boolean");
+  }
+  if (typeof resolved.retryOnTimeout !== "boolean") {
+    throw new Error("retryOnTimeout must be a boolean");
+  }
 
   return {
     ...resolved,
@@ -90,6 +136,42 @@ export function isRetryable(status: number, opts: RetryOptions): boolean {
   return opts.retryableStatuses.includes(status);
 }
 
+/** Decide whether a failed attempt may be repeated without changing request semantics. */
+export function decideRetry(
+  input: RetryDecisionInput,
+  opts: ResolvedRetryOptions,
+): RetryDecision | undefined {
+  if (
+    input.attempt >= opts.maxAttempts ||
+    input.mode === "never" ||
+    !input.bodyReplayable ||
+    (input.mode === "auto" && !AUTO_IDEMPOTENT_METHODS.has(input.method.toUpperCase()))
+  ) {
+    return undefined;
+  }
+
+  if (input.cause.kind === "Http" && !isRetryable(input.cause.status, opts)) {
+    return undefined;
+  }
+  if (input.cause.kind === "Network" && !opts.retryOnNetworkError) return undefined;
+  if (input.cause.kind === "Timeout" && !opts.retryOnTimeout) return undefined;
+
+  return {
+    cause: input.cause,
+    delayMs: calculateDelay(
+      input.attempt,
+      opts,
+      input.cause.kind === "Http" ? input.retryAfterHeader : undefined,
+    ),
+    reason:
+      input.cause.kind === "Http"
+        ? `HTTP ${input.cause.status}`
+        : input.cause.kind === "Network"
+          ? "Network failure"
+          : "Request timeout",
+  };
+}
+
 export function calculateDelay(
   attempt: number,
   opts: RetryOptions,
@@ -97,7 +179,7 @@ export function calculateDelay(
   nowMs = Date.now(),
 ): number {
   const retryAfterMs = parseRetryAfterMs(retryAfterHeader, nowMs);
-  if (retryAfterMs !== undefined) return retryAfterMs;
+  if (retryAfterMs !== undefined) return Math.min(retryAfterMs, opts.maxDelayMs);
   if (opts.initialDelayMs === 0 || opts.maxDelayMs === 0) return 0;
   const exponential = opts.initialDelayMs * Math.pow(2, attempt - 1);
   const capped = Math.min(exponential, opts.maxDelayMs);

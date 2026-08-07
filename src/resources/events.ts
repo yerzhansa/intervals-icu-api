@@ -3,10 +3,16 @@ import type { components } from "../generated/schema.js";
 import type { BinaryDownload, BinaryMetadataOptions, BinaryOnlyOptions } from "../download.js";
 import type { Result } from "../result.js";
 import { encodePathSegment } from "../path.js";
+import { encodeRequestBody } from "../request-casing.js";
 import { EventSchema, type Event } from "../schemas/event.js";
+import type { CamelCaseKeys } from "../transform.js";
 import { BaseResource } from "./base.js";
 
-type EventBody = components["schemas"]["EventEx"];
+/** @deprecated Prefer the canonical camelCase {@link EventInput}. */
+export type EventInputWire = components["schemas"]["EventEx"];
+
+/** Canonical managed request body. */
+export type EventInput = CamelCaseKeys<EventInputWire>;
 
 export class EventsResource extends BaseResource {
   async list(query?: {
@@ -40,7 +46,15 @@ export class EventsResource extends BaseResource {
     );
   }
 
-  async create(body: EventBody, options?: { upsertOnUid?: boolean }): Promise<Result<Event>> {
+  async create(
+    body: EventInput | EventInputWire,
+    options?: { upsertOnUid?: boolean },
+  ): Promise<Result<Event>> {
+    const encoded = encodeRequestBody<EventInputWire>(body, "EventEx");
+    if (!encoded.ok) {
+      return this.http.rejectValidation("POST", "/athlete/{id}/events", [...encoded.issues]);
+    }
+
     return this.http.requestJson(
       "POST",
       "/athlete/{id}/events",
@@ -50,21 +64,28 @@ export class EventsResource extends BaseResource {
             path: { id: this.athleteId },
             query: { upsertOnUid: options?.upsertOnUid ?? false },
           },
-          body,
+          body: encoded.value,
           signal,
         }),
       EventSchema,
     );
   }
 
-  async update(eventId: number, body: EventBody): Promise<Result<Event>> {
+  async update(eventId: number, body: EventInput | EventInputWire): Promise<Result<Event>> {
+    const encoded = encodeRequestBody<EventInputWire>(body, "EventEx");
+    if (!encoded.ok) {
+      return this.http.rejectValidation("PUT", "/athlete/{id}/events/{eventId}", [
+        ...encoded.issues,
+      ]);
+    }
+
     return this.http.requestJson(
       "PUT",
       "/athlete/{id}/events/{eventId}",
       (signal) =>
         this.api.PUT("/api/v1/athlete/{id}/events/{eventId}", {
           params: { path: { id: this.athleteId, eventId } },
-          body,
+          body: encoded.value,
           signal,
         }),
       EventSchema,

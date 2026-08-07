@@ -5,14 +5,14 @@ import { DEFAULT_RETRY } from "../src/retry.js";
 
 const MAX_TIMER_DELAY_MS = 2_147_483_647;
 
-function executor(timeoutMs?: number) {
+function executor(timeoutMs?: number, maxDelayMs = 0) {
   return new HttpExecutor({
     rateLimiter: new RateLimiter({ requestsPerSecond: 1_000, burst: 1_000 }),
     retryOpts: {
       ...DEFAULT_RETRY,
       maxAttempts: 2,
       initialDelayMs: 0,
-      maxDelayMs: 0,
+      maxDelayMs,
       jitterFactor: 0,
     },
     hooks: {},
@@ -33,7 +33,7 @@ describe("HTTP timer ceilings", () => {
   it("chunks a Retry-After delay larger than the runtime timer ceiling", async () => {
     vi.useFakeTimers();
     try {
-      const http = executor();
+      const http = executor(undefined, MAX_TIMER_DELAY_MS + 353);
       let calls = 0;
       const pending = http.requestJson<{ ready: boolean }>("GET", "/long-retry", async () => {
         calls += 1;

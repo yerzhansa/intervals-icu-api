@@ -1,6 +1,6 @@
 {
   "name": "intervals-icu-api",
-  "version": "0.2.0-beta.1",
+  "version": "0.3.0",
   "description": "TypeScript client for the intervals.icu API, generated from official OpenAPI spec",
   "keywords": [
     "api",
@@ -20,9 +20,7 @@
     "dist",
     "openapi.json",
     "CHANGELOG.md",
-    "MIGRATION.md",
-    "docs/RFC-0001-v0.2-correctness-contract.md",
-    "docs/v0.2-investigation-matrix.md"
+    "MIGRATION.md"
   ],
   "type": "module",
   "main": "./dist/index.js",
@@ -41,7 +39,7 @@
     "schema:check": "node scripts/schema-check.mjs",
     "schema:upstream-diff": "node scripts/schema-upstream-diff.mjs",
     "scan:sensitive": "node scripts/sensitive-data-check.mjs",
-    "test:schema-diff": "node --test scripts/test-schema-upstream-diff.mjs",
+    "test:schema-diff": "node --test scripts/test-*.mjs",
     "build": "tsup",
     "typecheck": "tsc --noEmit",
     "test:compat": "npm run build && tsc -p tests/compat/tsconfig.json",

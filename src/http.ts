@@ -2,7 +2,13 @@ import * as v from "valibot";
 import { createAuthHeaders, type AuthConfig } from "./auth.js";
 import type { BinaryDownload } from "./download.js";
 import { RateLimiter } from "./rate-limiter.js";
-import { type RetryOptions, isRetryable, calculateDelay, parseRetryAfterMs } from "./retry.js";
+import {
+  type RequestRetryMode,
+  type ResolvedRetryOptions,
+  type RetryCause,
+  decideRetry,
+  parseRetryAfterMs,
+} from "./retry.js";
 import { type Hooks, callHook } from "./hooks.js";
 import {
   type Result,
@@ -16,7 +22,7 @@ import { camelCaseKeys, type CamelCaseKeys } from "./transform.js";
 
 export interface HttpExecutorOptions {
   rateLimiter: RateLimiter;
-  retryOpts: RetryOptions;
+  retryOpts: ResolvedRetryOptions;
   hooks: Hooks;
   baseUrl: string;
   auth: AuthConfig;
@@ -28,9 +34,83 @@ type FetchInput = Parameters<typeof globalThis.fetch>[0];
 type FetchInit = Parameters<typeof globalThis.fetch>[1];
 const MAX_TIMER_DELAY_MS = 2_147_483_647;
 
+export type ResultRequestMethod = "GET" | "HEAD" | "OPTIONS" | "PUT" | "POST" | "PATCH" | "DELETE";
+
+export type ResultParseAs = "json" | "text" | "arrayBuffer" | "blob" | "formData" | "none";
+
+export type QueryPrimitive = string | number | boolean | null | undefined;
+export type RequestQuery =
+  | URLSearchParams
+  | Record<string, QueryPrimitive | readonly QueryPrimitive[]>;
+
+export interface RequestSuccess<T> {
+  data: T;
+  /** The original response. Its body has been consumed or explicitly cancelled. */
+  response: Response;
+}
+
+export interface ResultRequestCommonOptions extends Omit<
+  RequestInit,
+  "method" | "headers" | "body" | "signal"
+> {
+  method?: ResultRequestMethod;
+  headers?: HeadersInit | Record<string, string | undefined>;
+  query?: RequestQuery;
+  signal?: AbortSignal;
+  parseAs?: ResultParseAs;
+  retry?: RequestRetryMode;
+  /** Stable, identifier-free path supplied to lifecycle hooks. */
+  hookPath?: string;
+  fetch?: typeof globalThis.fetch;
+  /** Required by Fetch implementations for a ReadableStream request body. */
+  duplex?: "half";
+}
+
+export type ResultRequestBody =
+  | { json?: unknown; body?: never; bodyFactory?: never }
+  | { json?: never; body?: BodyInit | null; bodyFactory?: never }
+  | { json?: never; body?: never; bodyFactory: () => BodyInit | null };
+
+export type ResultRequestOptions<
+  T = unknown,
+  P extends ResultParseAs = ResultParseAs,
+> = ResultRequestCommonOptions & ResultRequestBody & ResultRequestParsingOptions<T, P>;
+
+type ResultRequestParsingOptions<T, P extends ResultParseAs> =
+  | (ResultRequestParseSelector<P> & { schema?: never })
+  | ([Extract<P, "json">] extends [never]
+      ? never
+      : {
+          parseAs?: "json";
+          /** The schema receives the exact parsed wire-shaped value. */
+          schema: v.GenericSchema<unknown, T>;
+        });
+
+type ResultRequestParseSelector<P extends ResultParseAs> = [Extract<P, "json">] extends [never]
+  ? { parseAs: P }
+  : { parseAs?: P };
+
+export type ResultRequestData<P extends ResultParseAs, T> = P extends "json"
+  ? T
+  : P extends "text"
+    ? string
+    : P extends "arrayBuffer"
+      ? ArrayBuffer
+      : P extends "blob"
+        ? Blob
+        : P extends "formData"
+          ? FormData
+          : undefined;
+
+export type ResultRequestArguments<T, P extends ResultParseAs> = [Extract<P, "json">] extends [
+  never,
+]
+  ? [options: ResultRequestOptions<T, P>]
+  : [options?: ResultRequestOptions<T, P>];
+
 export class HttpExecutor {
   private rateLimiter: RateLimiter;
-  private retryOpts: RetryOptions;
+  private retryOpts: ResolvedRetryOptions;
   private hooks: Hooks;
   private baseUrl: string;
   private auth: AuthConfig;
@@ -75,14 +155,7 @@ export class HttpExecutor {
       );
       return this.fetchWithTimeout(this.fetchImpl, request, undefined, true);
     };
-    this.openApiFetch = (input, init) => {
-      const request = stripCrossOriginDefaultAuthorization(
-        new Request(input, init),
-        this.baseUrl,
-        this.defaultAuthorization,
-      );
-      return this.fetchWithTimeout(this.fetchImpl, request, undefined, true, true);
-    };
+    this.openApiFetch = this.createManagedOpenApiFetch(this.fetchImpl);
     this.rawFetch = this.createRawFetch(this.fetchImpl);
   }
 
@@ -92,6 +165,8 @@ export class HttpExecutor {
     authorizationIsExplicit = false,
   ): typeof globalThis.fetch {
     return (input, init) => {
+      const signal = init?.signal ?? (input instanceof Request ? input.signal : undefined);
+      if (signal?.aborted) return Promise.reject(getAbortReason(signal));
       const sanitizedRequest = prepareRawRequestForTransport(
         input,
         init,
@@ -99,7 +174,18 @@ export class HttpExecutor {
         this.defaultAuthorization,
         authorizationIsExplicit,
       );
-      return sanitizedRequest ? fetchImpl(sanitizedRequest) : fetchImpl(input, init);
+      return sanitizedRequest
+        ? fetchAtTransportBoundary(fetchImpl, sanitizedRequest)
+        : fetchAtTransportBoundary(fetchImpl, input, init);
+    };
+  }
+
+  /** Preserve managed body-read classification without changing the raw response contract. */
+  private createManagedOpenApiFetch(fetchImpl: typeof globalThis.fetch): typeof globalThis.fetch {
+    const transport = this.createRawFetch(fetchImpl);
+    return async (input, init) => {
+      const response = await transport(input, init);
+      return response.body === null ? response : wrapManagedResponse(response);
     };
   }
 
@@ -108,6 +194,7 @@ export class HttpExecutor {
     method: string,
     path: string,
     externalSignal: AbortSignal | null | undefined,
+    bodyReplayable: boolean,
     fn: (signal: AbortSignal | null | undefined) => Promise<T>,
   ): Promise<T> {
     await callHook(this.hooks, "onRequest", { method, path });
@@ -119,39 +206,65 @@ export class HttpExecutor {
         await this.rateLimiter.acquire(externalSignal);
         result = await this.executeRawAttempt(externalSignal, fn);
       } catch (cause) {
-        return this.failRawRequest(method, path, start, cause, externalSignal);
+        if (externalSignal?.aborted) {
+          return this.failRawRequest(method, path, start, cause, externalSignal);
+        }
+
+        const mapped = mapOperationalError(cause);
+        const retryCause = retryCauseForError(mapped);
+        const decision = retryCause
+          ? decideRetry(
+              {
+                method,
+                mode: "auto",
+                bodyReplayable,
+                attempt,
+                cause: retryCause,
+              },
+              this.retryOpts,
+            )
+          : undefined;
+        if (!decision) return this.failRawRequest(method, path, start, cause, externalSignal);
+
+        try {
+          await this.waitForRetry(method, path, attempt, decision, externalSignal);
+        } catch (retryCause) {
+          return this.failRawRequest(method, path, start, retryCause, externalSignal);
+        }
+        continue;
       }
 
       const { response } = result;
-      if (isRetryable(response.status, this.retryOpts) && attempt < this.retryOpts.maxAttempts) {
-        if (externalSignal?.aborted) {
-          return this.failRawRequest(
-            method,
-            path,
-            start,
-            getAbortReason(externalSignal),
-            externalSignal,
+      const decision = response.ok
+        ? undefined
+        : decideRetry(
+            {
+              method,
+              mode: "auto",
+              bodyReplayable,
+              attempt,
+              cause: { kind: "Http", status: response.status },
+              retryAfterHeader: response.headers.get("retry-after"),
+            },
+            this.retryOpts,
           );
-        }
-        const delayMs = calculateDelay(
-          attempt,
-          this.retryOpts,
-          response.headers.get("retry-after"),
-        );
-        await callHook(this.hooks, "onRetry", {
-          method,
-          path,
-          attempt,
-          maxAttempts: this.retryOpts.maxAttempts,
-          delayMs,
-          reason: `HTTP ${response.status}`,
-        });
+      if (decision) {
         try {
-          await sleep(delayMs, externalSignal);
+          await this.waitForRetry(method, path, attempt, decision, externalSignal);
         } catch (cause) {
           return this.failRawRequest(method, path, start, cause, externalSignal);
         }
         continue;
+      }
+
+      if (externalSignal?.aborted) {
+        return this.failRawRequest(
+          method,
+          path,
+          start,
+          getAbortReason(externalSignal),
+          externalSignal,
+        );
       }
 
       if (response.ok) {
@@ -173,6 +286,26 @@ export class HttpExecutor {
     }
 
     throw new Error("Max retry attempts reached");
+  }
+
+  private async waitForRetry(
+    method: string,
+    path: string,
+    attempt: number,
+    decision: { cause: RetryCause; delayMs: number; reason: string },
+    signal?: AbortSignal | null,
+  ): Promise<void> {
+    if (signal?.aborted) throw getAbortReason(signal);
+    await callHook(this.hooks, "onRetry", {
+      method,
+      path,
+      attempt,
+      maxAttempts: this.retryOpts.maxAttempts,
+      delayMs: decision.delayMs,
+      reason: decision.reason,
+      cause: decision.cause,
+    });
+    await sleep(decision.delayMs, signal);
   }
 
   /** Report a locally detected validation failure through the normal logical-operation hooks. */
@@ -229,6 +362,84 @@ export class HttpExecutor {
     }
   }
 
+  /** Fetch an arbitrary endpoint while preserving Result/error, retry, hook, and auth contracts. */
+  async request<T = unknown, P extends ResultParseAs = "json">(
+    input: string | URL,
+    ...args: ResultRequestArguments<T, P>
+  ): Promise<Result<RequestSuccess<ResultRequestData<P, T>>>> {
+    const options = (args[0] ?? {}) as ResultRequestOptions<T, P>;
+    const internal = options as ResultRequestCommonOptions & {
+      json?: unknown;
+      body?: BodyInit | null;
+      bodyFactory?: () => BodyInit | null;
+      schema?: v.GenericSchema<unknown, T>;
+    };
+    const method = (internal.method ?? "GET").toUpperCase();
+    const path = internal.hookPath ?? "<arbitrary>";
+    const parseAs = (internal.parseAs ?? "json") as ResultParseAs;
+
+    const preparation = prepareArbitraryRequest(input, internal, this.baseUrl, method, parseAs);
+    if (!preparation.ok) return this.rejectValidation(method, path, preparation.issues);
+
+    const authorizationIsExplicit = hasAuthorizationHeader(internal.headers);
+    const transport = this.createRawFetch(internal.fetch, authorizationIsExplicit);
+    const factoryStreams = new WeakSet<ReadableStream>();
+    const response = await this.executeWithRetry(
+      method,
+      path,
+      () =>
+        this.executeManagedAttempt(async (signal) => {
+          const attempt = prepareArbitraryAttempt(
+            preparation,
+            internal,
+            this.auth,
+            method,
+            signal,
+            factoryStreams,
+          );
+          if (!attempt.ok) return { ok: false as const, localError: attempt.error };
+
+          const networkResponse = await transport(attempt.request);
+          if (!networkResponse.ok) {
+            return {
+              ok: false as const,
+              response: networkResponse,
+              error: await readHttpErrorBody(networkResponse),
+            };
+          }
+
+          const parsed = await parseArbitraryResponse(networkResponse, parseAs);
+          if (internal.schema) {
+            const validated = v.safeParse(internal.schema, parsed);
+            if (!validated.success) {
+              return {
+                ok: false as const,
+                validationIssues: toValidationIssues(validated.issues),
+              };
+            }
+            return {
+              ok: true as const,
+              value: { data: validated.output, response: networkResponse },
+              response: networkResponse,
+            };
+          }
+
+          return {
+            ok: true as const,
+            value: { data: parsed, response: networkResponse },
+            response: networkResponse,
+          };
+        }, internal.signal),
+      {
+        signal: internal.signal,
+        retryMode: internal.retry ?? "auto",
+        bodyReplayable: preparation.bodyReplayable,
+      },
+    );
+
+    return response as Result<RequestSuccess<ResultRequestData<P, T>>>;
+  }
+
   /** JSON request with Valibot schema validation and camelCase response keys. */
   async requestJson<TWire>(
     method: string,
@@ -278,11 +489,13 @@ export class HttpExecutor {
   /** Keep the per-attempt deadline active through middleware and response parsing. */
   private async executeManagedAttempt<T>(
     fn: (signal: AbortSignal | undefined) => Promise<T>,
+    externalSignal?: AbortSignal | null,
   ): Promise<T> {
-    if (this.timeoutMs === undefined) return fn(undefined);
+    if (externalSignal?.aborted) throw getAbortReason(externalSignal);
+    if (this.timeoutMs === undefined) return fn(externalSignal ?? undefined);
 
     const controller = new AbortController();
-    const deadline = new RequestDeadline(this.timeoutMs, controller);
+    const deadline = new RequestDeadline(this.timeoutMs, controller, externalSignal);
     try {
       const operation = Promise.resolve().then(() => fn(controller.signal));
       const result = await deadline.race(operation);
@@ -336,17 +549,53 @@ export class HttpExecutor {
     method: string,
     path: string,
     fn: () => Promise<ExecuteResult<T>>,
+    options: {
+      signal?: AbortSignal | null;
+      retryMode?: RequestRetryMode;
+      bodyReplayable?: boolean;
+    } = {},
   ): Promise<Result<T>> {
     await callHook(this.hooks, "onRequest", { method, path });
     const start = Date.now();
+    const signal = options.signal;
+    const retryMode = options.retryMode ?? "auto";
+    const bodyReplayable = options.bodyReplayable ?? true;
 
     for (let attempt = 1; attempt <= this.retryOpts.maxAttempts; attempt++) {
       let result: ExecuteResult<T>;
       try {
-        await this.rateLimiter.acquire();
+        await this.rateLimiter.acquire(signal);
         result = await fn();
       } catch (cause) {
-        return this.finishError(method, path, start, mapOperationalError(cause));
+        const mapped = mapOperationalError(signal?.aborted ? createAbortError() : cause);
+        const retryCause = signal?.aborted ? undefined : retryCauseForError(mapped);
+        const decision = retryCause
+          ? decideRetry(
+              {
+                method,
+                mode: retryMode,
+                bodyReplayable,
+                attempt,
+                cause: retryCause,
+              },
+              this.retryOpts,
+            )
+          : undefined;
+        if (!decision) return this.finishError(method, path, start, mapped);
+
+        try {
+          await this.waitForRetry(method, path, attempt, decision, signal);
+        } catch {
+          return this.finishError(method, path, start, {
+            kind: "Network",
+            message: "Request aborted",
+          });
+        }
+        continue;
+      }
+
+      if ("localError" in result) {
+        return this.finishError(method, path, start, result.localError);
       }
 
       if ("validationIssues" in result) {
@@ -367,18 +616,26 @@ export class HttpExecutor {
       }
 
       const status = result.response.status;
-      if (isRetryable(status, this.retryOpts) && attempt < this.retryOpts.maxAttempts) {
-        const retryAfter = result.response.headers.get("retry-after");
-        const delayMs = calculateDelay(attempt, this.retryOpts, retryAfter);
-        await callHook(this.hooks, "onRetry", {
+      const decision = decideRetry(
+        {
           method,
-          path,
+          mode: retryMode,
+          bodyReplayable,
           attempt,
-          maxAttempts: this.retryOpts.maxAttempts,
-          delayMs,
-          reason: `HTTP ${status}`,
-        });
-        await sleep(delayMs);
+          cause: { kind: "Http", status },
+          retryAfterHeader: result.response.headers.get("retry-after"),
+        },
+        this.retryOpts,
+      );
+      if (decision) {
+        try {
+          await this.waitForRetry(method, path, attempt, decision, signal);
+        } catch {
+          return this.finishError(method, path, start, {
+            kind: "Network",
+            message: "Request aborted",
+          });
+        }
         continue;
       }
 
@@ -411,15 +668,10 @@ export class HttpExecutor {
     input: FetchInput,
     init?: FetchInit,
     includeResponseBody = false,
-    releaseOnOpenApiEmptyBody = false,
   ): Promise<Response> {
-    const requestMethod = getFetchMethod(input, init);
-
     if (this.timeoutMs === undefined) {
-      const response = await fetchImpl(input, init);
-      return includeResponseBody &&
-        response.body !== null &&
-        !(releaseOnOpenApiEmptyBody && openApiFetchTreatsResponseAsEmpty(response, requestMethod))
+      const response = await fetchAtTransportBoundary(fetchImpl, input, init);
+      return includeResponseBody && response.body !== null
         ? wrapManagedResponse(response)
         : response;
     }
@@ -432,13 +684,9 @@ export class HttpExecutor {
 
     try {
       const response = await deadline.race(
-        fetchImpl(input, { ...init, signal: controller.signal }),
+        fetchAtTransportBoundary(fetchImpl, input, { ...init, signal: controller.signal }),
       );
-      if (
-        !includeResponseBody ||
-        response.body === null ||
-        (releaseOnOpenApiEmptyBody && openApiFetchTreatsResponseAsEmpty(response, requestMethod))
-      ) {
+      if (!includeResponseBody || response.body === null) {
         deadline.complete();
         return response;
       }
@@ -459,7 +707,392 @@ type ApiCallResult<T = unknown> = {
 type ExecuteResult<T> =
   | { ok: true; value: T; response: Response }
   | { ok: false; response: Response; error: unknown }
+  | { ok: false; localError: ApiError }
   | { ok: false; validationIssues: ValidationIssue[] };
+
+type ArbitraryInternalOptions<T> = ResultRequestCommonOptions & {
+  json?: unknown;
+  body?: BodyInit | null;
+  bodyFactory?: () => BodyInit | null;
+  schema?: v.GenericSchema<unknown, T>;
+};
+
+type ArbitraryPreparation =
+  | {
+      ok: true;
+      url: string;
+      requestInit: RequestInit & { duplex?: "half" };
+      hasJson: boolean;
+      jsonBody?: string;
+      bodyReplayable: boolean;
+    }
+  | { ok: false; issues: ValidationIssue[] };
+
+const RESULT_REQUEST_METHODS = new Set<ResultRequestMethod>([
+  "GET",
+  "HEAD",
+  "OPTIONS",
+  "PUT",
+  "POST",
+  "PATCH",
+  "DELETE",
+]);
+const RESULT_PARSE_MODES = new Set<ResultParseAs>([
+  "json",
+  "text",
+  "arrayBuffer",
+  "blob",
+  "formData",
+  "none",
+]);
+const REQUEST_RETRY_MODES = new Set<RequestRetryMode>(["auto", "idempotent", "never"]);
+
+function prepareArbitraryRequest<T>(
+  input: string | URL,
+  options: ArbitraryInternalOptions<T>,
+  baseUrl: string,
+  method: string,
+  parseAs: ResultParseAs,
+): ArbitraryPreparation {
+  const issue = (message: string, expected: string, received: unknown): ArbitraryPreparation => ({
+    ok: false,
+    issues: [{ path: "", message, expected, received }],
+  });
+
+  if (!RESULT_REQUEST_METHODS.has(method as ResultRequestMethod)) {
+    return issue(
+      "Unsupported request method",
+      "GET, HEAD, OPTIONS, PUT, POST, PATCH, or DELETE",
+      method,
+    );
+  }
+  if (!RESULT_PARSE_MODES.has(parseAs)) {
+    return issue("Unsupported response parser", "a supported parseAs value", parseAs);
+  }
+  if (options.retry !== undefined && !REQUEST_RETRY_MODES.has(options.retry)) {
+    return issue("Unsupported retry mode", "auto, idempotent, or never", options.retry);
+  }
+  if (options.schema !== undefined && parseAs !== "json") {
+    return issue("Response schemas require JSON parsing", 'parseAs: "json"', parseAs);
+  }
+  if (options.duplex !== undefined && options.duplex !== "half") {
+    return issue("Unsupported duplex mode", 'duplex: "half"', options.duplex);
+  }
+
+  const bodyFields = [
+    options.json !== undefined,
+    options.body !== undefined && options.body !== null,
+    options.bodyFactory !== undefined,
+  ].filter(Boolean).length;
+  if (bodyFields > 1) {
+    return issue(
+      "Request body options are mutually exclusive",
+      "one of json, body, or bodyFactory",
+      undefined,
+    );
+  }
+  if (options.bodyFactory !== undefined && typeof options.bodyFactory !== "function") {
+    return issue(
+      "bodyFactory must be a function",
+      "a function returning a fresh BodyInit",
+      typeof options.bodyFactory,
+    );
+  }
+  if ((method === "GET" || method === "HEAD") && bodyFields > 0) {
+    return issue(`${method} requests cannot include a body`, "no request body", undefined);
+  }
+  if (isReadableStreamBody(options.body) && options.duplex !== "half") {
+    return issue(
+      "ReadableStream request bodies require duplex half",
+      'duplex: "half"',
+      options.duplex,
+    );
+  }
+
+  let url: URL;
+  try {
+    url = new URL(input, `${baseUrl}/`);
+    applyRequestQuery(url, options.query);
+  } catch {
+    return issue(
+      "Request URL or query is invalid",
+      "a valid URL and serializable query",
+      undefined,
+    );
+  }
+  if (url.username !== "" || url.password !== "") {
+    return issue(
+      "Request URL must not contain embedded credentials",
+      "a URL without username or password data",
+      "credentials present",
+    );
+  }
+
+  let jsonBody: string | undefined;
+  if (options.json !== undefined) {
+    try {
+      jsonBody = JSON.stringify(options.json);
+    } catch {
+      return issue("JSON request body is not serializable", "a JSON-serializable value", undefined);
+    }
+    if (jsonBody === undefined) {
+      return issue(
+        "JSON request body is not serializable",
+        "a JSON value",
+        `non-serializable ${typeof options.json}`,
+      );
+    }
+  }
+
+  const {
+    method: _method,
+    headers: _headers,
+    query: _query,
+    signal: _signal,
+    parseAs: _parseAs,
+    retry: _retry,
+    hookPath: _hookPath,
+    fetch: _fetch,
+    duplex,
+    json: _json,
+    body: _body,
+    bodyFactory: _bodyFactory,
+    schema: _schema,
+    ...requestInit
+  } = options;
+  if (duplex !== undefined) (requestInit as RequestInit & { duplex?: "half" }).duplex = duplex;
+
+  return {
+    ok: true,
+    url: url.href,
+    requestInit: requestInit as RequestInit & { duplex?: "half" },
+    hasJson: options.json !== undefined,
+    jsonBody,
+    bodyReplayable:
+      options.bodyFactory !== undefined ||
+      options.json !== undefined ||
+      isReplayableRequestBody(options.body),
+  };
+}
+
+function applyRequestQuery(url: URL, query?: RequestQuery): void {
+  if (query === undefined) return;
+  if (query instanceof URLSearchParams) {
+    for (const [name, value] of query) url.searchParams.append(name, value);
+    return;
+  }
+
+  for (const [name, raw] of Object.entries(query)) {
+    if (raw === undefined) continue;
+    url.searchParams.delete(name);
+    const values = Array.isArray(raw) ? raw : [raw];
+    for (const value of values) {
+      if (value !== undefined) url.searchParams.append(name, value === null ? "" : String(value));
+    }
+  }
+}
+
+function isReplayableRequestBody(body: BodyInit | null | undefined): boolean {
+  return (
+    body === undefined ||
+    body === null ||
+    typeof body === "string" ||
+    body instanceof URLSearchParams ||
+    body instanceof Blob ||
+    body instanceof FormData ||
+    body instanceof ArrayBuffer ||
+    ArrayBuffer.isView(body)
+  );
+}
+
+function createArbitraryBody<T>(
+  options: ArbitraryInternalOptions<T>,
+  jsonBody?: string,
+): BodyInit | null | undefined {
+  if (options.bodyFactory !== undefined) return options.bodyFactory();
+  if (options.json !== undefined) return jsonBody;
+  return options.body;
+}
+
+type ArbitraryAttemptPreparation = { ok: true; request: Request } | { ok: false; error: ApiError };
+
+function prepareArbitraryAttempt<T>(
+  preparation: Extract<ArbitraryPreparation, { ok: true }>,
+  options: ArbitraryInternalOptions<T>,
+  auth: AuthConfig,
+  method: string,
+  signal: AbortSignal | undefined,
+  factoryStreams: WeakSet<ReadableStream>,
+): ArbitraryAttemptPreparation {
+  let body: BodyInit | null | undefined;
+  try {
+    body = createArbitraryBody(options, preparation.jsonBody);
+  } catch (error) {
+    return { ok: false, error: { kind: "Unknown", error } };
+  }
+
+  if (isReadableStreamBody(body)) {
+    if (options.duplex !== "half") {
+      return {
+        ok: false,
+        error: validationError(
+          "body",
+          "ReadableStream request bodies require duplex half",
+          'duplex: "half"',
+          options.duplex,
+        ),
+      };
+    }
+    if (options.bodyFactory !== undefined) {
+      if (factoryStreams.has(body)) {
+        return {
+          ok: false,
+          error: validationError(
+            "bodyFactory",
+            "bodyFactory returned a previously used ReadableStream",
+            "a fresh request body for every attempt",
+            "reused ReadableStream",
+          ),
+        };
+      }
+      factoryStreams.add(body);
+    }
+  }
+
+  try {
+    const headers = mergeArbitraryHeaders(auth, options.headers);
+    if (preparation.hasJson && !headers.has("content-type") && body !== undefined) {
+      headers.set("content-type", "application/json");
+    }
+    return {
+      ok: true,
+      request: new Request(preparation.url, {
+        ...preparation.requestInit,
+        method,
+        headers,
+        body,
+        signal,
+      } as RequestInit),
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      error: validationError(
+        "request",
+        "Request options could not be constructed",
+        "valid Fetch request options and body",
+        error instanceof Error ? error.name : typeof error,
+      ),
+    };
+  }
+}
+
+function validationError(
+  path: string,
+  message: string,
+  expected: string,
+  received: unknown,
+): ApiError {
+  return { kind: "Validation", issues: [{ path, message, expected, received }] };
+}
+
+function isReadableStreamBody(value: unknown): value is ReadableStream {
+  return typeof ReadableStream !== "undefined" && value instanceof ReadableStream;
+}
+
+function mergeArbitraryHeaders(auth: AuthConfig, source: unknown): Headers {
+  const headers = new Headers(createAuthHeaders(auth));
+  if (source === undefined || source === null) return headers;
+
+  if (source instanceof Headers) {
+    source.forEach((value, name) => headers.set(name, value));
+    return headers;
+  }
+  if (Array.isArray(source)) {
+    for (const entry of source) {
+      if (!Array.isArray(entry) || typeof entry[0] !== "string" || entry[1] === undefined) continue;
+      // User-provided tuple headers replace inherited defaults. Appending Authorization here
+      // would combine the package credential with an explicit cross-origin credential.
+      headers.set(entry[0], String(entry[1]));
+    }
+    return headers;
+  }
+  if (typeof source === "object") {
+    for (const [name, value] of Object.entries(source)) {
+      if (value === undefined) continue;
+      if (value === null) headers.delete(name);
+      else headers.set(name, String(value));
+    }
+  }
+  return headers;
+}
+
+export function hasAuthorizationHeader(value: unknown): boolean {
+  if (value instanceof Headers) return value.has("authorization");
+  if (Array.isArray(value)) {
+    return value.some(
+      (entry) =>
+        Array.isArray(entry) &&
+        typeof entry[0] === "string" &&
+        entry[0].toLowerCase() === "authorization" &&
+        entry[1] !== undefined,
+    );
+  }
+  if (typeof value !== "object" || value === null) return false;
+  return Object.entries(value).some(
+    ([name, headerValue]) => name.toLowerCase() === "authorization" && headerValue !== undefined,
+  );
+}
+
+async function parseArbitraryResponse(
+  response: Response,
+  parseAs: ResultParseAs,
+): Promise<unknown> {
+  try {
+    switch (parseAs) {
+      case "json": {
+        const text = await response.text();
+        return text ? JSON.parse(text) : undefined;
+      }
+      case "text":
+        return await response.text();
+      case "arrayBuffer":
+        return await response.arrayBuffer();
+      case "blob":
+        return await response.blob();
+      case "formData": {
+        const contentType = response.headers.get("content-type");
+        if (!isFormDataContentType(contentType)) {
+          throw new ResponseParseValidationError(
+            "Response cannot be parsed as form data",
+            "multipart/form-data with a boundary or application/x-www-form-urlencoded",
+            contentType,
+          );
+        }
+        return await response.formData();
+      }
+      case "none":
+        await response.body?.cancel();
+        return undefined;
+    }
+  } catch (cause) {
+    throw normalizeResponseBodyError(cause, parseAs === "json");
+  }
+}
+
+async function readHttpErrorBody(response: Response): Promise<unknown> {
+  try {
+    const text = await response.text();
+    if (!text) return undefined;
+    try {
+      return JSON.parse(text);
+    } catch {
+      return text;
+    }
+  } catch (cause) {
+    throw normalizeResponseBodyError(cause);
+  }
+}
 
 class RequestTimeoutError extends Error {
   constructor(readonly timeoutMs: number) {
@@ -472,6 +1105,17 @@ class ResponseBodyReadError extends Error {
   constructor(readonly cause: unknown) {
     super("Response body read failed");
     this.name = "ResponseBodyReadError";
+  }
+}
+
+class ResponseParseValidationError extends Error {
+  constructor(
+    message: string,
+    readonly expected: string,
+    readonly received: unknown,
+  ) {
+    super(message);
+    this.name = "ResponseParseValidationError";
   }
 }
 
@@ -627,6 +1271,7 @@ function normalizeResponseBodyError(error: unknown, preserveMalformedJson = fals
   if (
     error instanceof RequestTimeoutError ||
     error instanceof ResponseBodyReadError ||
+    error instanceof ResponseParseValidationError ||
     isAbortError(error) ||
     (preserveMalformedJson && isMalformedJsonError(error))
   ) {
@@ -669,6 +1314,24 @@ function mapOperationalError(error: unknown): ApiError {
     return { kind: "Network", message: "Network request failed" };
   }
 
+  if (error instanceof ResponseParseValidationError) {
+    return {
+      kind: "Validation",
+      issues: [
+        {
+          path: "response",
+          message: error.message,
+          expected: error.expected,
+          received: error.received,
+        },
+      ],
+    };
+  }
+
+  if (isMarkedNetworkTransportFailure(error)) {
+    return { kind: "Network", message: "Network request failed" };
+  }
+
   if (isAbortError(error)) {
     return { kind: "Network", message: "Request aborted" };
   }
@@ -687,15 +1350,55 @@ function mapOperationalError(error: unknown): ApiError {
     };
   }
 
-  if (isNetworkError(error)) {
-    return { kind: "Network", message: "Network request failed" };
-  }
-
   return { kind: "Unknown", error };
+}
+
+function fetchAtTransportBoundary(
+  fetchImpl: typeof globalThis.fetch,
+  input: FetchInput,
+  init?: FetchInit,
+): Promise<Response> {
+  try {
+    return Promise.resolve(fetchImpl(input, init)).catch((cause: unknown) => {
+      throw markNetworkTransportFailure(cause);
+    });
+  } catch (cause) {
+    return Promise.reject(markNetworkTransportFailure(cause));
+  }
+}
+
+const NETWORK_TRANSPORT_FAILURES = new WeakSet<object>();
+
+function markNetworkTransportFailure(cause: unknown): unknown {
+  if (isNetworkError(cause) && typeof cause === "object" && cause !== null) {
+    NETWORK_TRANSPORT_FAILURES.add(cause);
+  }
+  return cause;
+}
+
+function isMarkedNetworkTransportFailure(cause: unknown): boolean {
+  return typeof cause === "object" && cause !== null && NETWORK_TRANSPORT_FAILURES.has(cause);
+}
+
+function retryCauseForError(error: ApiError): RetryCause | undefined {
+  if (error.kind === "Network" && error.message !== "Request aborted") {
+    return { kind: "Network" };
+  }
+  if (error.kind === "Timeout") return { kind: "Timeout" };
+  return undefined;
 }
 
 function isMalformedJsonError(error: unknown): boolean {
   return error instanceof SyntaxError;
+}
+
+function isFormDataContentType(contentType: string | null): boolean {
+  if (contentType === null) return false;
+  const mediaType = contentType.split(";", 1)[0]?.trim().toLowerCase();
+  if (mediaType === "application/x-www-form-urlencoded") return true;
+  return (
+    mediaType === "multipart/form-data" && /;\s*boundary=(?:"[^"]+"|[^;\s]+)/iu.test(contentType)
+  );
 }
 
 function isAbortError(error: unknown): boolean {
@@ -728,20 +1431,6 @@ function createAbortError(): Error {
   const error = new Error("The operation was aborted");
   error.name = "AbortError";
   return error;
-}
-
-function getFetchMethod(input: FetchInput, init?: FetchInit): string {
-  return (init?.method ?? (input instanceof Request ? input.method : "GET")).toUpperCase();
-}
-
-/** Keep deadline ownership aligned with openapi-fetch's empty-response fast path. */
-function openApiFetchTreatsResponseAsEmpty(response: Response, requestMethod: string): boolean {
-  const contentLength = response.headers.get("content-length");
-  return (
-    response.status === 204 ||
-    requestMethod === "HEAD" ||
-    (contentLength === "0" && !response.headers.get("transfer-encoding")?.includes("chunked"))
-  );
 }
 
 /**
