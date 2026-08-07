@@ -31,9 +31,10 @@ export class ActivitiesResource extends BaseResource {
     return this.http.requestJson(
       "GET",
       "/athlete/{id}/activities",
-      () =>
+      (signal) =>
         this.api.GET("/api/v1/athlete/{id}/activities", {
           params: { path: { id: this.athleteId }, query },
+          signal,
         }),
       v.array(ActivitySchema),
     );
@@ -43,9 +44,10 @@ export class ActivitiesResource extends BaseResource {
     return this.http.requestJson(
       "GET",
       "/activity/{id}",
-      () =>
+      (signal) =>
         this.api.GET("/api/v1/activity/{id}", {
           params: { path: { id: activityId } },
+          signal,
         }),
       ActivitySchema,
     );
@@ -74,22 +76,27 @@ export class ActivitiesResource extends BaseResource {
     return this.http.requestJson(
       "GET",
       "/activity/{id}/streams",
-      () =>
+      (signal) =>
         this.api.GET("/api/v1/activity/{id}/streams{ext}", {
           params: {
             path: { id: activityId, ext: ".json" },
             query,
           },
+          signal,
         }),
       v.array(ActivityStreamSchema),
     );
   }
 
   async getIntervals(activityId: string): Promise<Result<ActivityIntervals>> {
-    return this.http.requestJson<ActivityIntervalsWire>("GET", "/activity/{id}/intervals", () =>
-      this.api.GET("/api/v1/activity/{id}/intervals", {
-        params: { path: { id: activityId } },
-      }),
+    return this.http.requestJson<ActivityIntervalsWire>(
+      "GET",
+      "/activity/{id}/intervals",
+      (signal) =>
+        this.api.GET("/api/v1/activity/{id}/intervals", {
+          params: { path: { id: activityId } },
+          signal,
+        }),
     );
   }
 

@@ -233,23 +233,23 @@ export class HttpExecutor {
   async requestJson<TWire>(
     method: string,
     path: string,
-    fn: () => Promise<ApiCallResult>,
+    fn: (signal: AbortSignal | undefined) => Promise<ApiCallResult>,
     schema: v.GenericSchema<unknown, TWire>,
   ): Promise<Result<CamelCaseKeys<TWire>>>;
   async requestJson<TWire>(
     method: string,
     path: string,
-    fn: () => Promise<ApiCallResult<TWire>>,
+    fn: (signal: AbortSignal | undefined) => Promise<ApiCallResult<TWire>>,
     schema?: undefined,
   ): Promise<Result<CamelCaseKeys<TWire>>>;
   async requestJson<TWire>(
     method: string,
     path: string,
-    fn: () => Promise<ApiCallResult<TWire>>,
+    fn: (signal: AbortSignal | undefined) => Promise<ApiCallResult<TWire>>,
     schema?: v.GenericSchema<unknown, TWire>,
   ): Promise<Result<CamelCaseKeys<TWire>>> {
     return this.executeWithRetry(method, path, async () => {
-      const { data, error, response } = await fn();
+      const { data, error, response } = await this.executeManagedAttempt(fn);
       if (!response.ok) return { ok: false as const, response, error };
 
       if (schema) {
@@ -273,6 +273,25 @@ export class HttpExecutor {
         response,
       };
     });
+  }
+
+  /** Keep the per-attempt deadline active through middleware and response parsing. */
+  private async executeManagedAttempt<T>(
+    fn: (signal: AbortSignal | undefined) => Promise<T>,
+  ): Promise<T> {
+    if (this.timeoutMs === undefined) return fn(undefined);
+
+    const controller = new AbortController();
+    const deadline = new RequestDeadline(this.timeoutMs, controller);
+    try {
+      const operation = Promise.resolve().then(() => fn(controller.signal));
+      const result = await deadline.race(operation);
+      deadline.complete();
+      return result;
+    } catch (cause) {
+      deadline.complete();
+      throw cause;
+    }
   }
 
   /** Binary request (FIT/GPX/ZIP downloads). */

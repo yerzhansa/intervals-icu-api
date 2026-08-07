@@ -8,34 +8,38 @@ type WorkoutEx = components["schemas"]["WorkoutEx"];
 
 export class WorkoutsResource extends BaseResource {
   async list() {
-    return this.http.requestJson("GET", "/athlete/{id}/workouts", () =>
+    return this.http.requestJson("GET", "/athlete/{id}/workouts", (signal) =>
       this.api.GET("/api/v1/athlete/{id}/workouts", {
         params: { path: { id: this.athleteId } },
+        signal,
       }),
     );
   }
 
   async get(workoutId: number) {
-    return this.http.requestJson("GET", "/athlete/{id}/workouts/{workoutId}", () =>
+    return this.http.requestJson("GET", "/athlete/{id}/workouts/{workoutId}", (signal) =>
       this.api.GET("/api/v1/athlete/{id}/workouts/{workoutId}", {
         params: { path: { id: this.athleteId, workoutId } },
+        signal,
       }),
     );
   }
 
   async create(body: WorkoutEx) {
-    return this.http.requestJson("POST", "/athlete/{id}/workouts", () =>
+    return this.http.requestJson("POST", "/athlete/{id}/workouts", (signal) =>
       this.api.POST("/api/v1/athlete/{id}/workouts", {
         params: { path: { id: this.athleteId } },
         body,
+        signal,
       }),
     );
   }
 
   async delete(workoutId: number) {
-    return this.http.requestJson("DELETE", "/athlete/{id}/workouts/{workoutId}", () =>
+    return this.http.requestJson("DELETE", "/athlete/{id}/workouts/{workoutId}", (signal) =>
       this.api.DELETE("/api/v1/athlete/{id}/workouts/{workoutId}", {
         params: { path: { id: this.athleteId, workoutId } },
+        signal,
       }),
     );
   }

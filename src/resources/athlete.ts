@@ -10,9 +10,10 @@ export class AthleteResource extends BaseResource {
     return this.http.requestJson(
       "GET",
       "/athlete/{id}",
-      () =>
+      (signal) =>
         this.api.GET("/api/v1/athlete/{id}", {
           params: { path: { id: this.athleteId } },
+          signal,
         }),
       AthleteSchema,
     );
@@ -22,19 +23,21 @@ export class AthleteResource extends BaseResource {
     return this.http.requestJson(
       "GET",
       "/athlete/{id}/profile",
-      () =>
+      (signal) =>
         this.api.GET("/api/v1/athlete/{id}/profile", {
           params: { path: { id: this.athleteId } },
+          signal,
         }),
       AthleteSchema,
     );
   }
 
   async update(body: AthleteUpdate) {
-    return this.http.requestJson("PUT", "/athlete/{id}", () =>
+    return this.http.requestJson("PUT", "/athlete/{id}", (signal) =>
       this.api.PUT("/api/v1/athlete/{id}", {
         params: { path: { id: this.athleteId } },
         body,
+        signal,
       }),
     );
   }

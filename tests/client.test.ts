@@ -1,5 +1,15 @@
 import { describe, it, expect, vi } from "vitest";
+import type { Middleware } from "openapi-fetch";
 import { IntervalsClient } from "../src/client.js";
+
+function hangingJsonResponse(): Response {
+  return new Response(
+    new ReadableStream<Uint8Array>({
+      pull: () => new Promise<void>(() => {}),
+    }),
+    { headers: { "content-type": "application/json" } },
+  );
+}
 
 describe("IntervalsClient", () => {
   it("throws if no auth provided", () => {
@@ -99,5 +109,96 @@ describe("IntervalsClient", () => {
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(onResponse).not.toHaveBeenCalled();
     expect(onError).toHaveBeenCalledTimes(1);
+  });
+
+  it("applies the managed deadline while shared request middleware is pending", async () => {
+    let releaseMiddleware!: () => void;
+    const middlewarePending = new Promise<void>((resolve) => {
+      releaseMiddleware = resolve;
+    });
+    const middleware: Middleware = {
+      async onRequest() {
+        await middlewarePending;
+      },
+    };
+    const fetch = vi.fn(async () => Response.json({ id: "i1" })) as typeof globalThis.fetch;
+    const client = new IntervalsClient({
+      apiKey: "test",
+      athleteId: "i1",
+      fetch,
+      timeoutMs: 5,
+    });
+    client.raw.use(middleware);
+
+    const result = await client.athlete.get();
+
+    expect(result).toEqual({
+      ok: false,
+      error: {
+        kind: "Timeout",
+        message: "Request exceeded configured timeout of 5 ms",
+      },
+    });
+    expect(fetch).not.toHaveBeenCalled();
+
+    releaseMiddleware();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("applies the managed deadline to a response replaced by middleware", async () => {
+    const middleware: Middleware = {
+      onResponse() {
+        return hangingJsonResponse();
+      },
+    };
+    const fetch = vi.fn(async () => Response.json({ id: "i1" })) as typeof globalThis.fetch;
+    const client = new IntervalsClient({
+      apiKey: "test",
+      athleteId: "i1",
+      fetch,
+      timeoutMs: 5,
+    });
+    client.raw.use(middleware);
+
+    const result = await client.athlete.get();
+
+    expect(result).toEqual({
+      ok: false,
+      error: {
+        kind: "Timeout",
+        message: "Request exceeded configured timeout of 5 ms",
+      },
+    });
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("applies the managed deadline to middleware recovery responses", async () => {
+    const middleware: Middleware = {
+      onError() {
+        return hangingJsonResponse();
+      },
+    };
+    const fetch = vi.fn(async () => {
+      throw new TypeError("synthetic transport failure");
+    }) as typeof globalThis.fetch;
+    const client = new IntervalsClient({
+      apiKey: "test",
+      athleteId: "i1",
+      fetch,
+      timeoutMs: 5,
+    });
+    client.raw.use(middleware);
+
+    const result = await client.athlete.get();
+
+    expect(result).toEqual({
+      ok: false,
+      error: {
+        kind: "Timeout",
+        message: "Request exceeded configured timeout of 5 ms",
+      },
+    });
+    expect(fetch).toHaveBeenCalledTimes(1);
   });
 });

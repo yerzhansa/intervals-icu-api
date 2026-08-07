@@ -18,9 +18,10 @@ export class EventsResource extends BaseResource {
     return this.http.requestJson(
       "GET",
       "/athlete/{id}/events",
-      () =>
+      (signal) =>
         this.api.GET("/api/v1/athlete/{id}/events{format}", {
           params: { path: { id: this.athleteId, format: "" }, query },
+          signal,
         }),
       v.array(EventSchema),
     );
@@ -30,9 +31,10 @@ export class EventsResource extends BaseResource {
     return this.http.requestJson(
       "GET",
       "/athlete/{id}/events/{eventId}",
-      () =>
+      (signal) =>
         this.api.GET("/api/v1/athlete/{id}/events/{eventId}", {
           params: { path: { id: this.athleteId, eventId } },
+          signal,
         }),
       EventSchema,
     );
@@ -42,13 +44,14 @@ export class EventsResource extends BaseResource {
     return this.http.requestJson(
       "POST",
       "/athlete/{id}/events",
-      () =>
+      (signal) =>
         this.api.POST("/api/v1/athlete/{id}/events", {
           params: {
             path: { id: this.athleteId },
             query: { upsertOnUid: options?.upsertOnUid ?? false },
           },
           body,
+          signal,
         }),
       EventSchema,
     );
@@ -58,19 +61,21 @@ export class EventsResource extends BaseResource {
     return this.http.requestJson(
       "PUT",
       "/athlete/{id}/events/{eventId}",
-      () =>
+      (signal) =>
         this.api.PUT("/api/v1/athlete/{id}/events/{eventId}", {
           params: { path: { id: this.athleteId, eventId } },
           body,
+          signal,
         }),
       EventSchema,
     );
   }
 
   async delete(eventId: number) {
-    return this.http.requestJson("DELETE", "/athlete/{id}/events/{eventId}", () =>
+    return this.http.requestJson("DELETE", "/athlete/{id}/events/{eventId}", (signal) =>
       this.api.DELETE("/api/v1/athlete/{id}/events/{eventId}", {
         params: { path: { id: this.athleteId, eventId } },
+        signal,
       }),
     );
   }

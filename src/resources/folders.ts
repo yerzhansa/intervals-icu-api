@@ -2,9 +2,10 @@ import { BaseResource } from "./base.js";
 
 export class FoldersResource extends BaseResource {
   async list() {
-    return this.http.requestJson("GET", "/athlete/{id}/folders", () =>
+    return this.http.requestJson("GET", "/athlete/{id}/folders", (signal) =>
       this.api.GET("/api/v1/athlete/{id}/folders", {
         params: { path: { id: this.athleteId } },
+        signal,
       }),
     );
   }

@@ -16,9 +16,10 @@ export class WellnessResource extends BaseResource {
     return this.http.requestJson(
       "GET",
       "/athlete/{id}/wellness",
-      () =>
+      (signal) =>
         this.api.GET("/api/v1/athlete/{id}/wellness{ext}", {
           params: { path: { id: this.athleteId, ext: "" }, query },
+          signal,
         }),
       v.array(WellnessSchema),
     );
@@ -28,37 +29,41 @@ export class WellnessResource extends BaseResource {
     return this.http.requestJson(
       "GET",
       "/athlete/{id}/wellness/{date}",
-      () =>
+      (signal) =>
         this.api.GET("/api/v1/athlete/{id}/wellness/{date}", {
           params: { path: { id: this.athleteId, date } },
+          signal,
         }),
       WellnessSchema,
     );
   }
 
   async update(body: WellnessBody) {
-    return this.http.requestJson("PUT", "/athlete/{id}/wellness", () =>
+    return this.http.requestJson("PUT", "/athlete/{id}/wellness", (signal) =>
       this.api.PUT("/api/v1/athlete/{id}/wellness", {
         params: { path: { id: this.athleteId } },
         body,
+        signal,
       }),
     );
   }
 
   async updateByDate(date: string, body: WellnessBody) {
-    return this.http.requestJson("PUT", "/athlete/{id}/wellness/{date}", () =>
+    return this.http.requestJson("PUT", "/athlete/{id}/wellness/{date}", (signal) =>
       this.api.PUT("/api/v1/athlete/{id}/wellness/{date}", {
         params: { path: { id: this.athleteId, date } },
         body,
+        signal,
       }),
     );
   }
 
   async updateBulk(body: WellnessBody[]) {
-    return this.http.requestJson("PUT", "/athlete/{id}/wellness-bulk", () =>
+    return this.http.requestJson("PUT", "/athlete/{id}/wellness-bulk", (signal) =>
       this.api.PUT("/api/v1/athlete/{id}/wellness-bulk", {
         params: { path: { id: this.athleteId } },
         body,
+        signal,
       }),
     );
   }
