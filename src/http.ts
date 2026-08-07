@@ -180,6 +180,22 @@ export class HttpExecutor {
     };
   }
 
+  /** Observe raw body-reader failures and restore the original response after every attempt. */
+  createObservedRawFetch(
+    fetchImpl: typeof globalThis.fetch = this.fetchImpl,
+    authorizationIsExplicit = false,
+  ): { fetch: typeof globalThis.fetch; cleanup: () => void } {
+    const transport = this.createRawFetch(fetchImpl, authorizationIsExplicit);
+    const observers = new Set<() => void>();
+    return {
+      fetch: async (input, init) =>
+        observeRawResponseBodyFailures(await transport(input, init), observers),
+      cleanup: () => {
+        for (const restore of observers) restore();
+      },
+    };
+  }
+
   /** Preserve managed body-read classification without changing the raw response contract. */
   private createManagedOpenApiFetch(fetchImpl: typeof globalThis.fetch): typeof globalThis.fetch {
     const transport = this.createRawFetch(fetchImpl);
@@ -196,6 +212,7 @@ export class HttpExecutor {
     externalSignal: AbortSignal | null | undefined,
     bodyReplayable: boolean,
     fn: (signal: AbortSignal | null | undefined) => Promise<T>,
+    cleanupAttempt?: () => void,
   ): Promise<T> {
     await callHook(this.hooks, "onRequest", { method, path });
     const start = Date.now();
@@ -204,7 +221,11 @@ export class HttpExecutor {
       let result: T;
       try {
         await this.rateLimiter.acquire(externalSignal);
-        result = await this.executeRawAttempt(externalSignal, fn);
+        try {
+          result = await this.executeRawAttempt(externalSignal, fn);
+        } finally {
+          cleanupAttempt?.();
+        }
       } catch (cause) {
         if (externalSignal?.aborted) {
           return this.failRawRequest(method, path, start, cause, externalSignal);
@@ -1069,7 +1090,19 @@ async function parseArbitraryResponse(
             contentType,
           );
         }
-        return await response.formData();
+        const bytes = await response.arrayBuffer();
+        try {
+          const ResponseConstructor = response.constructor as typeof Response;
+          return await new ResponseConstructor(bytes, {
+            headers: { "content-type": contentType ?? "" },
+          }).formData();
+        } catch {
+          throw new ResponseParseValidationError(
+            "Response body was not valid form data",
+            "form data matching the declared content type",
+            undefined,
+          );
+        }
       }
       case "none":
         await response.body?.cancel();
@@ -1368,6 +1401,58 @@ function fetchAtTransportBoundary(
 }
 
 const NETWORK_TRANSPORT_FAILURES = new WeakSet<object>();
+
+const RAW_RESPONSE_BODY_OBSERVERS = new WeakMap<Response, () => void>();
+
+function observeRawResponseBodyFailures(response: Response, observers: Set<() => void>): Response {
+  if (RAW_RESPONSE_BODY_OBSERVERS.has(response)) return response;
+
+  const descriptors = new Map<PropertyKey, PropertyDescriptor | undefined>();
+  let restored = false;
+  const restore = () => {
+    if (restored) return;
+    restored = true;
+    for (const [property, descriptor] of descriptors) {
+      if (descriptor === undefined) Reflect.deleteProperty(response, property);
+      else Object.defineProperty(response, property, descriptor);
+    }
+    RAW_RESPONSE_BODY_OBSERVERS.delete(response);
+    observers.delete(restore);
+  };
+
+  try {
+    for (const property of RESPONSE_BODY_METHODS) {
+      // FormData readers combine transport consumption and MIME parsing in one call. A
+      // TypeError from that method alone cannot safely be classified as a network failure.
+      if (property === "formData") continue;
+      const method = Reflect.get(response, property, response) as (
+        ...args: unknown[]
+      ) => Promise<unknown>;
+      if (typeof method !== "function") continue;
+      descriptors.set(property, Object.getOwnPropertyDescriptor(response, property));
+      Object.defineProperty(response, property, {
+        configurable: true,
+        value: (...args: unknown[]) => {
+          restore();
+          try {
+            return Promise.resolve(method.apply(response, args)).catch((cause: unknown) => {
+              throw markNetworkTransportFailure(cause);
+            });
+          } catch (cause) {
+            throw markNetworkTransportFailure(cause);
+          }
+        },
+        writable: true,
+      });
+    }
+    RAW_RESPONSE_BODY_OBSERVERS.set(response, restore);
+    observers.add(restore);
+  } catch {
+    restore();
+  }
+
+  return response;
+}
 
 function markNetworkTransportFailure(cause: unknown): unknown {
   if (isNetworkError(cause) && typeof cause === "object" && cause !== null) {

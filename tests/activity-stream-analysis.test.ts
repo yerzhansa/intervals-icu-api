@@ -143,7 +143,11 @@ describe("calculateEfficiencyFactorDecoupling", () => {
       { outputStream: "watts" },
     );
     const mismatch = calculateEfficiencyFactorDecoupling(
-      [stream("watts", [100, 100, 100]), stream("heartrate", [100, 100])],
+      [
+        stream("time", [0, 1, 2]),
+        stream("watts", [100, 100, 100]),
+        stream("heartrate", [100, 100]),
+      ],
       { outputStream: "watts" },
     );
 
@@ -159,7 +163,19 @@ describe("calculateEfficiencyFactorDecoupling", () => {
     if (!mismatch.ok) expect(mismatch.error[0].kind).toBe("LengthMismatch");
   });
 
-  it("rejects duplicate optional time streams instead of silently using index time", () => {
+  it("requires a real time stream instead of fabricating one-second timestamps", () => {
+    const result = calculateEfficiencyFactorDecoupling(
+      [stream("watts", [100, 100, 80, 80]), stream("heartrate", [100, 100, 100, 100])],
+      { outputStream: "watts" },
+    );
+
+    expect(result).toEqual({
+      ok: false,
+      error: [{ kind: "MissingStream", type: "time" }],
+    });
+  });
+
+  it("rejects duplicate time streams instead of selecting one arbitrarily", () => {
     const result = calculateEfficiencyFactorDecoupling(
       [
         stream("time", [0, 1, 2, 3]),
@@ -179,6 +195,7 @@ describe("calculateEfficiencyFactorDecoupling", () => {
   it("rejects duplicate optional moving streams instead of treating all samples as moving", () => {
     const result = calculateEfficiencyFactorDecoupling(
       [
+        stream("time", [0, 1, 2, 3]),
         stream("watts", [100, 100, 80, 80]),
         stream("heartrate", [100, 100, 100, 100]),
         stream("moving", [true, true, true, true]),
@@ -190,6 +207,27 @@ describe("calculateEfficiencyFactorDecoupling", () => {
     expect(result).toEqual({
       ok: false,
       error: [{ kind: "DuplicateStream", type: "moving", count: 2 }],
+    });
+  });
+
+  it("rejects non-boolean moving samples instead of treating them as moving", () => {
+    const result = calculateEfficiencyFactorDecoupling(
+      [
+        stream("time", [0, 1, 2, 3]),
+        stream("watts", [100, 100, 80, 80]),
+        stream("heartrate", [100, 100, 100, 100]),
+        stream("moving", [true, 0, null, "false"]),
+      ],
+      { outputStream: "watts" },
+    );
+
+    expect(result).toEqual({
+      ok: false,
+      error: [
+        { kind: "InvalidMovingStream", type: "moving", index: 1, reason: "NonBoolean" },
+        { kind: "InvalidMovingStream", type: "moving", index: 2, reason: "NonBoolean" },
+        { kind: "InvalidMovingStream", type: "moving", index: 3, reason: "NonBoolean" },
+      ],
     });
   });
 
@@ -227,7 +265,11 @@ describe("calculateEfficiencyFactorDecoupling", () => {
       { outputStream: "watts", timeStream: "custom_clock" },
     );
     const missingMoving = calculateEfficiencyFactorDecoupling(
-      [stream("watts", [100, 100, 80, 80]), stream("heartrate", [100, 100, 100, 100])],
+      [
+        stream("time", [0, 1, 2, 3]),
+        stream("watts", [100, 100, 80, 80]),
+        stream("heartrate", [100, 100, 100, 100]),
+      ],
       { outputStream: "watts", movingStream: "custom_moving" },
     );
 

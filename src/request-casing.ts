@@ -96,13 +96,28 @@ function encodeNode(
         : encodeNode(value, referenced, path, context);
     }
     case "array":
-      if (!Array.isArray(value)) return cloneOpaque(value, path, context);
+      if (!Array.isArray(value)) {
+        if (!isObjectLike(value)) {
+          return cloneOpaque(value, path, context);
+        }
+        failType(path, "array", value);
+      }
       return encodeArray(value, node.item, path, context);
     case "object":
-      if (!isPlainJsonRecord(value)) return cloneOpaque(value, path, context);
+      if (!isPlainJsonRecord(value)) {
+        if (!isObjectLike(value)) {
+          return cloneOpaque(value, path, context);
+        }
+        failType(path, "plain JSON object", value);
+      }
       return encodeObject(value, node, path, context);
     case "dictionary":
-      if (!isPlainJsonRecord(value)) return cloneOpaque(value, path, context);
+      if (!isPlainJsonRecord(value)) {
+        if (!isObjectLike(value)) {
+          return cloneOpaque(value, path, context);
+        }
+        failType(path, "plain JSON object", value);
+      }
       return encodeDictionary(value, node.value, path, context);
     case "opaque":
       return cloneOpaque(value, path, context);
@@ -121,7 +136,9 @@ function encodeArray(
 ): unknown[] {
   enter(value, path, context);
   try {
-    return value.map((item, index) => encodeNode(item, itemNode, `${path}.${index}`, context));
+    return protectSerializationBoundary(
+      value.map((item, index) => encodeNode(item, itemNode, `${path}.${index}`, context)),
+    );
   } finally {
     context.active.delete(value);
   }
@@ -148,12 +165,13 @@ function encodeObject(
       const property = canonicalMatch ?? wireMatch?.[1];
 
       if (property === undefined || canonicalKey === undefined) {
-        defineOwnDataProperty(
+        defineRequestDataProperty(
           output,
           sourceKey,
           node.additional === undefined
             ? cloneOpaque(sourceValue, appendPath(path, sourceKey), context)
             : encodeNode(sourceValue, node.additional, appendPath(path, sourceKey), context),
+          appendPath(path, sourceKey),
         );
         continue;
       }
@@ -176,16 +194,17 @@ function encodeObject(
         selectStyle("wire", sourceKey, appendPath(path, canonicalKey), context);
       }
 
-      defineOwnDataProperty(
+      defineRequestDataProperty(
         output,
         targetKey,
         property.value === undefined
           ? cloneOpaque(sourceValue, appendPath(path, canonicalKey), context)
           : encodeNode(sourceValue, property.value, appendPath(path, canonicalKey), context),
+        appendPath(path, canonicalKey),
       );
     }
 
-    return output;
+    return protectSerializationBoundary(output);
   } finally {
     context.active.delete(value);
   }
@@ -201,13 +220,14 @@ function encodeDictionary(
   try {
     const output: Record<string, unknown> = {};
     for (const [key, item] of Object.entries(value)) {
-      defineOwnDataProperty(
+      defineRequestDataProperty(
         output,
         key,
         encodeNode(item, valueNode, appendPath(path, key), context),
+        appendPath(path, key),
       );
     }
-    return output;
+    return protectSerializationBoundary(output);
   } finally {
     context.active.delete(value);
   }
@@ -217,7 +237,9 @@ function cloneOpaque(value: unknown, path: string, context: EncodingContext): un
   if (Array.isArray(value)) {
     enter(value, path, context);
     try {
-      return value.map((item, index) => cloneOpaque(item, `${path}.${index}`, context));
+      return protectSerializationBoundary(
+        value.map((item, index) => cloneOpaque(item, `${path}.${index}`, context)),
+      );
     } finally {
       context.active.delete(value);
     }
@@ -229,9 +251,10 @@ function cloneOpaque(value: unknown, path: string, context: EncodingContext): un
   try {
     const output: Record<string, unknown> = {};
     for (const [key, item] of Object.entries(value)) {
-      defineOwnDataProperty(output, key, cloneOpaque(item, appendPath(path, key), context));
+      const itemPath = appendPath(path, key);
+      defineRequestDataProperty(output, key, cloneOpaque(item, itemPath, context), itemPath);
     }
-    return output;
+    return protectSerializationBoundary(output);
   } finally {
     context.active.delete(value);
   }
@@ -289,6 +312,62 @@ function getWirePropertyIndex(
 
 function fail(issue: ValidationIssue): never {
   throw new RequestBodyEncodingError(issue);
+}
+
+function failType(path: string, expected: string, value: unknown): never {
+  fail({
+    path,
+    message: `Request body field must be a ${expected}`,
+    expected,
+    received: getValueType(value),
+  });
+}
+
+function isObjectLike(value: unknown): value is object {
+  return (typeof value === "object" && value !== null) || typeof value === "function";
+}
+
+function protectSerializationBoundary<T extends object>(value: T): T {
+  if (!Object.hasOwn(value, "toJSON")) {
+    Object.defineProperty(value, "toJSON", {
+      value: undefined,
+      configurable: true,
+      writable: true,
+    });
+  }
+  return value;
+}
+
+function defineRequestDataProperty(
+  target: Record<string, unknown>,
+  key: string,
+  value: unknown,
+  path: string,
+): void {
+  if (key === "toJSON" && typeof value === "function") {
+    fail({
+      path,
+      message: "Request body cannot contain a callable toJSON serialization hook",
+      expected: "JSON data without serialization hooks",
+      received: "function",
+    });
+  }
+  defineOwnDataProperty(target, key, value);
+}
+
+function getValueType(value: unknown): string {
+  if (value === null) return "null";
+  if (Array.isArray(value)) return "array";
+  if (typeof value !== "object") return typeof value;
+
+  const prototype = Object.getPrototypeOf(value) as object | null;
+  const constructor =
+    prototype === null
+      ? undefined
+      : Object.getOwnPropertyDescriptor(prototype, "constructor")?.value;
+  return typeof constructor === "function" && constructor.name.length > 0
+    ? constructor.name
+    : "non-plain object";
 }
 
 function appendPath(path: string, key: string): string {

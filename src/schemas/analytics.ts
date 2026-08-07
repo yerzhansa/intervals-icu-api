@@ -6,6 +6,13 @@ const NullableNumberArraySchema = v.array(v.nullable(v.number()));
 const OptionalNumber = v.nullish(v.number());
 const OptionalString = v.nullish(v.string());
 
+function hasExpectedLength(
+  values: readonly unknown[] | null | undefined,
+  expectedLength: number,
+): boolean {
+  return values === null || values === undefined || values.length === expectedLength;
+}
+
 function toOpaqueValue(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(toOpaqueValue);
   if (value !== null && typeof value === "object") {
@@ -123,19 +130,65 @@ const CurveMetadataSchema = {
   weight: OptionalNumber,
 } as const;
 
-export const HeartRateCurveSchema = v.looseObject({
-  ...CurveMetadataSchema,
-  secs: v.array(v.number()),
-  values: NullableNumberArraySchema,
-});
+export const HeartRateCurveSchema = v.pipe(
+  v.looseObject({
+    ...CurveMetadataSchema,
+    secs: v.array(v.number()),
+    values: NullableNumberArraySchema,
+  }),
+  v.forward(
+    v.check(
+      (curve) => curve.secs.length === curve.values.length,
+      "Heart-rate curve secs and values must have equal lengths",
+    ),
+    ["values"],
+  ),
+  v.forward(
+    v.check(
+      (curve) => hasExpectedLength(curve.start_index, curve.secs.length),
+      "Heart-rate curve start_index must align with secs when present",
+    ),
+    ["start_index"],
+  ),
+  v.forward(
+    v.check(
+      (curve) => hasExpectedLength(curve.end_index, curve.secs.length),
+      "Heart-rate curve end_index must align with secs when present",
+    ),
+    ["end_index"],
+  ),
+);
 
-export const PaceCurveSchema = v.looseObject({
-  ...CurveMetadataSchema,
-  distance: v.array(v.number()),
-  paceModels: v.nullish(v.array(PaceModelSchema)),
-  type: v.nullish(v.picklist(["POWER", "HR", "PACE", "GAP"])),
-  values: NullableNumberArraySchema,
-});
+export const PaceCurveSchema = v.pipe(
+  v.looseObject({
+    ...CurveMetadataSchema,
+    distance: v.array(v.number()),
+    paceModels: v.nullish(v.array(PaceModelSchema)),
+    type: v.nullish(v.picklist(["POWER", "HR", "PACE", "GAP"])),
+    values: NullableNumberArraySchema,
+  }),
+  v.forward(
+    v.check(
+      (curve) => curve.distance.length === curve.values.length,
+      "Pace curve distance and values must have equal lengths",
+    ),
+    ["values"],
+  ),
+  v.forward(
+    v.check(
+      (curve) => hasExpectedLength(curve.start_index, curve.distance.length),
+      "Pace curve start_index must align with distance when present",
+    ),
+    ["start_index"],
+  ),
+  v.forward(
+    v.check(
+      (curve) => hasExpectedLength(curve.end_index, curve.distance.length),
+      "Pace curve end_index must align with distance when present",
+    ),
+    ["end_index"],
+  ),
+);
 
 const PowerCurveFields = {
   ...CurveMetadataSchema,
@@ -155,18 +208,64 @@ const PowerCurveFields = {
 } as const;
 
 /** Per-activity power-curve shape, retaining the 0.2 `secs` + `watts` contract. */
-export const PowerCurveSchema = v.looseObject({
-  ...PowerCurveFields,
-  values: v.nullish(NullableNumberArraySchema),
-  watts: NullableNumberArraySchema,
-});
+export const PowerCurveSchema = v.pipe(
+  v.looseObject({
+    ...PowerCurveFields,
+    values: v.nullish(NullableNumberArraySchema),
+    watts: NullableNumberArraySchema,
+  }),
+  v.forward(
+    v.check(
+      (curve) => curve.secs.length === curve.watts.length,
+      "Power curve secs and watts must have equal lengths",
+    ),
+    ["watts"],
+  ),
+  v.forward(
+    v.check(
+      (curve) => hasExpectedLength(curve.values, curve.secs.length),
+      "Power curve secs and values must have equal lengths when values are present",
+    ),
+    ["values"],
+  ),
+  v.forward(
+    v.check(
+      (curve) => hasExpectedLength(curve.watts_per_kg, curve.secs.length),
+      "Power curve watts_per_kg must align with secs when present",
+    ),
+    ["watts_per_kg"],
+  ),
+);
 
 /** Athlete best-power-curve shape returned inside the athlete curve-set payload. */
-export const AthletePowerCurveSchema = v.looseObject({
-  ...PowerCurveFields,
-  values: NullableNumberArraySchema,
-  watts: v.nullish(NullableNumberArraySchema),
-});
+export const AthletePowerCurveSchema = v.pipe(
+  v.looseObject({
+    ...PowerCurveFields,
+    values: NullableNumberArraySchema,
+    watts: v.nullish(NullableNumberArraySchema),
+  }),
+  v.forward(
+    v.check(
+      (curve) => curve.secs.length === curve.values.length,
+      "Athlete power curve secs and values must have equal lengths",
+    ),
+    ["values"],
+  ),
+  v.forward(
+    v.check(
+      (curve) => hasExpectedLength(curve.watts, curve.secs.length),
+      "Athlete power curve secs and watts must have equal lengths when watts are present",
+    ),
+    ["watts"],
+  ),
+  v.forward(
+    v.check(
+      (curve) => hasExpectedLength(curve.watts_per_kg, curve.secs.length),
+      "Athlete power curve watts_per_kg must align with secs when present",
+    ),
+    ["watts_per_kg"],
+  ),
+);
 
 export const PowerVsHeartRatePlotSchema = v.looseObject({
   avgCadenceZ2: OptionalNumber,
@@ -197,10 +296,19 @@ export const ActivityHeartRateCurveSchema = v.looseObject({
   weight: OptionalNumber,
 });
 
-export const ActivityHeartRateCurvePayloadSchema = v.looseObject({
-  curves: v.array(ActivityHeartRateCurveSchema),
-  secs: v.array(v.number()),
-});
+export const ActivityHeartRateCurvePayloadSchema = v.pipe(
+  v.looseObject({
+    curves: v.array(ActivityHeartRateCurveSchema),
+    secs: v.array(v.number()),
+  }),
+  v.forward(
+    v.check(
+      (payload) => payload.curves.every((curve) => curve.bpm.length === payload.secs.length),
+      "Every activity heart-rate curve must align with the secs axis",
+    ),
+    ["curves"],
+  ),
+);
 
 export const ActivityPaceCurveSchema = v.looseObject({
   id: OptionalString,
@@ -209,11 +317,20 @@ export const ActivityPaceCurveSchema = v.looseObject({
   weight: OptionalNumber,
 });
 
-export const ActivityPaceCurvePayloadSchema = v.looseObject({
-  curves: v.array(ActivityPaceCurveSchema),
-  distances: v.array(v.number()),
-  gap: v.boolean(),
-});
+export const ActivityPaceCurvePayloadSchema = v.pipe(
+  v.looseObject({
+    curves: v.array(ActivityPaceCurveSchema),
+    distances: v.array(v.number()),
+    gap: v.boolean(),
+  }),
+  v.forward(
+    v.check(
+      (payload) => payload.curves.every((curve) => curve.secs.length === payload.distances.length),
+      "Every activity pace curve must align with the distances axis",
+    ),
+    ["curves"],
+  ),
+);
 
 export const ActivityPowerCurveSchema = v.looseObject({
   id: OptionalString,
@@ -222,11 +339,20 @@ export const ActivityPowerCurveSchema = v.looseObject({
   weight: OptionalNumber,
 });
 
-export const ActivityPowerCurvePayloadSchema = v.looseObject({
-  after_kj: OptionalNumber,
-  curves: v.array(ActivityPowerCurveSchema),
-  secs: v.array(v.number()),
-});
+export const ActivityPowerCurvePayloadSchema = v.pipe(
+  v.looseObject({
+    after_kj: OptionalNumber,
+    curves: v.array(ActivityPowerCurveSchema),
+    secs: v.array(v.number()),
+  }),
+  v.forward(
+    v.check(
+      (payload) => payload.curves.every((curve) => curve.watts.length === payload.secs.length),
+      "Every activity power curve must align with the secs axis",
+    ),
+    ["curves"],
+  ),
+);
 
 export const DataCurveSchema = v.looseObject({
   ...CurveMetadataSchema,
@@ -271,20 +397,30 @@ export type AthletePaceCurveSetWire = v.InferInput<typeof AthletePaceCurveSetSch
 /** Validated JSON shape before response key transformation and map normalization. */
 export type AthletePowerCurveSetWire = v.InferInput<typeof AthletePowerCurveSetSchema>;
 
-export const AthletePowerHeartRateCurveSchema = v.looseObject({
-  athleteId: OptionalString,
-  bpm: NullableNumberArraySchema,
-  bucketSize: OptionalNumber,
-  cadence: NullableNumberArraySchema,
-  end: OptionalString,
-  ftp: OptionalNumber,
-  lthr: OptionalNumber,
-  maxWatts: OptionalNumber,
-  max_hr: OptionalNumber,
-  minWatts: OptionalNumber,
-  minutes: NullableNumberArraySchema,
-  start: OptionalString,
-});
+export const AthletePowerHeartRateCurveSchema = v.pipe(
+  v.looseObject({
+    athleteId: OptionalString,
+    bpm: NullableNumberArraySchema,
+    bucketSize: OptionalNumber,
+    cadence: NullableNumberArraySchema,
+    end: OptionalString,
+    ftp: OptionalNumber,
+    lthr: OptionalNumber,
+    maxWatts: OptionalNumber,
+    max_hr: OptionalNumber,
+    minWatts: OptionalNumber,
+    minutes: NullableNumberArraySchema,
+    start: OptionalString,
+  }),
+  v.forward(
+    v.check(
+      (curve) =>
+        curve.bpm.length === curve.minutes.length && curve.cadence.length === curve.minutes.length,
+      "Power/heart-rate bpm, cadence, and minutes arrays must have equal lengths",
+    ),
+    ["minutes"],
+  ),
+);
 
 export type EffortWire = v.InferInput<typeof EffortSchema>;
 type EffortDecoded = v.InferOutput<typeof EffortSchema>;

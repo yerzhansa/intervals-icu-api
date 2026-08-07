@@ -148,7 +148,7 @@ client.activities.exportCsv({ oldest: "2026-01-01" }); // → string
 
 The legacy `getStreams(activityId, string[])` overload still works. Omitting `types` asks Intervals.icu for its default streams; it is not converted into an empty list.
 
-Normalized streams retain duplicate and custom descriptors rather than silently overwriting them. The pure helper below calculates a transparent, time-weighted efficiency-factor drift; it is intentionally distinct from Intervals' lag-adjusted and cleaned power-vs-HR metric.
+Normalized streams retain duplicate and custom descriptors rather than silently overwriting them. The pure helper below calculates a transparent, time-weighted efficiency-factor drift; it is intentionally distinct from Intervals' lag-adjusted and cleaned power-vs-HR metric. It requires a valid, strictly increasing `time` stream (or the configured `timeStream`) and reports non-boolean moving samples instead of inventing timing or movement data.
 
 ```typescript
 import { calculateEfficiencyFactorDecoupling } from "intervals-icu-api";

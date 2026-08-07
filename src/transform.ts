@@ -222,11 +222,11 @@ function isSupportedOpaqueValue(value: unknown): boolean {
     value instanceof WeakSet ||
     value instanceof ArrayBuffer ||
     ArrayBuffer.isView(value) ||
-    value instanceof Blob ||
-    value instanceof FormData ||
-    value instanceof URL ||
-    value instanceof URLSearchParams ||
-    value instanceof ReadableStream
+    (typeof Blob !== "undefined" && value instanceof Blob) ||
+    (typeof FormData !== "undefined" && value instanceof FormData) ||
+    (typeof URL !== "undefined" && value instanceof URL) ||
+    (typeof URLSearchParams !== "undefined" && value instanceof URLSearchParams) ||
+    (typeof ReadableStream !== "undefined" && value instanceof ReadableStream)
   );
 }
 

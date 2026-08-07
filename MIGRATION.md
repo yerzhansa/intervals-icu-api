@@ -50,7 +50,7 @@ Analytics responses use loose, sanitized schemas: required semantic axes are val
 
 `activities.getStreamMap()` converts the stream array into a duplicate-safe `ReadonlyMap`, preserves custom descriptors, and reports malformed or duplicate streams instead of overwriting them. `normalizeActivityStreams()` provides the same pure operation for already-fetched values.
 
-`calculateEfficiencyFactorDecoupling()` computes a transparent, time-weighted first-half versus second-half efficiency-factor drift. It is intentionally a local calculation, not a reimplementation of Intervals.icu's cleaned and lag-adjusted power-versus-heart-rate metric.
+`calculateEfficiencyFactorDecoupling()` computes a transparent, time-weighted first-half versus second-half efficiency-factor drift. It is intentionally a local calculation, not a reimplementation of Intervals.icu's cleaned and lag-adjusted power-versus-heart-rate metric. A valid, strictly increasing `time` stream is required (or select one with `timeStream`); non-boolean moving samples now return `InvalidMovingStream` diagnostics.
 
 ## Retries are method-aware
 

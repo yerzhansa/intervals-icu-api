@@ -123,6 +123,30 @@ describe("camelCaseKeys", () => {
     }
   });
 
+  it("works when optional web-platform constructors are unavailable", () => {
+    const optionalGlobals = [
+      "Blob",
+      "FormData",
+      "URL",
+      "URLSearchParams",
+      "ReadableStream",
+    ] as const;
+    const descriptors = optionalGlobals.map(
+      (name) => [name, Object.getOwnPropertyDescriptor(globalThis, name)] as const,
+    );
+
+    try {
+      for (const name of optionalGlobals) Reflect.deleteProperty(globalThis, name);
+      expect(camelCaseKeys({ outer_key: { inner_key: 1 } })).toEqual({
+        outerKey: { innerKey: 1 },
+      });
+    } finally {
+      for (const [name, descriptor] of descriptors) {
+        if (descriptor !== undefined) Object.defineProperty(globalThis, name, descriptor);
+      }
+    }
+  });
+
   it("rejects collisions instead of applying insertion-order precedence", () => {
     const input = { foo_bar: 1, fooBar: 2 };
 

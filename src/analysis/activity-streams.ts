@@ -119,6 +119,7 @@ function chooseReference(
 export interface EfficiencyFactorDecouplingOptions {
   outputStream: ActivityStreamType;
   heartRateStream?: ActivityStreamType;
+  /** Name of the required timestamp stream. Defaults to `time`. */
   timeStream?: ActivityStreamType;
   movingStream?: ActivityStreamType;
   startSeconds?: number;
@@ -138,6 +139,12 @@ export type StreamAnalysisIssue =
       type: string;
       index: number;
       reason: "NonFinite" | "NonIncreasing";
+    }
+  | {
+      kind: "InvalidMovingStream";
+      type: string;
+      index: number;
+      reason: "NonBoolean";
     }
   | { kind: "NoUsableSamples"; half?: "first" | "second" }
   | { kind: "ZeroEfficiencyFactor"; half: "first" | "second" };
@@ -201,27 +208,29 @@ export function calculateEfficiencyFactorDecoupling(
 
   const timeResult = streams.getUnique(timeType);
   const movingResult = streams.getUnique(movingType);
-  const optionalLookupIssues: StreamLookupError[] = [];
-  if (
-    !timeResult.ok &&
-    (timeResult.error.kind !== "MissingStream" || options.timeStream !== undefined)
-  ) {
-    optionalLookupIssues.push(timeResult.error);
+  if (!timeResult.ok) {
+    const lookupIssues: StreamLookupError[] = [timeResult.error];
+    if (
+      !movingResult.ok &&
+      (movingResult.error.kind !== "MissingStream" || options.movingStream !== undefined)
+    ) {
+      lookupIssues.push(movingResult.error);
+    }
+    return err(lookupIssues);
   }
   if (
     !movingResult.ok &&
     (movingResult.error.kind !== "MissingStream" || options.movingStream !== undefined)
   ) {
-    optionalLookupIssues.push(movingResult.error);
+    return err([movingResult.error]);
   }
-  if (optionalLookupIssues.length > 0) return err(optionalLookupIssues);
 
-  const time = timeResult.ok ? timeResult.value : undefined;
+  const time = timeResult.value;
   const moving = movingResult.ok ? movingResult.value : undefined;
   const lengths: Record<string, number> = {
     [options.outputStream]: outputResult.value.data.length,
     [heartRateType]: heartRateResult.value.data.length,
-    ...(time ? { [timeType]: time.data.length } : {}),
+    [timeType]: time.data.length,
     ...(moving ? { [movingType]: moving.data.length } : {}),
   };
   const distinctLengths = new Set(Object.values(lengths));
@@ -232,8 +241,12 @@ export function calculateEfficiencyFactorDecoupling(
   const length = Math.min(...Object.values(lengths));
   if (!Number.isFinite(length) || length === 0) return err([{ kind: "NoUsableSamples" }]);
 
-  const timestampResult = createTimestamps(time?.data, length, timeType);
+  const timestampResult = createTimestamps(time.data, length, timeType);
   if (!timestampResult.ok) return err([timestampResult.error]);
+  if (moving) {
+    const movingIssues = validateMovingStream(moving.data, length, movingType);
+    if (movingIssues.length > 0) return err(movingIssues);
+  }
   const timestamps = timestampResult.value;
   const fallbackDuration = medianPositiveDelta(timestamps) ?? 1;
   const durations = timestamps.map((timestamp, index) => {
@@ -258,7 +271,7 @@ export function calculateEfficiencyFactorDecoupling(
   for (let index = 0; index < length; index++) {
     const output = finiteNumber(outputResult.value.data[index]);
     const heartRate = finiteNumber(heartRateResult.value.data[index]);
-    const isMoving = moving ? moving.data[index] !== false : true;
+    const isMoving = moving ? moving.data[index] === true : true;
     const timestamp = timestamps[index];
     const sampleEnd = timestamp + durations[index];
     if (output === undefined || heartRate === undefined || heartRate <= 0 || !isMoving) continue;
@@ -338,12 +351,10 @@ function validateOptions(options: EfficiencyFactorDecouplingOptions): StreamAnal
 }
 
 function createTimestamps(
-  data: readonly unknown[] | undefined,
+  data: readonly unknown[],
   length: number,
   type: string,
 ): Result<number[], StreamAnalysisIssue> {
-  if (!data) return ok(Array.from({ length }, (_, index) => index));
-
   const timestamps: number[] = [];
   for (let index = 0; index < length; index++) {
     const timestamp = finiteNumber(data[index]);
@@ -357,6 +368,20 @@ function createTimestamps(
     timestamps.push(timestamp);
   }
   return ok(timestamps);
+}
+
+function validateMovingStream(
+  data: readonly unknown[],
+  length: number,
+  type: string,
+): StreamAnalysisIssue[] {
+  const issues: StreamAnalysisIssue[] = [];
+  for (let index = 0; index < length; index++) {
+    if (typeof data[index] !== "boolean") {
+      issues.push({ kind: "InvalidMovingStream", type, index, reason: "NonBoolean" });
+    }
+  }
+  return issues;
 }
 
 function medianPositiveDelta(timestamps: readonly number[]): number | undefined {

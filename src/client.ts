@@ -1,4 +1,8 @@
-import createClient, { defaultPathSerializer, type PathSerializer } from "openapi-fetch";
+import createClient, {
+  defaultBodySerializer,
+  defaultPathSerializer,
+  type PathSerializer,
+} from "openapi-fetch";
 import type { paths } from "./generated/schema.js";
 import { createAuthHeaders, type AuthConfig } from "./auth.js";
 import { RateLimiter, type RateLimiterOptions } from "./rate-limiter.js";
@@ -197,8 +201,12 @@ function wrapRawClient(
         const method =
           property === "request" && typeof args[0] === "string" ? args[0].toUpperCase() : property;
         const baseInit = typeof init === "object" && init !== null ? init : {};
+        const stableInit = stabilizeDefaultRawBody(baseInit);
         const externalSignal = (baseInit as { signal?: AbortSignal | null }).signal;
-        const rawFetch = http.createRawFetch(customFetch, hasExplicitAuthorization(init));
+        const rawTransport = http.createObservedRawFetch(
+          customFetch,
+          hasExplicitAuthorization(init),
+        );
         return http.requestRaw(
           method,
           schemaPath ?? "",
@@ -206,13 +214,37 @@ function wrapRawClient(
           rawBodyIsReplayable(init),
           (signal) => {
             const attemptArgs = [...args];
-            attemptArgs[initIndex] = { ...baseInit, fetch: rawFetch, signal };
+            attemptArgs[initIndex] = { ...stableInit, fetch: rawTransport.fetch, signal };
             return value.apply(target, attemptArgs);
           },
+          rawTransport.cleanup,
         );
       };
     },
   });
+}
+
+function stabilizeDefaultRawBody(init: object): object {
+  const options = init as { body?: unknown; bodySerializer?: unknown };
+  if (options.body === undefined || typeof options.bodySerializer === "function") return init;
+
+  let serialized = false;
+  let cachedBody: unknown;
+  const serialize = defaultBodySerializer as unknown as (
+    body: unknown,
+    headers?: unknown,
+  ) => unknown;
+
+  return {
+    ...init,
+    bodySerializer: (body: unknown, headers?: unknown) => {
+      if (!serialized) {
+        cachedBody = serialize(body, headers);
+        serialized = true;
+      }
+      return cachedBody;
+    },
+  };
 }
 
 function hasExplicitAuthorization(init: unknown): boolean {

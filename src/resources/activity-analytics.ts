@@ -61,18 +61,31 @@ export type ActivityFilterInput = ActivityFilterInputCommon &
     | { fieldId?: never; field_id?: ActivityFilterFieldId }
   );
 
-export interface FindBestEffortsOptions {
+interface FindBestEffortsCommonOptions {
   stream: ActivityStreamType;
-  /** Effort duration in seconds. */
-  duration?: number;
-  /** Effort distance in meters. */
-  distance?: number;
   count?: number;
   minValue?: number;
   excludeIntervals?: boolean;
   startIndex?: number;
   endIndex?: number;
 }
+
+type BestEffortWindow =
+  | {
+      /** Effort duration in seconds. */
+      duration: number;
+      /** Effort distance in meters. */
+      distance?: number;
+    }
+  | {
+      /** Effort duration in seconds. */
+      duration?: number;
+      /** Effort distance in meters. */
+      distance: number;
+    };
+
+/** Best-effort search options; at least one effort window selector is required. */
+export type FindBestEffortsOptions = FindBestEffortsCommonOptions & BestEffortWindow;
 
 export interface HistogramOptions {
   bucketSize?: number;
@@ -160,6 +173,19 @@ export class ActivityAnalyticsResource extends BaseResource {
     activityId: string,
     options: FindBestEffortsOptions,
   ): Promise<Result<BestEfforts>> {
+    const hasDuration = typeof options.duration === "number" && Number.isFinite(options.duration);
+    const hasDistance = typeof options.distance === "number" && Number.isFinite(options.distance);
+    if (!hasDuration && !hasDistance) {
+      return this.http.rejectValidation("GET", "/activity/{id}/best-efforts", [
+        {
+          path: "query",
+          message: "At least one of duration or distance is required",
+          expected: "duration or distance",
+          received: undefined,
+        },
+      ]);
+    }
+
     const query: operations["findBestEfforts"]["parameters"]["query"] = {
       ...options,
       stream: options.stream,

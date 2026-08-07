@@ -1,8 +1,22 @@
 import { afterAll, beforeAll, describe, expect, expectTypeOf, it } from "vitest";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
+import * as v from "valibot";
 import { IntervalsClient } from "../src/client.js";
-import type { ActivityFilterInput } from "../src/resources/activity-analytics.js";
+import type {
+  ActivityFilterInput,
+  FindBestEffortsOptions,
+} from "../src/resources/activity-analytics.js";
+import {
+  ActivityHeartRateCurvePayloadSchema,
+  ActivityPaceCurvePayloadSchema,
+  ActivityPowerCurvePayloadSchema,
+  AthletePowerCurveSchema,
+  AthletePowerHeartRateCurveSchema,
+  HeartRateCurveSchema,
+  PaceCurveSchema,
+  PowerCurveSchema,
+} from "../src/schemas/analytics.js";
 import type {
   AthleteHeartRateCurveSet,
   AthletePaceCurveSet,
@@ -128,6 +142,149 @@ describe("activity analytics endpoints", () => {
 
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.kind).toBe("Validation");
+  });
+
+  it.each([
+    ["missing", {}],
+    ["null duration", { duration: null }],
+    ["NaN distance", { distance: Number.NaN }],
+    ["infinite duration", { duration: Number.POSITIVE_INFINITY }],
+  ] as const)(
+    "rejects a best-efforts search with a %s window before fetching",
+    async (_name, window) => {
+      let requestCount = 0;
+      server.use(
+        http.get(`${BASE}/api/v1/activity/:id/best-efforts`, () => {
+          requestCount += 1;
+          return HttpResponse.json(fixture.bestEfforts);
+        }),
+      );
+      const options = { stream: "watts", ...window } as unknown as FindBestEffortsOptions;
+
+      const result = await createClient().activities.findBestEfforts("synthetic-activity", options);
+
+      expect(result).toEqual({
+        ok: false,
+        error: {
+          kind: "Validation",
+          issues: [
+            {
+              path: "query",
+              message: "At least one of duration or distance is required",
+              expected: "duration or distance",
+              received: undefined,
+            },
+          ],
+        },
+      });
+      expect(requestCount).toBe(0);
+    },
+  );
+
+  it("preserves zero as a finite best-efforts window selector", async () => {
+    let requestedUrl: URL | undefined;
+    server.use(
+      http.get(`${BASE}/api/v1/activity/:id/best-efforts`, ({ request }) => {
+        requestedUrl = new URL(request.url);
+        return HttpResponse.json(fixture.bestEfforts);
+      }),
+    );
+
+    const result = await createClient().activities.findBestEfforts("synthetic-activity", {
+      stream: "watts",
+      duration: 0,
+    });
+
+    expect(result.ok).toBe(true);
+    expect(requestedUrl?.searchParams.get("duration")).toBe("0");
+  });
+});
+
+describe("analytics positional curve schemas", () => {
+  it.each([
+    ["heart-rate secs/values", HeartRateCurveSchema, { secs: [1, 60], values: [180] }],
+    [
+      "heart-rate secs/start_index",
+      HeartRateCurveSchema,
+      { secs: [1, 60], values: [180, 160], start_index: [1] },
+    ],
+    [
+      "heart-rate secs/end_index",
+      HeartRateCurveSchema,
+      { secs: [1, 60], values: [180, 160], end_index: [2] },
+    ],
+    ["pace distance/values", PaceCurveSchema, { distance: [1_000], values: [220, 1_200] }],
+    [
+      "pace distance/start_index",
+      PaceCurveSchema,
+      { distance: [400, 1_000], values: [80, 220], start_index: [1] },
+    ],
+    [
+      "pace distance/end_index",
+      PaceCurveSchema,
+      { distance: [400, 1_000], values: [80, 220], end_index: [2] },
+    ],
+    ["activity power secs/watts", PowerCurveSchema, { secs: [5, 60], watts: [400] }],
+    [
+      "activity power secs/optional values",
+      PowerCurveSchema,
+      { secs: [5, 60], watts: [400, 350], values: [400] },
+    ],
+    [
+      "activity power secs/watts_per_kg",
+      PowerCurveSchema,
+      { secs: [5, 60], watts: [400, 350], watts_per_kg: [5] },
+    ],
+    ["athlete power secs/values", AthletePowerCurveSchema, { secs: [5, 60], values: [400] }],
+    [
+      "athlete power secs/optional watts",
+      AthletePowerCurveSchema,
+      { secs: [5, 60], values: [400, 350], watts: [400] },
+    ],
+    [
+      "athlete power secs/watts_per_kg",
+      AthletePowerCurveSchema,
+      { secs: [5, 60], values: [400, 350], watts_per_kg: [5] },
+    ],
+    [
+      "activity heart-rate payload axis",
+      ActivityHeartRateCurvePayloadSchema,
+      { secs: [60, 300], curves: [{ bpm: [180] }] },
+    ],
+    [
+      "activity pace payload axis",
+      ActivityPaceCurvePayloadSchema,
+      { distances: [1_000, 5_000], gap: false, curves: [{ secs: [220] }] },
+    ],
+    [
+      "activity power payload axis",
+      ActivityPowerCurvePayloadSchema,
+      { secs: [60, 300], curves: [{ watts: [400] }] },
+    ],
+    [
+      "power/heart-rate bpm/cadence/minutes",
+      AthletePowerHeartRateCurveSchema,
+      { bpm: [150, 160], cadence: [85], minutes: [10, 20] },
+    ],
+  ] as const)("rejects mismatched %s arrays", (_name, schema, input) => {
+    expect(v.safeParse(schema, input).success).toBe(false);
+  });
+
+  it.each([
+    [
+      "heart-rate index",
+      HeartRateCurveSchema,
+      { secs: [1, 60], values: [180, 160], start_index: null },
+    ],
+    ["pace index", PaceCurveSchema, { distance: [400, 1_000], values: [80, 220], end_index: null }],
+    [
+      "activity power W/kg",
+      PowerCurveSchema,
+      { secs: [5, 60], watts: [400, 350], watts_per_kg: null },
+    ],
+    ["athlete power W/kg", AthletePowerCurveSchema, { secs: [5, 60], values: [400, 350] }],
+  ] as const)("accepts nullish/absent optional %s arrays", (_name, schema, input) => {
+    expect(v.safeParse(schema, input).success).toBe(true);
   });
 });
 

@@ -198,6 +198,99 @@ describe("schema-aware request casing", () => {
     });
   });
 
+  it("rejects structured class instances instead of bypassing the schema codec", () => {
+    class EventBody {
+      readonly startDateLocal = "2026-08-07T06:00:00";
+      readonly category = "WORKOUT";
+    }
+
+    expect(encodeRequestBody(new EventBody(), "EventEx")).toEqual({
+      ok: false,
+      issues: [
+        {
+          path: "body",
+          message: "Request body field must be a plain JSON object",
+          expected: "plain JSON object",
+          received: "EventBody",
+        },
+      ],
+    });
+  });
+
+  it("preserves explicit undefined on optional structured fields for compatibility", () => {
+    expect(encodeRequestBody({ sportInfo: undefined }, "Wellness")).toEqual({
+      ok: true,
+      value: { sportInfo: undefined },
+    });
+  });
+
+  it("rejects callable structured bodies even when they define toJSON", () => {
+    const body = Object.assign(function eventBody() {}, {
+      startDateLocal: "2026-08-07T06:00:00",
+      toJSON: () => ({ startDateLocal: "bypass" }),
+    });
+
+    expect(encodeRequestBody(body, "EventEx")).toEqual({
+      ok: false,
+      issues: [
+        {
+          path: "body",
+          message: "Request body field must be a plain JSON object",
+          expected: "plain JSON object",
+          received: "function",
+        },
+      ],
+    });
+  });
+
+  it("shadows inherited toJSON hooks on encoded records and bulk arrays", () => {
+    const previous = Object.getOwnPropertyDescriptor(Object.prototype, "toJSON");
+    let encodedJson: string | undefined;
+    let bulkJson: string | undefined;
+
+    try {
+      Object.defineProperty(Object.prototype, "toJSON", {
+        value: () => ({ startDateLocal: "bypass" }),
+        configurable: true,
+      });
+      const encoded = encodeRequestBody({ startDateLocal: "2026-08-07T06:00:00" }, "EventEx");
+      const bulk = encodeRequestBody([{ avgSleepingHR: 48 }], "Wellness", true);
+      if (!encoded.ok || !bulk.ok) throw new Error("Expected request encoding to succeed");
+      encodedJson = JSON.stringify(encoded.value);
+      bulkJson = JSON.stringify(bulk.value);
+    } finally {
+      if (previous === undefined) Reflect.deleteProperty(Object.prototype, "toJSON");
+      else Object.defineProperty(Object.prototype, "toJSON", previous);
+    }
+
+    expect(encodedJson).toBe('{"start_date_local":"2026-08-07T06:00:00"}');
+    expect(bulkJson).toBe('[{"avgSleepingHR":48}]');
+  });
+
+  it("rejects callable toJSON hooks before serialization", () => {
+    const toJSON = vi.fn(() => ({ startDateLocal: "bypass" }));
+    const encoded = encodeRequestBody(
+      {
+        startDateLocal: "2026-08-07T06:00:00",
+        extension: { nested_value: true, toJSON },
+      },
+      "EventEx",
+    );
+
+    expect(encoded).toEqual({
+      ok: false,
+      issues: [
+        {
+          path: "body.extension.toJSON",
+          message: "Request body cannot contain a callable toJSON serialization hook",
+          expected: "JSON data without serialization hooks",
+          received: "function",
+        },
+      ],
+    });
+    expect(toJSON).not.toHaveBeenCalled();
+  });
+
   it("encodes bulk arrays under one consistent casing contract", () => {
     const encoded = encodeRequestBody(
       [
@@ -296,5 +389,27 @@ describe("managed mutation integration", () => {
     expect(fetchImpl).not.toHaveBeenCalled();
     expect(onRequest).toHaveBeenCalledTimes(1);
     expect(onError).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not let an own toJSON hook replace a managed mutation body", async () => {
+    const fetchImpl = vi.fn<typeof globalThis.fetch>();
+    const toJSON = vi.fn(() => ({ startDateLocal: "bypass" }));
+    const client = new IntervalsClient({
+      apiKey: "test",
+      athleteId: "synthetic-athlete",
+      fetch: fetchImpl,
+    });
+
+    const result = await client.events.create({
+      startDateLocal: "2026-08-07T06:00:00",
+      category: "WORKOUT",
+      name: "Synthetic",
+      toJSON,
+    } as EventInput & { toJSON(): unknown });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error.kind).toBe("Validation");
+    expect(toJSON).not.toHaveBeenCalled();
+    expect(fetchImpl).not.toHaveBeenCalled();
   });
 });

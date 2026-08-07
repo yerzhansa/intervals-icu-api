@@ -118,6 +118,21 @@ describe("IntervalsClient.request", () => {
     },
   );
 
+  it("returns Validation without retrying malformed multipart form data", async () => {
+    const fetch = vi.fn(
+      async () =>
+        new Response("not a multipart body", {
+          headers: { "content-type": "multipart/form-data; boundary=valid-boundary" },
+        }),
+    ) as typeof globalThis.fetch;
+
+    const result = await createClient(fetch).request("/plain", { parseAs: "formData" });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error.kind).toBe("Validation");
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
   it("normalizes HTTP, malformed JSON, and schema failures", async () => {
     const responses = [
       Response.json({ error_code: "teapot" }, { status: 418, statusText: "Teapot" }),
