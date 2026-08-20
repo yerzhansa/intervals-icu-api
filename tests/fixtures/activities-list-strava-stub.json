@@ -1,0 +1,18 @@
+[
+  {
+    "id": "12345678",
+    "icu_athlete_id": "i12345",
+    "start_date_local": "1998-08-20T14:08:41",
+    "source": "STRAVA",
+    "_note": "STRAVA activities are not available via the API"
+  },
+  {
+    "id": "i12345:1234567890",
+    "start_date_local": "2026-04-13T07:30:00",
+    "type": "Ride",
+    "name": "Morning Endurance Ride",
+    "moving_time": 5400,
+    "icu_training_load": 65,
+    "trainer": false
+  }
+]

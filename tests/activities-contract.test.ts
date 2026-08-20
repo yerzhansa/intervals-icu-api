@@ -10,6 +10,7 @@ import {
 } from "../src/schemas/activity-stream.js";
 import streamsFixture from "./fixtures/activity-streams.json";
 import intervalsFixture from "./fixtures/activity-intervals.json";
+import stravaStubListFixture from "./fixtures/activities-list-strava-stub.json";
 
 const BASE = "https://intervals.icu";
 const server = setupServer();
@@ -119,6 +120,36 @@ describe("typed activity streams", () => {
       actual: 3,
       referenceType: "time",
     });
+  });
+});
+
+describe("Strava-sourced activity stubs", () => {
+  it("parses a list that mixes a five-key Strava stub with a full activity", async () => {
+    server.use(
+      http.get(`${BASE}/api/v1/athlete/:id/activities`, () =>
+        HttpResponse.json(stravaStubListFixture),
+      ),
+    );
+
+    const result = await createClient().activities.list({ oldest: "1998-08-01T00:00:00" });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+
+    const [stub, full] = result.value;
+
+    expect(stub.type ?? null).toBeNull();
+    expect(stub.id).toBe("12345678");
+    expect(stub.startDateLocal).toBe("1998-08-20T14:08:41");
+    expect(stub.source).toBe("STRAVA");
+
+    expect(full.type).toBe("Ride");
+    expect(full.id).toBe("i12345:1234567890");
+    expect(full.startDateLocal).toBe("2026-04-13T07:30:00");
+    expect(full.name).toBe("Morning Endurance Ride");
+    expect(full.movingTime).toBe(5_400);
+    expect(full.icuTrainingLoad).toBe(65);
+    expect(full.trainer).toBe(false);
   });
 });
 

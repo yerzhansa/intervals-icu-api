@@ -5,7 +5,7 @@ import type { CamelCaseKeys } from "../transform.js";
 export const ActivitySchema = v.looseObject({
   id: v.union([v.string(), v.number()]),
   start_date_local: v.string(),
-  type: v.string(),
+  type: v.nullish(v.string()),
   name: v.nullish(v.string()),
   description: v.nullish(v.string()),
   distance: v.nullish(v.number()),
