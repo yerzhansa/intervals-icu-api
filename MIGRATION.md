@@ -1,3 +1,9 @@
+# Migrating from 0.3.1 to 0.4.0
+
+`Activity.type` and `ActivityWire.type` are now `string | null | undefined`, because Strava-sourced activities arrive as a five-key stub with no `type` and a required `type` rejected the whole response array; narrow the value before using it.
+
+---
+
 # Migrating from 0.2.0 to 0.3.0
 
 `0.3.0` completes the request-casing, transport, retry, analytics, and stream-analysis work deferred from `0.2.0`. It remains compatible with `0.2` wire-shaped mutation inputs for the `0.3.x` line, but makes camelCase the canonical managed API.
